@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.report.masterdata.mapper.MasterdataPchInfoMapper">
+    
+    <resultMap type="MasterdataPchInfo" id="MasterdataPchInfoResult">
+        <result property="id"    column="id"    />
+        <result property="pch"    column="pch"    />
+        <result property="pchmc"    column="pchmc"    />
+        <result property="belongDept"    column="belong_dept"    />
+        <result property="ssnf"    column="ssnf"    />
+        <result property="pchzt"    column="pchzt"    />
+        <result property="moneyRate"    column="money_rate"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="bizVersion"    column="biz_version"    />
+    </resultMap>
+
+    <sql id="selectMasterdataPchInfoVo">
+        select
+            id, pch, pchmc, belong_dept, ssnf, pchzt, money_rate, create_by, create_time, update_by, update_time, biz_version
+        from
+            masterdata_pch_info
+    </sql>
+
+    <select id="selectMasterdataPchInfoList" parameterType="MasterdataPchInfo" resultMap="MasterdataPchInfoResult">
+        <include refid="selectMasterdataPchInfoVo"/>
+        <where>  
+            <if test="pch != null  and pch != ''"> and pch like concat('%', #{pch}, '%')</if>
+            <if test="pchmc != null  and pchmc != ''"> and pchmc like concat('%', #{pchmc}, '%')</if>
+            <if test="belongDept != null  and belongDept != ''"> and belong_dept = #{belongDept}</if>
+            <if test="ssnf != null "> and ssnf = #{ssnf}</if>
+            <if test="pchzt != null  and pchzt != ''"> and pchzt = #{pchzt}</if>
+            <if test="moneyRate != null "> and money_rate = #{moneyRate}</if>
+        </where>
+    </select>
+    
+    <select id="selectMasterdataPchInfoById" parameterType="String" resultMap="MasterdataPchInfoResult">
+        <include refid="selectMasterdataPchInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 判断新增批次号存在性sql -->
+    <sql id="selectPchCountsVo">
+        select count(1) as cnt from masterdata_pch_info where pch = #{pch} and belong_dept = #{belongDept}
+    </sql>
+    <!-- 判断新增批次号存在性方法 -->
+    <select id="selectPchCounts" parameterType="MasterdataPchInfo" resultType="java.lang.Integer">
+        <include refid="selectPchCountsVo"/>
+    </select>
+
+    <!-- 取得批次号下拉列表数据sql -->
+    <sql id="selectPchListVo">
+        select
+            id, pch, pchmc, belong_dept, ssnf, pchzt, money_rate,
+            create_by, create_time, update_by, update_time, biz_version
+        from
+            masterdata_pch_info
+    </sql>
+    <!-- 取得批次号下拉列表数据 -->
+    <select id="selectPchList" parameterType="java.lang.String" resultMap="MasterdataPchInfoResult">
+        <include refid="selectPchListVo"/>
+        <where>
+            <if test="belongDept != null  and belongDept != ''"> and belong_dept = #{belongDept}</if>
+        </where>
+    </select>
+        
+    <insert id="insertMasterdataPchInfo" parameterType="MasterdataPchInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into masterdata_pch_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pch != null and pch != ''">pch,</if>
+            <if test="pchmc != null">pchmc,</if>
+            <if test="belongDept != null and belongDept != ''">belong_dept,</if>
+            <if test="ssnf != null">ssnf,</if>
+            <if test="pchzt != null and pchzt != ''">pchzt,</if>
+            <if test="moneyRate != null">money_rate,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="bizVersion != null">biz_version,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pch != null and pch != ''">#{pch},</if>
+            <if test="pchmc != null">#{pchmc},</if>
+            <if test="belongDept != null and belongDept != ''">#{belongDept},</if>
+            <if test="ssnf != null">#{ssnf},</if>
+            <if test="pchzt != null and pchzt != ''">#{pchzt},</if>
+            <if test="moneyRate != null">#{moneyRate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="bizVersion != null">#{bizVersion},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMasterdataPchInfo" parameterType="MasterdataPchInfo">
+        update masterdata_pch_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pch != null and pch != ''">pch = #{pch},</if>
+            <if test="pchmc != null">pchmc = #{pchmc},</if>
+            <if test="belongDept != null">belong_dept = #{belongDept},</if>
+            <if test="ssnf != null">ssnf = #{ssnf},</if>
+            <if test="pchzt != null and pchzt != ''">pchzt = #{pchzt},</if>
+            <if test="moneyRate != null">money_rate = #{moneyRate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="bizVersion != null">biz_version = #{bizVersion},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMasterdataPchInfoById" parameterType="String">
+        delete from masterdata_pch_info where id = #{id}
+    </delete>
+
+    <delete id="deleteMasterdataPchInfoByIds" parameterType="String">
+        delete from masterdata_pch_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
