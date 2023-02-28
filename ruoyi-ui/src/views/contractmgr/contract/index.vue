@@ -275,8 +275,19 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="我方单位名称" prop="ourCompanyName">
-              <el-input v-model="form.ourCompanyName" placeholder="请输入我方单位名称" style="width: 200px"
-                maxlength="128" show-word-limit />
+              <el-select
+                v-model="form.ourCompanyName"
+                placeholder="我方单位名称"
+                clearable
+                style="width: 200px"
+              >
+                <el-option
+                  v-for="dict in dict.type.contract_our_company_name"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -327,7 +338,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="8" v-show="displayContractTotal">
             <el-form-item label="合同总价" prop="contractTotal">{{calContractTotal}}</el-form-item>
           </el-col>
           <el-col :span="8">
@@ -340,9 +351,14 @@
               <el-input v-model="form.portToFactoryFare" placeholder="请输入港口到厂运费" style="width: 200px" />
             </el-form-item>
           </el-col>
+          <el-col :span="8" v-show="!displayContractTotal">
+            <el-form-item label="港口到港口运费" prop="portToPortFare">
+              <el-input v-model="form.portToPortFare" placeholder="请输入港口到港口运费" style="width: 200px" />
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="8" v-show="displayContractTotal">
             <el-form-item label="港口到港口运费" prop="portToPortFare">
               <el-input v-model="form.portToPortFare" placeholder="请输入港口到港口运费" style="width: 200px" />
             </el-form-item>
@@ -465,7 +481,7 @@ import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Contract",
-  dicts: ['contractmgr_contract_approval_status', 'contractmgr_contract_type'],
+  dicts: ['contractmgr_contract_approval_status', 'contractmgr_contract_type', 'contract_our_company_name'],
   data() {
     return {
       // 遮罩层
@@ -569,6 +585,7 @@ export default {
       remoteLoadingSClientName: false,
       isAdmin: false,
       user: {},
+      displayContractTotal: true
     };
   },
   filters:{
@@ -708,6 +725,8 @@ export default {
       this.isUpdate = false;
       this.showApproval = false;
       this.form.contractActionType = '0';
+      this.form.ourCompanyName = '1'
+      this.displayContractTotal = false;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -719,6 +738,11 @@ export default {
         this.form.constractIsExist = response.data.constractIsExist;
         this.title = "修改合同数据";
         this.isUpdate = true;
+        if (this.form.contractStatus == 'MANUALADD' || this.form.contractStatus == '7IMPORT') {
+          this.displayContractTotal = false;
+        } else {
+          this.displayContractTotal = true;
+        }
       });
 
       getContractAdditional(contractId).then(response => {
