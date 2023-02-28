@@ -138,7 +138,7 @@
     />
 
     <!-- 添加或修改批次号管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="450px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="批次号" prop="pch">
           <el-input v-model="form.pch" placeholder="请输入批次号" style="width: 260px;" />
@@ -162,9 +162,12 @@
             style="width: 260px;">
           </el-date-picker>
         </el-form-item>
+        
         <el-form-item label="利率" prop="moneyRate">
-          <el-input-number v-model="form.moneyRate" :precision="2" :step="0.01" :max="10" style="width: 260px;"/>
+          <el-input-number v-model="form.moneyRate" :precision="2" :step="0.01" :min="0" :max="100" style="width: 260px;"/>
+          <div style="display: inline-block; margin-left: 10px;">%</div>
         </el-form-item>
+       
         <el-form-item label="状态" prop="pchzt">
           <el-select
             v-model="form.pchzt"
@@ -364,3 +367,30 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.mo-input--number {
+    border: 1px solid #DCDFE6;
+    width: 100%;
+    display: flex;
+    border-radius: 4px;
+    .el-input-number--mini{
+      flex: 1;
+    }
+    ::v-deep .el-input__inner{
+      border: none!important;
+    }
+  }
+.define-append{
+    width: 40px;
+    display: inline-block;
+    background: #F5F7FA;
+    padding: 0px 3px;
+    border-left: none;
+    height: 32px;
+    line-height: 32px;
+    color: #909399;
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
