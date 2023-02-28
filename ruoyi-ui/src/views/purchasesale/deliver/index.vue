@@ -385,19 +385,19 @@
               <el-input v-model="form.checkQuantity" placeholder="请输入核算数量" style="width: 200px" />
             </el-form-item>
           </el-col>
+          <!-- 核算金额 -->
+          <el-col :span="8">
+            <el-form-item label="核算金额" prop="checkMoney">
+              <el-input v-model="form.checkMoney" placeholder="请输入核算金额" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <!-- 核算单价 -->
           <el-col :span="8">
             <el-form-item label="核算单价" prop="checkPrice">
               <!-- <el-input v-model="calCheckPrice" placeholder="请输入核算单价" style="width: 200px" /> -->
               {{calCheckPrice}}
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <!-- 核算金额 -->
-          <el-col :span="8">
-            <el-form-item label="核算金额" prop="checkMoney">
-              <el-input v-model="form.checkMoney" placeholder="请输入核算金额" style="width: 200px" />
             </el-form-item>
           </el-col>
           <!-- 货损数量 -->
@@ -636,16 +636,16 @@
           </el-col>
         </el-row>
         <el-row>
-          <!-- 核算单价 -->
-          <el-col :span="8">
-            <el-form-item label="核算单价" prop="checkPrice">
-              <el-input v-model="formDetail.checkPrice" :disabled="true" style="width: 200px" />
-            </el-form-item>
-          </el-col>
           <!-- 核算金额 -->
           <el-col :span="8">
             <el-form-item label="核算金额" prop="checkMoney">
               <el-input v-model="formDetail.checkMoney" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 核算单价 -->
+          <el-col :span="8">
+            <el-form-item label="核算单价" prop="checkPrice">
+              <el-input v-model="formDetail.checkPrice" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
           <!-- 货损数量 -->
