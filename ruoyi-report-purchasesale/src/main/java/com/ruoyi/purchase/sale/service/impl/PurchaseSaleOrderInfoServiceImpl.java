@@ -262,6 +262,13 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
                     element.setCompletionRate(completionRate + "%");
                 }
             }
+
+            // 根据客户编号，取得客户名称
+            String supplierName = element.getSupplierName();
+            MasterDataClientInfo supplierData = masterDataClientInfoMapper
+                    .selectMasterDataClientInfoByBaseId(supplierName);
+            String supplierRealName = supplierData.getCompanyName();
+            element.setSupplierRealName(supplierRealName);
         });
     }
 

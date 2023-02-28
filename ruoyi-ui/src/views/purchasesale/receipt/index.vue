@@ -134,12 +134,6 @@
     <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-row>
-          <!-- 收货编号 -->
-          <!-- <el-col :span="8">
-            <el-form-item label="收货编号" prop="receiptId">
-              <el-input v-model="form.receiptId" placeholder="请输入收货编号" :disabled="this.isUpdate" style="width: 240px" />
-            </el-form-item>
-          </el-col> -->
           <!-- 采购合同编号 -->
           <el-col :span="8">
             <el-form-item label="采购合同编号" prop="purchaseContractId">
@@ -166,7 +160,6 @@
           <!-- 采购订单编号 -->
           <el-col :span="8">
             <el-form-item label="采购订单编号" prop="purchaseOrderId">
-              <!-- <el-input v-model="form.purchaseOrderId" placeholder="请输入采购订单编号" style="width: 240px" /> -->
               <el-select
                 v-model="form.purchaseOrderId"
                 filterable
@@ -208,7 +201,7 @@
           </el-col>
           <!-- 供应商名称 -->
           <el-col :span="8">
-            <el-form-item label="供应商名称" prop="handledBy" style="width: 240px">{{form.supplierName}}</el-form-item>
+            <el-form-item label="供应商名称" prop="supplierName" style="width: 300px">{{form.supplierRealName}}</el-form-item>
           </el-col>
           <!-- 物料名称 -->
           <el-col :span="8">
@@ -471,9 +464,6 @@
           <!-- 运输方式 -->
           <el-col :span="8">
             <el-form-item label="运输方式" prop="transportMode">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_transport_mode" :value="formDetail.transportMode"/>
-              </template> -->
               <el-select
                 v-model="form.transportMode"
                 clearable
@@ -799,7 +789,7 @@ export default {
 
       this.form.purchaseContractId = purchaseOrder.contractId; // 合同编号
       this.form.handledBy = purchaseOrder.handledBy;  // 经办人
-      this.form.supplierName = purchaseOrder.supplierName;  // 供应商名称
+      this.form.supplierRealName = purchaseContract.supplierRealName;  // 供应商名称
       this.form.materialName = purchaseOrder.materialName;  // 物料名称
       this.form.checkPrice = purchaseOrder.unitPrice; // 核算单价
     },
@@ -824,7 +814,7 @@ export default {
 
       this.form.purchaseOrderId = purchaseContract.orderId; // 订单编号
       this.form.handledBy = purchaseContract.handledBy;  // 经办人
-      this.form.supplierName = purchaseContract.supplierName;  // 供应商名称
+      this.form.supplierRealName = purchaseContract.supplierRealName;  // 供应商名称
       this.form.materialName = purchaseContract.materialName;  // 物料名称
       this.form.checkPrice = purchaseContract.unitPrice; // 核算单价
     },
@@ -910,6 +900,7 @@ export default {
       this.isUpdate = false;
       this.form.dryCalDryingRate = 14.5;
       this.form.dryCalScaleRange = 1.2;
+      this.form.transportMode = '3';
     },
     /** 修改按钮操作 */
     handleUpdate() {
