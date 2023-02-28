@@ -194,4 +194,9 @@
             #{baseId}
         </foreach>
     </delete>
+
+    <!-- 根据公司名称，查询主数据信息 -->
+    <select id="selectMasterDataClientInfoCntByName" parameterType="MasterDataClientInfo"  resultType="java.lang.Integer">
+        select count(1) as cnt from master_data_client_info where record_flag = #{recordFlag} and company_name = #{companyName};
+    </select>
 </mapper>

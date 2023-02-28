@@ -76,9 +76,17 @@ public class MasterDataClientInfoController extends BaseController
         masterDataClientInfo.setCreateBy(SecurityUtils.getUsername());
         masterDataClientInfo.setUpdateBy(SecurityUtils.getUsername());
 
+        MasterDataClientInfo parameter = new MasterDataClientInfo();
+        parameter.setRecordFlag(masterDataClientInfo.getRecordFlag());
+        parameter.setCompanyName(masterDataClientInfo.getCompanyName());
+
         Long recordFLag = masterDataClientInfo.getRecordFlag();
         if (recordFLag ==  1) {
             // 供应商管理-供应商
+            if (masterDataClientInfoService.selectMasterDataClientInfoCntByName(parameter) > 0) {
+                return AjaxResult.error("该供应商已存在，请核实！");
+            }
+
             Optional<MasterDataClientInfo> optSelMaxSupplierRecord = masterDataClientInfoService.selectMaxSupplierId();
             if (optSelMaxSupplierRecord.isPresent()) {
                 String baseId = optSelMaxSupplierRecord.get().getBaseId();
@@ -89,6 +97,10 @@ public class MasterDataClientInfoController extends BaseController
             }
         } else if (recordFLag == 2) {
             // 供应商管理-客户
+            if (masterDataClientInfoService.selectMasterDataClientInfoCntByName(parameter) > 0) {
+                return AjaxResult.error("该客户已存在，请核实！");
+            }
+
             Optional<MasterDataClientInfo> optSelMaxClientRecord = masterDataClientInfoService.selectMaxClientId();
             if (optSelMaxClientRecord.isPresent()) {
                 String baseId = optSelMaxClientRecord.get().getBaseId();

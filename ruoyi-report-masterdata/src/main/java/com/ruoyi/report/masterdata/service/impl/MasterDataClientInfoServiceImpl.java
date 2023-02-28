@@ -123,4 +123,14 @@ public class MasterDataClientInfoServiceImpl implements IMasterDataClientInfoSer
     public Optional<MasterDataClientInfo> selectMaxClientId() {
         return masterDataClientInfoMapper.selectMaxClientId();
     }
+
+    /**
+     * 根据公司名称，查询主数据信息
+     *
+     * @param masterDataClientInfo
+     * @return
+     */
+    public int selectMasterDataClientInfoCntByName(MasterDataClientInfo masterDataClientInfo) {
+        return masterDataClientInfoMapper.selectMasterDataClientInfoCntByName(masterDataClientInfo);
+    }
 }

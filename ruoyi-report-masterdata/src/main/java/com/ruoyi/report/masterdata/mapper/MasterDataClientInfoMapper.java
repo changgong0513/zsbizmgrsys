@@ -83,4 +83,12 @@ public interface MasterDataClientInfoMapper
      * @return
      */
     public Optional<MasterDataClientInfo> selectMaxClientId();
+
+    /**
+     * 根据公司名称，查询主数据信息
+     *
+     * @param masterDataClientInfo
+     * @return
+     */
+    public int selectMasterDataClientInfoCntByName(MasterDataClientInfo masterDataClientInfo);
 }
