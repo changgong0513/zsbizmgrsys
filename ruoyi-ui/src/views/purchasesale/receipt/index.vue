@@ -201,7 +201,8 @@
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择收货日期"
-                style="width: 240px">
+                style="width: 240px"
+                :picker-options="pickerOptions0">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -688,7 +689,12 @@ export default {
       listPurchaseContract: [],
       remoteLoadingPurchaseContract: false,
       // 批次号选项
-      pchOptions: []
+      pchOptions: [],
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() > Date.now() - 8.64e6;//如果没有后面的-8.64e6就是不可以选择今天的
+        }
+      }
     };
   },
   created() {
