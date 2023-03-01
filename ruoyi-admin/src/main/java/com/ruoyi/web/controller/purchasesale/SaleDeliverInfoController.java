@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.purchasesale;
 
+import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 发货管理Controller
@@ -44,12 +46,23 @@ public class SaleDeliverInfoController extends BaseController
         list.stream().forEach(element -> {
             if (element.getDeliverQuantity().compareTo(new BigDecimal(0)) > 0) {
                 // 已发货
-                element.setDeliverStatus("1");
+                element.setDeliverStatus("2");
             } else {
                 // 待发货
-                element.setDeliverStatus("2");
+                element.setDeliverStatus("1");
             }
         });
+
+        // 查询条件包含订单状态的场合
+        List<SaleDeliverInfo> filterList = null;
+        if (StringUtils.isNotBlank(saleDeliverInfo.getDeliverStatus())) {
+            filterList = list.stream().filter(element -> element.getDeliverStatus().equals(saleDeliverInfo.getDeliverStatus()))
+                    .collect(Collectors.toList());
+
+            if (filterList != null) {
+                return getDataTable(filterList);
+            }
+        }
 
         return getDataTable(list);
     }

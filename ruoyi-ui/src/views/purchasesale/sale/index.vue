@@ -555,9 +555,276 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-divider />
+        <h3>发货明细</h3>
+        <el-row>
+          <el-table v-loading="loading" :data="this.deliverList">
+            <el-table-column label="销售合同编号" align="center" prop="saleContractId" width="150" />
+            <el-table-column label="发货日期" align="center" prop="deliverDate" width="100">
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.deliverDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="仓库名称" align="center" prop="warehouseName" width="100" :show-overflow-tooltip="true" />
+            <el-table-column label="运输方式" align="center" prop="transportMode" width="100">
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.purchasesale_transport_mode" :value="scope.row.transportMode"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="运输单号" align="center" prop="transportNumber" width="100" :show-overflow-tooltip="true" />
+            <el-table-column label="核算金额" align="center" prop="checkMoney" width="100" />
+            <el-table-column label="货损金额" align="center" prop="cargoDamageMoney" width="100" />
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="text"
+                  icon="el-icon-edit"
+                  @click="viewReceipt(scope.row)"
+                >查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          
+          <pagination
+            v-show="totalDeliver>0"
+            :total="totalDeliver"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getDeliverList"
+          />
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelDetail">关 闭</el-button>
+      </div>
+    </el-dialog>
+
+    <!--查看销售发货详细对话框 -->
+    <el-dialog :title="title" :visible.sync="openDeliverDetail" width="50%" append-to-body :close-on-click-modal="false">
+      <el-form ref="formDeliverDetail" :model="formDeliverDetail" label-width="100px">
+        <el-row>
+          <!-- 发货编号 -->
+          <el-col :span="8">
+            <el-form-item label="发货编号">
+              <el-input v-model="formDeliverDetail.deliverId" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 销售合同编号 -->
+          <el-col :span="8">
+            <el-form-item label="销售合同编号">
+              <el-input v-model="formDeliverDetail.saleContractId" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 经办人 -->
+          <el-col :span="8">
+            <el-form-item label="经办人" prop="handledBy">
+              <el-input v-model="formDeliverDetail.handledBy" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 发货日期 -->
+          <el-col :span="8">
+            <el-form-item label="发货日期" prop="deliverDate">
+              <el-input v-model="formDeliverDetail.deliverDate" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 客户编号 -->
+          <el-col :span="8">
+            <el-form-item label="客户编号" prop="clientId">
+              <el-input v-model="formDeliverDetail.clientId" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 客户姓名 -->
+          <el-col :span="8">
+            <el-form-item label="客户姓名" prop="clientName">
+              <el-input v-model="formDeliverDetail.clientName" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 物料编号 -->
+          <el-col :span="8">
+            <el-form-item label="物料编号" prop="materialId">
+              <el-input v-model="formDeliverDetail.materialId" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 物料名称 -->
+          <el-col :span="8">
+            <el-form-item label="物料名称" prop="materialName">
+              <el-input v-model="formDeliverDetail.materialName" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 合同单价 -->
+          <el-col :span="8">
+            <el-form-item label="合同单价" prop="contractPrice">
+              <el-input v-model="formDeliverDetail.contractPrice" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 计量单位 -->
+          <el-col :span="8">
+            <el-form-item label="计量单位" prop="measurementUnit">
+              <el-select
+                v-model="formDeliverDetail.measurementUnit"
+                placeholder="计量单位"
+                clearable
+                :disabled="true"
+                style="width: 200px"
+              >
+                <el-option
+                  v-for="dict in dict.type.masterdata_warehouse_measurement_unit"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 发货方式 -->
+          <el-col :span="8">
+            <el-form-item label="发货方式" prop="deliverMode">
+              <el-select
+                v-model="formDeliverDetail.deliverMode"
+                clearable
+                :disabled="true"
+                style="width: 200px"
+              >
+                <el-option
+                  v-for="dict in dict.type.purchasesale_deliver_mode"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 仓库编号 -->
+          <el-col :span="8">
+            <el-form-item label="仓库编号" prop="warehouseCode">
+              <el-input v-model="formDeliverDetail.warehouseCode" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 仓库名称 -->
+          <el-col :span="8">
+            <el-form-item label="仓库名称" prop="warehouseName">
+              <el-input v-model="formDeliverDetail.warehouseName" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 发货数量 -->
+          <el-col :span="8">
+            <el-form-item label="发货数量" prop="deliverQuantity">
+              <el-input v-model="formDeliverDetail.deliverQuantity" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 核算数量 -->
+          <el-col :span="8">
+            <el-form-item label="核算数量" prop="checkQuantity">
+              <el-input v-model="formDeliverDetail.checkQuantity" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 核算金额 -->
+          <el-col :span="8">
+            <el-form-item label="核算金额" prop="checkMoney">
+              <el-input v-model="formDeliverDetail.checkMoney" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 核算单价 -->
+          <el-col :span="8">
+            <el-form-item label="核算单价" prop="checkPrice">
+              <el-input v-model="formDeliverDetail.checkPrice" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 货损数量 -->
+          <el-col :span="8">
+            <el-form-item label="货损数量" prop="cargoDamageQuantity">
+              <el-input v-model="formDeliverDetail.cargoDamageQuantity" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 货损金额 -->
+          <el-col :span="8">
+            <el-form-item label="货损金额" prop="cargoDamageMoney">
+              <el-input v-model="formDeliverDetail.cargoDamageMoney" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 运输方式 -->
+          <el-col :span="8">
+            <el-form-item label="运输方式" prop="transportMode">
+              <el-select
+                v-model="formDeliverDetail.transportMode"
+                clearable
+                :disabled="true"
+                style="width: 200px"
+              >
+                <el-option
+                  v-for="dict in dict.type.purchasesale_transport_mode"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 运输单号 -->
+          <el-col :span="8">
+            <el-form-item label="运输单号" prop="transportNumber">
+              <el-input v-model="formDeliverDetail.transportNumber" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 运输金额 -->
+          <el-col :span="8">
+            <el-form-item label="运输金额" prop="transportMoney">
+              <el-input v-model="formDeliverDetail.transportMoney" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 其他金额 -->
+          <el-col :span="8">
+            <el-form-item label="其他金额" prop="otherMoney">
+              <el-input v-model="formDeliverDetail.otherMoney" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 预期到货日期 -->
+          <el-col :span="8">
+            <el-form-item label="预期到货日期" prop="expectArrivalDate">
+              <el-input v-model="formDeliverDetail.expectArrivalDate" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 要求到货日期 -->
+          <el-col :span="8">
+            <el-form-item label="要求到货日期" prop="requireArrivalDate">
+              <el-input v-model="formDeliverDetail.requireArrivalDate" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 账期（关联采购（销售）订单信息表的账期） -->
+          <el-col :span="16">
+            <el-form-item label="账期" prop="accountPeriod">
+              <div><el-input v-model="formDeliverDetail.accountPeriod" :disabled="true" style="width: 80px;" /><span style="margin-left: 10px;">（天）</span></div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 备注 -->
+          <el-col :span="24">
+            <el-form-item label="备注" prop="deliverRemark">
+              <el-input v-model="formDeliverDetail.deliverRemark" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelDeliverDetail">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -566,6 +833,7 @@
 <script>
 
 import { listPurchase, getPurchase, delPurchase, addPurchase, updatePurchase } from "@/api/purchasesale/purchasesale";
+import { listDeliver } from "@/api/purchasesale/deliver";
 import { listClient } from "@/api/masterdata/client";
 import { deptTreeSelect } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
@@ -591,6 +859,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 1,
+      totalDeliver: 1,
       // 销售收货销售发货管理表格数据
       purchaseList: [],
       // 弹出层标题
@@ -673,7 +942,11 @@ export default {
       defaultProps: {
         children: "children",
         label: "label"
-      }
+      },
+      deliverList: [],
+      selRow: {},
+      formDeliverDetail: {},
+      openDeliverDetail: false,
     };
   },
   created() {
@@ -720,6 +993,7 @@ export default {
       // 取消按钮
     cancelDetail() {
       this.openDetail = false;
+      this.selRow = {};
       this.reset();
     },
     // 表单重置
@@ -837,13 +1111,32 @@ export default {
     handleView(row) {
       this.formDetail = row;
       this.openDetail = true;
+      this.selRow = row;
+      this.getDeliverList();
+    },
+    // 取消查看发货详细
+    cancelDeliverDetail() {
+      this.openDeliverDetail = false;
+      this.formDeliverDetail =  {};
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
       deptTreeSelect().then(response => {
         this.deptOptions = response.data;
       });
-    }
+    },
+    // 查看收货详细
+    viewReceipt(row) {
+      this.formDeliverDetail = row;
+      this.openDeliverDetail = true;
+    },
+    /** 取得发货列表 */
+    getDeliverList() {
+      listDeliver(this.selRow).then(response => {
+        this.deliverList = response.rows;
+        this.totalDeliver = response.total;
+      });
+    },
   }
 };
 </script>

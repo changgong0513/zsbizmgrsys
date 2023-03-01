@@ -57,15 +57,15 @@
         ></el-date-picker>
       </el-form-item>
       <!-- 订单状态（数据来源于采购（销售）订单信息表，关联查询） -->
-      <el-form-item label="订单状态" prop="orderStatus">
+      <el-form-item label="订单状态" prop="deliverStatus">
         <el-select
-          v-model="queryParams.orderStatus"
+          v-model="queryParams.deliverStatus"
           placeholder="订单状态"
           clearable
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.purchasesale_receipt_order_status"
+            v-for="dict in dict.type.deliver_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
