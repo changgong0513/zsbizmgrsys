@@ -568,9 +568,6 @@
           <!-- 计量单位 -->
           <el-col :span="8">
             <el-form-item label="计量单位" prop="measurementUnit">
-              <!-- <template>
-                <dict-tag :options="dict.type.masterdata_warehouse_measurement_unit" :disabled="true" :value="formDetail.measurementUnit" style="width: 200px"/>
-              </template> -->
               <el-select
                 v-model="formDetail.measurementUnit"
                 placeholder="计量单位"
@@ -590,9 +587,6 @@
           <!-- 发货方式 -->
           <el-col :span="8">
             <el-form-item label="发货方式" prop="deliverMode">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_deliver_mode" :value="formDetail.deliverMode"/>
-              </template> -->
               <el-select
                 v-model="formDetail.deliverMode"
                 clearable
@@ -1176,6 +1170,8 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+        // 计算属性，核算单价赋值给Form
+        this.form.checkPrice = this.calCheckPrice;
         if (valid) {
           if (this.isUpdate) {
             updateDeliver(this.form).then(response => {
@@ -1184,7 +1180,6 @@ export default {
               this.getList();
             });
           } else {
-            console.log("新增" + JSON.stringify(this.form))
             addDeliver(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
