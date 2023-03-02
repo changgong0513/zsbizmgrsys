@@ -134,6 +134,9 @@ public class ContractContentInfo extends BaseEntity
     /** 合同所属部门编号 */
     private Long belongDeptId;
 
+    /** 本地合同状态 */
+    private String localContractStatus;
+
     public int getConstractIsExist() {
         return constractIsExist;
     }
@@ -406,6 +409,14 @@ public class ContractContentInfo extends BaseEntity
 
     public void setBelongDeptId(Long belongDeptId) {
         this.belongDeptId = belongDeptId;
+    }
+
+    public String getLocalContractStatus() {
+        return localContractStatus;
+    }
+
+    public void setLocalContractStatus(String localContractStatus) {
+        this.localContractStatus = localContractStatus;
     }
 
     @Override

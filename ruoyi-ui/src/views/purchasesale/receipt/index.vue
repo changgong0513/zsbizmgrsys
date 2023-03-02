@@ -724,7 +724,6 @@ export default {
         this.remoteLoading = true;
         this.queryParams.orderId = query;
         this.queryParams.contractType = "P";
-        console.log("select远程方法调用" + JSON.stringify(this.queryParams));
         listPurchase(this.queryParams).then(response => {
           this.remoteLoading = false;
           this.purchaseOrderList = response.rows;
@@ -745,7 +744,6 @@ export default {
         this.remoteLoadingWarehouse = true;
         listWarehouse(this.form).then(response => {
           this.remoteLoadingWarehouse = false;
-          console.log(JSON.stringify(response.rows));
           this.purchaseOrderListWarehouse = response.rows;
           this.purchaseOptionsWarehouse = response.rows.map(item => {
             return { value: `${item.warehouseCode}`, label: `${item.warehouseCode}` };
@@ -764,7 +762,6 @@ export default {
         this.remoteLoadingPurchaseContract = true;
         this.queryParams.contractId = query;
         this.queryParams.contractType = "P";
-        console.log("select远程方法调用" + JSON.stringify(this.queryParams));
         listPurchase(this.queryParams).then(response => {
           this.remoteLoadingPurchaseContract = false;
           this.listPurchaseContract = response.rows;
@@ -805,15 +802,12 @@ export default {
     },
     /** 合同编号下拉列表框，选择值改变后回调方法 */
     selChangePurchaseContract(selValue) {
-      console.log("选择的合同编号是：" + selValue);
-
       let purchaseContract = this.listPurchaseContract.find(item => {
         return item.contractId === selValue;
       });
-      console.log("选择的合同数据是：" + JSON.stringify(purchaseContract));
-
       this.form.purchaseOrderId = purchaseContract.orderId; // 订单编号
       this.form.handledBy = purchaseContract.handledBy;  // 经办人
+      this.form.supplierName = purchaseContract.supplierName;  // 供应商编号
       this.form.supplierRealName = purchaseContract.supplierRealName;  // 供应商名称
       this.form.materialName = purchaseContract.materialName;  // 物料名称
       this.form.checkPrice = purchaseContract.unitPrice; // 核算单价
@@ -928,6 +922,7 @@ export default {
               this.getList();
             });
           } else {
+            console.log("@@@@@@" + JSON.stringify(this.form));
             this.form.checkMoney = this.calCheckMoney; // 核算金额
             this.form.cargoDamageMoney = this.calCargoDamageMoney; // 货损金额
             this.form.cargoDamageQuantity = this.calCargoDamageQuantity; // 货损数量

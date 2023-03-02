@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="contractRemark"    column="contract_remark"    />
         <result property="contractStatus"    column="contract_status"    />
         <result property="belongDeptId"    column="belong_dept_id"    />
+        <result property="localContractStatus"    column="local_contract_status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -42,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             opposite_company_name, opposite__principal,
             contract_quantity, contract_price, contract_total,
             accounting_period, delivery_method, port_to_factory_fare, port_to_port_fare,
-            contract_other, contract_agent, contract_remark, contract_status, belong_dept_id
+            contract_other, contract_agent, contract_remark, contract_status, belong_dept_id, local_contract_status
         from
             contract_content_info
     </sql>
@@ -73,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractRemark != null  and contractRemark != ''"> and contract_remark = #{contractRemark}</if>
             <if test="contractStatus != null  and contractStatus != ''"> and contract_status = #{contractStatus}</if>
             <if test="belongDeptId != null  and belongDeptId != 0 and belongDeptId != 100 and belongDeptId != 103"> and belong_dept_id = #{belongDeptId}</if>
-            <if test="bizVersion != null "> and biz_version = #{bizVersion}</if>
+            <if test="localContractStatus != null  and localContractStatus != ''"> and local_contract_status = #{localContractStatus}</if>
         </where>
         order by
             create_time desc
@@ -110,6 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractRemark != null">contract_remark,</if>
             <if test="contractStatus != null and contractStatus != ''">contract_status,</if>
             <if test="belongDeptId != null  and belongDeptId != 0">belong_dept_id,</if>
+            <if test="localContractStatus != null  and localContractStatus != 0">local_contract_status,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null and updateBy != ''">update_by,</if>
@@ -140,6 +142,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractRemark != null">#{contractRemark},</if>
             <if test="contractStatus != null and contractStatus != ''">#{contractStatus},</if>
             <if test="belongDeptId != null  and belongDeptId != 0"> #{belongDeptId},</if>
+            <if test="localContractStatus != null  and localContractStatus != 0">#{localContractStatus},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
@@ -173,6 +176,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractRemark != null">contract_remark = #{contractRemark},</if>
             <if test="contractStatus != null and contractStatus != ''">contract_status = #{contractStatus},</if>
             <if test="belongDeptId != null  and belongDeptId != 0">belong_dept_id = #{belongDeptId},</if>
+            <if test="localContractStatus != null  and localContractStatus != 0">local_contract_status = #{localContractStatus},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>

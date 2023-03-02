@@ -81,14 +81,8 @@ public class ContractContentInfoController extends BaseController
         // 生成前端显示合同数据列表
         contractContentInfoService.makeModelViewData(list);
 
-        // 管理员不能保存或者生成订单
-        list.stream().forEach(element -> {
-            if (this.getDeptId() == 103 || this.getDeptId() == 100) {
-                element.setConstractIsExist(1);
-            } else {
-                element.setConstractIsExist(0);
-            }
-        });
+        // 处理合同管理保存和生成按钮状态
+        handleConstractIsExist(contractContentInfo);
 
         // 响应请求分页数据
         return getDataTable(list);
@@ -130,12 +124,8 @@ public class ContractContentInfoController extends BaseController
             return;
         });
 
-        // 管理员不能保存或者生成订单
-        if (this.getDeptId() == 103 || this.getDeptId() == 100) {
-            contractContentInfo.setConstractIsExist(1);
-        } else {
-            contractContentInfo.setConstractIsExist(0);
-        }
+        // 处理合同管理保存和生成按钮状态
+        handleConstractIsExist(contractContentInfo);
 
         return AjaxResult.success(contractContentInfo);
     }
@@ -162,11 +152,15 @@ public class ContractContentInfoController extends BaseController
         contractContentInfo.setGoodsName(material.getMaterialName());
         String actionType = contractContentInfo.getContractActionType();
         if (StringUtils.equals(actionType, "2")) {
+            contractContentInfo.setConstractIsExist(1);
             boolean isExist = contractContentInfoService.isExistContractByContractId(contractContentInfo.getContractId());
             if (!isExist) {
                 // 未进行保存合同，直接进行生成订单的场合
                 contractContentInfo.setContractStatus("MANUALADD");
+                contractContentInfo.setLocalContractStatus("5"); // 本地合同状态：手动添加
                 contractContentInfoService.insertContractContentInfo(contractContentInfo);
+            } else {
+                contractContentInfoService.updateContractContentInfo(contractContentInfo);
             }
 
             // 根据合同数据，生成到采购表或者销售表的场合
@@ -174,6 +168,7 @@ public class ContractContentInfoController extends BaseController
         } else {
             // 新增和首次保存合同的场合
             contractContentInfo.setContractStatus("MANUALADD");
+            contractContentInfo.setLocalContractStatus("5"); // 本地合同状态：手动添加
             retCode = contractContentInfoService.insertContractContentInfo(contractContentInfo);
         }
 
@@ -195,11 +190,17 @@ public class ContractContentInfoController extends BaseController
         String actionType = contractContentInfo.getContractActionType();
         if (StringUtils.equals(actionType, "1")) {
             // 更新和非首次保存合同的场合
-            retCode = contractContentInfoService.updateContractContentInfo(contractContentInfo);
+            contractContentInfo.setLocalContractStatus("2");
+//            retCode = contractContentInfoService.updateContractContentInfo(contractContentInfo);
         } else {
             // 根据合同数据，生成到采购表或者销售表的场合
-            retCode = contractContentInfoService.importContractDataIntoPurchaseSaleTable(contractContentInfo);
+            contractContentInfo.setConstractIsExist(1);
+            contractContentInfo.setLocalContractStatus("3");
+
+            contractContentInfoService.importContractDataIntoPurchaseSaleTable(contractContentInfo);
         }
+
+        contractContentInfoService.updateContractContentInfo(contractContentInfo);
 
         return toAjax(retCode);
     }
@@ -373,6 +374,7 @@ public class ContractContentInfoController extends BaseController
             }
 
             element.setContractStatus("IMPORT");
+            element.setLocalContractStatus("4"); // 本地合同状态：手动导入
         });
 
         String operName = getUsername();
@@ -423,5 +425,20 @@ public class ContractContentInfoController extends BaseController
         }
 
         return desc;
+    }
+
+    /**
+     * 处理合同管理保存和生成按钮状态
+     *
+     * @param contractContentInfo
+     */
+    private void handleConstractIsExist(ContractContentInfo contractContentInfo) {
+        // 管理员不能保存或者生成订单
+        if (this.getDeptId() == 103 || this.getDeptId() == 100
+                || StringUtils.equals(contractContentInfo.getLocalContractStatus(), "3")) {
+            contractContentInfo.setConstractIsExist(1);
+        } else {
+            contractContentInfo.setConstractIsExist(0);
+        }
     }
 }

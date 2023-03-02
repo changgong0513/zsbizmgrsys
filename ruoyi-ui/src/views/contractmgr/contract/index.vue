@@ -2,84 +2,63 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-row>
-        <!-- 合同编号 -->
-        <el-col :span="8">
-          <el-form-item label="合同编号" prop="contractId">
-            <el-input
-            v-model="queryParams.contractId"
-            placeholder="请输入合同编号"
-            clearable
-            @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-        </el-col>
-        <!-- 合同名称 -->
-        <el-col :span="8">
-          <el-form-item label="合同名称" prop="contractName">
-            <el-input
-              v-model="queryParams.contractName"
-              placeholder="请输入合同名称"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-        </el-col>
-        <!-- 客户名称 -->
-        <el-col :span="8">
-          <el-form-item label="客户名称" prop="oppositeCompanyName">
-            <el-input
-              v-model="queryParams.oppositeCompanyName"
-              placeholder="请输入客户名称"
-              clearable
-              @keyup.enter.native="handleQuery" 
-              style="width: 240px"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <!-- 合同总价 -->
-        <el-col :span="16">
-          <!-- 合同总价min -->
-          <el-form-item label="合同总价" prop="leftContractTotal">
-            <el-input
-              v-model="queryParams.leftContractTotal"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <!-- 合同总价max -->
-          <el-form-item label="~" prop="rightContractTotal" label-width="15px">
-            <el-input
-              v-model="queryParams.rightContractTotal"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <!-- 签约日期 -->
-          <el-form-item label="签约日期" prop="signDate">
-            <el-date-picker 
-              clearable
-              v-model="queryParams.signDate"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="请选择签约日期"
-              style="width: 240px" >
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24" align="right">
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <!-- 合同编号 -->
+      <el-form-item label="合同编号" prop="contractId">
+        <el-input
+        v-model="queryParams.contractId"
+        placeholder="请输入合同编号"
+        clearable
+        @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="合同名称" prop="contractName">
+        <el-input
+          v-model="queryParams.contractName"
+          placeholder="请输入合同名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="客户名称" prop="oppositeCompanyName">
+        <el-input
+          v-model="queryParams.oppositeCompanyName"
+          placeholder="请输入客户名称"
+          clearable
+          @keyup.enter.native="handleQuery" 
+          style="width: 240px"
+        />
+      </el-form-item>
+      <!-- 合同总价min -->
+      <el-form-item label="合同总价" prop="leftContractTotal">
+        <el-input
+          v-model="queryParams.leftContractTotal"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <!-- 合同总价max -->
+      <el-form-item label="~" prop="rightContractTotal" label-width="15px">
+        <el-input
+          v-model="queryParams.rightContractTotal"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <!-- 签约日期 -->
+      <el-form-item label="签约日期" prop="signDate">
+        <el-date-picker 
+          clearable
+          v-model="queryParams.signDate"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择签约日期"
+          style="width: 240px" >
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
@@ -162,9 +141,9 @@
       </el-table-column>
       <el-table-column label="客户名称" align="center" prop="companyName" width="350" :show-overflow-tooltip="true" />
       <el-table-column label="合同总价" align="center" prop="contractTotal" width="100" />
-      <el-table-column label="审批状态" align="center" prop="contractStatus" width="100">
+      <el-table-column label="合同状态" align="center" prop="localContractStatus" width="100">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.contractmgr_contract_approval_status" :value="scope.row.contractStatus"/>
+          <dict-tag :options="dict.type.local_contract_status" :value="scope.row.localContractStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="上传合同" align="center" class-name="small-padding fixed-width"  width="100">
@@ -432,7 +411,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('1')" :disabled="form.constractIsExist == 1">保 存</el-button>
-        <el-button type="warning" @click="submitForm('2')" :disabled="form.constractIsExist == 1">生 成</el-button>
+        <el-button type="warning" @click="submitForm('2')" :disabled="form.localContractStatus == 2 ? false : true">生 成</el-button>
         <el-button @click="cancel(1)">取 消</el-button>
       </div>
     </el-dialog> 
@@ -481,7 +460,7 @@ import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Contract",
-  dicts: ['contractmgr_contract_approval_status', 'contractmgr_contract_type', 'contract_our_company_name'],
+  dicts: ['contractmgr_contract_approval_status', 'contractmgr_contract_type', 'contract_our_company_name', 'local_contract_status'],
   data() {
     return {
       // 遮罩层
@@ -732,9 +711,9 @@ export default {
     handleUpdate(row) {
       this.reset();
       const contractId = row.contractId || this.ids;
-      console.log("@@@@@@" + contractId);
       getContract(contractId).then(response => {
         this.form = response.data;
+        console.log("@@@@@@" + response.data.constractIsExist);
         this.form.constractIsExist = response.data.constractIsExist;
         this.title = "修改合同数据";
         this.isUpdate = true;

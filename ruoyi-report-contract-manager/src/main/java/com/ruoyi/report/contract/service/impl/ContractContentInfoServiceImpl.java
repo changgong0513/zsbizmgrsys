@@ -681,6 +681,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             GetProcessInstanceResponse resp = client.getProcessInstanceWithOptions(getProcessInstanceRequest, getProcessInstanceHeaders, new com.aliyun.teautil.models.RuntimeOptions());
             System.out.println("合同状态------" + resp.getBody().getResult().status);
             contract.setContractStatus(resp.getBody().getResult().status);
+            contract.setLocalContractStatus("1"); // 本地合同状态：已同步
 
             List<GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues> list = resp.getBody().getResult().formComponentValues;
             System.out.println("------合同项总数------" + list.size());
