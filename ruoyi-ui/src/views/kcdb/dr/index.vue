@@ -72,16 +72,15 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['kcdb:kcdb:add']"
         >新增</el-button>
-      </el-col> -->
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -90,7 +89,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-        >修改</el-button>
+        >修改1</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -160,14 +159,18 @@
     />
 
     <!-- 添加或修改存库调拨对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
+          <!-- 收货部门 -->
           <el-col :span="8">
-            <el-form-item label="调拨单号" prop="dh">
-              <el-input v-model="form.dh" placeholder="请输入调拨单号" :disabled="this.isUpdate" style="width: 240px" />
+            <el-form-item label="收货部门" prop="shbm">
+              <treeselect v-model="form.fhbm" 
+                :options="deptOptions" :show-count="true" 
+                placeholder="请选择收货部门" style="width: 240px;" />
             </el-form-item>
           </el-col>
+          <!-- 调拨类型 -->
           <el-col :span="8">
             <el-form-item label="调拨类型" prop="lx">
               <el-select
@@ -175,7 +178,6 @@
                 placeholder="请输入调拨类型"
                 clearable
                 style="width: 240px"
-                :disabled="true"
               >
                 <el-option
                   v-for="dict in dict.type.kcdb_db_type"
@@ -186,87 +188,11 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <!-- 仓库名称 -->
           <el-col :span="8">
-            <el-form-item label="物料名称" prop="materialName">
-              <el-input v-model="form.materialName" placeholder="请输入物料名称" :disabled="true" style="width: 240px" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="调拨数量" prop="dbsl">
-              <el-input v-model="form.dbsl" placeholder="请输入调拨数量" :disabled="true" style="width: 240px" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="结算单价" prop="jsdj">
-              <el-input v-model="form.jsdj" placeholder="请输入结算单价" :disabled="true" style="width: 240px" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="金额" prop="dbje" style="width: 240px">{{form.dbje}}</el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="结算方式" prop="jsfs">
+            <el-form-item label="仓库名称" prop="shck">
               <el-select
-                v-model="form.jsfs"
-                placeholder="结算方式"
-                clearable
-                style="width: 240px"
-                :disabled="true"
-              >
-                <el-option
-                  v-for="dict in dict.type.purchasesale_settlement_method"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="运输方式" prop="ysfs">
-              <el-select
-                v-model="form.ysfs"
-                placeholder="请输入运输方式"
-                clearable
-                style="width: 240px"
-                :disabled="true"
-              >
-                <el-option
-                  v-for="dict in dict.type.purchasesale_transport_mode"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="调拨日期" prop="dbrq">
-              <el-date-picker clearable
-                v-model="form.dbrq"
-                type="date"
-                value-format="yyyy-MM-dd"
-                placeholder="请选择调拨日期" :disabled="true" style="width: 240px">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="收货部门" prop="shbm">
-              <treeselect v-model="form.shbm" 
-                :options="deptOptions" :show-count="true" 
-                placeholder="请选择所属部门" style="width: 240px;" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="收货仓库" prop="shck">
-              <el-select
-                v-model="form.shck"
+                v-model="form.fhck"
                 filterable
                 remote
                 clearable
@@ -284,13 +210,104 @@
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+          <!-- 物料名称 -->
+          <el-col :span="8">
+            <el-form-item label="物料名称" prop="wlmc">
+              <el-select
+                v-model="form.wlmc"
+                filterable
+                remote
+                clearable
+                reserve-keyword
+                style="width: 240px"
+                placeholder="请输入物料名称关键字"
+                :remote-method="remoteMethodMaterialName"
+                :loading="remoteLoadingMaterialName">
+                <el-option
+                  v-for="item in optionsMaterialName"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 运输方式 -->
+          <el-col :span="8">
+            <el-form-item label="运输方式" prop="ysfs">
+              <el-select
+                v-model="form.ysfs"
+                placeholder="请输入运输方式"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in dict.type.purchasesale_transport_mode"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 结算方式 -->
+          <el-col :span="8">
+            <el-form-item label="结算方式" prop="jsfs">
+              <el-select
+                v-model="form.jsfs"
+                placeholder="结算方式"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="dict in dict.type.purchasesale_settlement_method"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 调拨数量 -->
+          <el-col :span="8">
+            <el-form-item label="调拨数量" prop="dbsl">
+              <el-input v-model="form.dbsl" placeholder="请输入调拨数量" style="width: 240px" />
+            </el-form-item>
+          </el-col>
+          <!-- 结算单价 -->
+          <el-col :span="8">
+            <el-form-item label="结算单价" prop="jsdj">
+              <el-input v-model="form.jsdj" placeholder="请输入结算单价" style="width: 240px" />
+            </el-form-item>
+          </el-col>
+          <!-- 金额 -->
+          <el-col :span="8">
+            <el-form-item label="金额" prop="dbje" style="width: 240px">{{calDrje}}</el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <!-- 卸货数量 -->
           <el-col :span="8">
             <el-form-item label="卸货数量" prop="xhsl">
               <el-input v-model="form.xhsl" placeholder="请输入卸货数量" style="width: 240px" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+          <!-- 调拨日期 -->
+          <el-col :span="8">
+            <el-form-item label="调拨日期" prop="dbrq">
+              <el-date-picker clearable
+                v-model="form.dbrq"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择调拨日期" style="width: 240px">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <!-- 内勤人员 -->
           <el-col :span="8">
             <el-form-item label="内勤人员" prop="nqry">
               <el-input v-model="form.nqry" placeholder="请输入内勤人员" style="width: 240px" />
@@ -298,9 +315,10 @@
           </el-col>
         </el-row>
         <el-row>
+          <!-- 备注 -->
           <el-col :span="24">
             <el-form-item label="备注" prop="bz">
-              <el-input v-model="form.bz" placeholder="请输入备注" style="width: 800px" 
+              <el-input v-model="form.bz" placeholder="请输入备注" style="width: 95%" 
                 maxlength="256" show-word-limit />
             </el-form-item>
           </el-col>
@@ -470,6 +488,7 @@
 <script>
 import { listKcdb, getKcdb, delKcdb, addKcdb, updateKcdb } from "@/api/kcdb/kcdb";
 import { listWarehouse } from "@/api/masterdata/warehouse";
+import { listMaterialData } from "@/api/masterdata/material";
 import { deptTreeSelect } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -516,10 +535,19 @@ export default {
           { required: true, message: "收货部门不能为空", trigger: "change" }
         ],
         shck: [
-          { required: true, message: "收货仓库不能为空", trigger: "change" }
+          { required: true, message: "仓库名称不能为空", trigger: "change" }
         ],
-        xhsl: [
-          { required: true, message: "卸货数量不能为空", trigger: "blur" }
+        wlmc: [
+          { required: true, message: "物料名称不能为空", trigger: "change" }
+        ],
+        ysfs: [
+          { required: true, message: "运输方式不能为空", trigger: "change" }
+        ],
+        dbsl: [
+          { required: true, message: "调拨数据不能为空", trigger: "blur" }
+        ],
+        jsdj: [
+          { required: true, message: "结算单价不能为空", trigger: "blur" }
         ],
         nqry: [
           { required: true, message: "内勤人员不能为空", trigger: "blur" }
@@ -532,6 +560,10 @@ export default {
       optionsWarehouseName: [],
       ListWarehouseName: [],
       remoteLoadingWarehouseName: false,
+      // 物料名称选择用
+      optionsMaterialName: [],
+      listMaterialName: [],
+      remoteLoadingMaterialName: false,
       // 部门树选项
       deptOptions: [],
       defaultProps: {
@@ -543,6 +575,17 @@ export default {
   created() {
     this.getList();
     this.getDeptTree();
+  },
+  computed: {
+    /** 计算调拨金额（调入） */
+    calDrje: function () {
+      if (this.form.dbsl && this.form.jsdj) {
+        this.form.dbje = Number(this.form.dbsl) * Number(this.form.jsdj);
+        return Number(this.form.dbsl) * Number(this.form.jsdj);
+      }
+      
+      return 0;
+    }
   },
   methods: {
     /** 根据输入仓库名称关键字，取得仓库名称列表 */
@@ -563,6 +606,26 @@ export default {
         });
       } else {
         this.optionsWarehouseName = [];
+      }
+    },
+    /** 根据输入物料名称关键字，取得物料名称列表 */
+    remoteMethodMaterialName(query) {
+      if (query !== '') {
+        this.remoteLoadingMaterialName = true;
+        this.queryParams.materialName = query;
+        console.log("取得物料名称远程方法调用查询参数：" + JSON.stringify(this.queryParams));
+        listMaterialData(this.queryParams).then(response => {
+          this.remoteLoadingMaterialName = false;
+          this.listMaterialName = response.rows;
+          this.optionsMaterialName = response.rows.map(item => {
+            return { value: `${item.materialId}`, label: `${item.materialName}` };
+          }).filter(item => {
+            return item.label.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1;
+          });
+        });
+      } else {
+        this.optionsClientName = [];
       }
     },
     /** 查询存库调拨列表 */
@@ -641,7 +704,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加存库调拨";
+      this.title = "添加存库调入";
       this.isUpdate = false;
     },
     /** 修改按钮操作 */
@@ -692,11 +755,11 @@ export default {
     handleExport() {
       this.download('kcdb/mgr/export', {
         ...this.queryParams
-      }, `库存调拨_${new Date().getFullYear()}年${new Date().getMonth()+1}月${new Date().getDate()}日 ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}.xlsx`)
+      }, `库存调入_${new Date().getFullYear()}年${new Date().getMonth()+1}月${new Date().getDate()}日 ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}.xlsx`)
     },
     /** 查看存库调出详细数据 */ 
     handleView(row) {
-      this.title = "查看存库调出详细数据"
+      this.title = "查看存库调入详情"
       this.formDetail = row;
       this.openDetail = true;
     },

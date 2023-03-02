@@ -1060,10 +1060,17 @@ export default {
       });
 
       this.form.materialName = selMaterialData.materialName; // 物料名称
+      this.form.measurementUnit = selMaterialData.materialUnit // 计量单位
     },
     /** 物料名称下拉列表框，选择值改变后回调方法 */
     selChangeMaterialName(selValue) {
       this.form.materialId = selValue; // 物料编号
+
+      let selMaterialData = this.listMaterialName.find(item => {
+        return item.materialId == selValue;
+      });
+
+      this.form.measurementUnit = selMaterialData.materialUnit // 计量单位
     },
     /** 仓库编号下拉列表框，选择值改变后回调方法 */
     selChangeWarehouse(selValue) {

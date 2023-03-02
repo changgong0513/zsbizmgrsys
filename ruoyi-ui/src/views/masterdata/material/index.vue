@@ -273,6 +273,7 @@ export default {
       this.reset();
       this.open = true;
       this.actionFlag = "add";
+      this.form.materialUnit = 1;
       this.title = "添加物料数据";
     },
     /** 修改按钮操作 */
