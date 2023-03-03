@@ -68,6 +68,8 @@ public class PurchaseSaleOrderInfoController extends BaseController {
 
         startPage();
 
+        purchaseSaleOrderInfo.setBelongDept(String.valueOf(this.getDeptId()));
+
         List<PurchaseSaleOrderInfo> list = null;
         if (StringUtils.equals(purchaseSaleOrderInfo.getContractType(), CONST_CONTRACT_TYPE_PURCHASE)) {
             // 采购订单管理-收货管理

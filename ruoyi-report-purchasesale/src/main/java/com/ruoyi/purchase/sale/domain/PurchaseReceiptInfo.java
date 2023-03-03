@@ -38,8 +38,11 @@ public class PurchaseReceiptInfo extends BaseEntity
     @Excel(name = "收货日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date receiptDate;
 
-    /** 供应商名称 */
+    /** 供应商名称（编号） */
     private String supplierName;
+
+    /** 供应商名称 */
+    private String supplierRealName;
 
     /** 物料名称 */
     @Excel(name = "物料名称")
@@ -105,6 +108,9 @@ public class PurchaseReceiptInfo extends BaseEntity
 
     /** 合同单价 */
     private BigDecimal htdj;
+
+    /** 收货状态 */
+    private String receiptStatus;
 
     public void setReceiptId(String receiptId) 
     {
@@ -336,6 +342,22 @@ public class PurchaseReceiptInfo extends BaseEntity
 
     public BigDecimal getHtdj() { return htdj; }
     public void setHtdj(BigDecimal htdj) { this.htdj = htdj; }
+
+    public String getSupplierRealName() {
+        return supplierRealName;
+    }
+
+    public void setSupplierRealName(String supplierRealName) {
+        this.supplierRealName = supplierRealName;
+    }
+
+    public String getReceiptStatus() {
+        return receiptStatus;
+    }
+
+    public void setReceiptStatus(String receiptStatus) {
+        this.receiptStatus = receiptStatus;
+    }
 
     @Override
     public String toString() {

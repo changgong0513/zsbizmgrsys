@@ -59,16 +59,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['purchasesale:purchasesale:add']"
-        >新增</el-button>
-      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -136,7 +126,7 @@
     />
 
     <!-- 添加或修改采购收货销售发货管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <!-- 合同编号 -->
@@ -223,12 +213,6 @@
           <!-- 供应商名称 -->
           <el-col :span="8">
             <el-form-item label="供应商名称" prop="supplierRealName">
-              <!-- <el-input 
-                v-model="form.supplierRealName" 
-                placeholder="请输入供应商名称" 
-                style="width: 240px"
-                maxlength="128"
-                show-word-limit /> -->
               <el-select
                 v-model="form.supplierRealName"
                 filterable
@@ -430,7 +414,7 @@
     </el-dialog>
 
     <!-- 采购管理数据详细 -->
-    <el-dialog title="采购管理数据详细" :visible.sync="openDetail" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog title="采购管理数据详细" :visible.sync="openDetail" width="60%" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
           <!-- 订单编号 -->
@@ -730,105 +714,156 @@
         <el-row>
           <!-- 收货编号 -->
           <el-col :span="8">
-            <el-form-item label="收货编号" prop="receiptId">{{formReceiptDetail.receiptId}}</el-form-item>
+            <el-form-item label="收货编号" prop="receiptId">
+              <el-input v-model="formReceiptDetail.receiptId" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 采购订单编号 -->
           <el-col :span="8">
-            <el-form-item label="采购订单编号" prop="purchaseOrderId">{{formReceiptDetail.purchaseOrderId}}</el-form-item>
+            <el-form-item label="采购订单编号" prop="purchaseOrderId">
+              <el-input v-model="formReceiptDetail.purchaseOrderId" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 采购合同编号 -->
           <el-col :span="8">
-            <el-form-item label="采购合同编号" prop="purchaseContractId">{{formReceiptDetail.purchaseContractId}}</el-form-item>
+            <el-form-item label="采购合同编号" prop="purchaseContractId">
+              <el-input v-model="formReceiptDetail.purchaseContractId" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 经办人 -->
           <el-col :span="8">
-            <el-form-item label="经办人" prop="handledBy">{{formReceiptDetail.handledBy}}</el-form-item>
+            <el-form-item label="经办人" prop="handledBy">
+              <el-input v-model="formReceiptDetail.handledBy" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 收货日期 -->
           <el-col :span="8">
-            <el-form-item label="收货日期" prop="receiptDate">{{formReceiptDetail.receiptDate}}</el-form-item>
+            <el-form-item label="收货日期" prop="receiptDate">
+              <el-input v-model="formReceiptDetail.receiptDate" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 供应商名称 -->
           <el-col :span="8">
-            <el-form-item label="供应商名称" prop="supplierName">{{formReceiptDetail.supplierName}}</el-form-item>
+            <el-form-item label="供应商名称" prop="supplierRealName">
+              <el-input v-model="formReceiptDetail.supplierRealName" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 物料名称 -->
           <el-col :span="8">
-            <el-form-item label="物料名称" prop="materialName">{{formReceiptDetail.materialName}}</el-form-item>
+            <el-form-item label="物料名称" prop="materialName">
+              <el-input v-model="formReceiptDetail.materialName" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 仓库编号 -->
           <el-col :span="8">
-            <el-form-item label="仓库编号" prop="warehouseCode">{{formReceiptDetail.warehouseCode}}</el-form-item>
+            <el-form-item label="仓库编号" prop="warehouseCode">
+              <el-input v-model="formReceiptDetail.warehouseCode" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 仓库名称 -->
           <el-col :span="8">
-            <el-form-item label="仓库名称" prop="warehouseName">{{formReceiptDetail.warehouseName}}</el-form-item>
+            <el-form-item label="仓库名称" prop="warehouseName">
+              <el-input v-model="formReceiptDetail.warehouseName" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 批次号 -->
           <el-col :span="8">
-            <el-form-item label="批次号" prop="batchNo">{{formReceiptDetail.batchNo}}</el-form-item>
+            <el-form-item label="批次号" prop="batchNo">
+              <el-input v-model="formReceiptDetail.batchNo" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 车船编号 -->
           <el-col :span="8">
-            <el-form-item label="车船编号" prop="ccbh">{{formReceiptDetail.ccbh}}</el-form-item>
+            <el-form-item label="车船编号" prop="ccbh">
+              <el-input v-model="formReceiptDetail.ccbh" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 运输方式 -->
           <el-col :span="8">
             <el-form-item label="运输方式" prop="transportMode">
-              <template>
-                <dict-tag :options="dict.type.purchasesale_transport_mode" :value="formReceiptDetail.transportMode"/>
-              </template>
+              <el-select
+                v-model="formReceiptDetail.transportMode"
+                placeholder=""
+                clearable
+                style="width: 200px"
+                :disabled="true"
+              >
+                <el-option
+                  v-for="dict in dict.type.purchasesale_transport_mode"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 运输单号 -->
           <el-col :span="8">
-            <el-form-item label="运输单号" prop="transportNumber">{{formReceiptDetail.transportNumber}}</el-form-item>
+            <el-form-item label="运输单号" prop="transportNumber">
+              <el-input v-model="formReceiptDetail.transportNumber" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
-          <!-- 卸货数量 -->
+          <!-- 预期收货数量 -->
           <el-col :span="8">
-            <el-form-item label="卸货数量" prop="expectReceiptQuantity">{{formReceiptDetail.expectReceiptQuantity}}</el-form-item>
+            <el-form-item label="预期收货数量" prop="expectReceiptQuantity">
+              <el-input v-model="formReceiptDetail.expectReceiptQuantity" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 核算数量 -->
           <el-col :span="8">
-            <el-form-item label="核算数量" prop="checkQuantity">{{formReceiptDetail.checkQuantity}}</el-form-item>
+            <el-form-item label="核算数量" prop="checkQuantity">
+              <el-input v-model="formReceiptDetail.checkQuantity" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 核算单价 -->
           <el-col :span="8">
-            <el-form-item label="核算单价" prop="checkPrice">{{formReceiptDetail.checkPrice}}</el-form-item>
+            <el-form-item label="核算单价" prop="checkPrice">
+              <el-input v-model="formReceiptDetail.checkPrice" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 核算金额 -->
           <el-col :span="8">
-            <el-form-item label="核算金额" prop="checkMoney">{{formReceiptDetail.checkMoney}}</el-form-item>
+            <el-form-item label="核算金额" prop="checkMoney">
+              <el-input v-model="formReceiptDetail.checkMoney" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 合同单价 -->
           <el-col :span="8">
-            <el-form-item label="合同单价" prop="checkMoney">{{formReceiptDetail.htdj}}</el-form-item>
+            <el-form-item label="合同单价" prop="htdj">
+              <el-input v-model="formReceiptDetail.htdj" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 货损数量 -->
           <el-col :span="8">
-            <el-form-item label="货损数量" prop="cargoDamageQuantity">{{formReceiptDetail.cargoDamageQuantity}}</el-form-item>
+            <el-form-item label="货损数量" prop="cargoDamageQuantity">
+              <el-input v-model="formReceiptDetail.cargoDamageQuantity" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 货损金额 -->
           <el-col :span="8">
-            <el-form-item label="货损金额" prop="cargoDamageMoney">{{formReceiptDetail.cargoDamageMoney}}</el-form-item>
+            <el-form-item label="货损金额" prop="cargoDamageMoney">
+              <el-input v-model="formReceiptDetail.cargoDamageMoney" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 备注 -->
           <el-col :span="24">
-            <el-form-item label="备注" prop="receiptRemark">{{formReceiptDetail.receiptRemark}}</el-form-item>
+            <el-form-item label="备注" prop="receiptRemark">
+              <el-input v-model="formReceiptDetail.receiptRemark" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-divider />
@@ -836,25 +871,35 @@
         <el-row>
           <!-- 水分值 -->
           <el-col :span="8">
-            <el-form-item label="水分值" prop="dryCalWaterValue">{{formReceiptDetail.dryCalWaterValue}}</el-form-item>
+            <el-form-item label="水分值" prop="dryCalWaterValue">
+              <el-input v-model="formReceiptDetail.dryCalWaterValue" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 烘干率 -->
           <el-col :span="8">
-            <el-form-item label="烘干率" prop="dryCalDryingRate">{{formReceiptDetail.dryCalDryingRate}}</el-form-item>
+            <el-form-item label="烘干率" prop="dryCalDryingRate">
+              <el-input v-model="formReceiptDetail.dryCalDryingRate" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 比例范围 -->
           <el-col :span="8">
-            <el-form-item label="比例范围" prop="dryCalScaleRange">{{formReceiptDetail.dryCalScaleRange}}</el-form-item>
+            <el-form-item label="比例范围" prop="dryCalScaleRange">
+              <el-input v-model="formReceiptDetail.dryCalScaleRange" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <!-- 结算重量 -->
           <el-col :span="8">
-            <el-form-item label="结算重量" prop="dryCalSettlementWeight">{{formReceiptDetail.dryCalSettlementWeight}}</el-form-item>
+            <el-form-item label="结算重量" prop="dryCalSettlementWeight">
+              <el-input v-model="formReceiptDetail.dryCalSettlementWeight" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <!-- 计算结果 -->
           <el-col :span="16">
-            <el-form-item label="计算结果" prop="dryCalResult">{{formReceiptDetail.dryCalResult}}</el-form-item>
+            <el-form-item label="计算结果" prop="dryCalResult">
+              <el-input v-model="formReceiptDetail.dryCalResult" placeholder="" style="width: 200px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -1098,7 +1143,6 @@ export default {
     },
     getReceiptList() {
       listReceipt(this.selRow).then(response => {
-        console.log(JSON.stringify(response.rows));
         this.receiptList = response.rows;
         this.totalReceipt = response.total;
       });
@@ -1187,7 +1231,6 @@ export default {
         this.isUpdate = true;
         this.fileList = [];
         getOrderAdditional(this.form.orderId).then(response => {
-          console.log(JSON.stringify(response.rows));
           response.rows.forEach(element => {
             this.fileList.push({ name: element.uplloadFilePath, 
               url: element.uplloadFilePath });
@@ -1197,7 +1240,6 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      console.log("提交按钮");
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.isUpdate) {
@@ -1235,14 +1277,12 @@ export default {
     },
      /** 查看合同数据 */ 
     handleView(row) {
-      console.log(JSON.stringify(row));
       this.formDetail = row;
       this.fileListDetail = [];
       this.selRow = row;
       this.selRow.purchaseOrderId = this.formDetail.orderId;
 
       getOrderAdditional(this.formDetail.orderId).then(response => {
-        console.log(JSON.stringify(response.rows));
         response.rows.forEach(element => {
           if (element.bizVersion != 100) {
             this.fileListDetail.push({ name: element.uplloadFilePath, url: element.uplloadFilePath });
@@ -1257,14 +1297,6 @@ export default {
     // 上传前校检格式和大小
     handleBeforeUpload(file) {
       let isValidSuccess = true;
-
-      // this.$refs["form"].validate(valid => {
-      //   if (!valid) {
-      //     isValidSuccess = false;
-      //   }
-      // });
-
-      console.log("表单校验结果" + isValidSuccess);
       if (!isValidSuccess) {
         this.$modal.msgError(`添加上传文件时，表单必填字段不能为空，否则无法上传文件，请检查!`);
         this.$modal.closeLoading();
@@ -1362,8 +1394,6 @@ export default {
     },
     // 查看收货详细
     viewReceipt(row) {
-      // console.log("选择的仓库数据: " + JSON.stringify(row));
-      // this.$router.push({ path: "/cgmgr/shmgr", query: { selRow: row } });
       this.formReceiptDetail = row;
       this.openReceiptDetail = true;
     },

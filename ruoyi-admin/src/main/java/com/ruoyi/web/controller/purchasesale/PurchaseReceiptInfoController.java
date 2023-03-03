@@ -11,12 +11,17 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.purchase.sale.domain.PurchaseReceiptInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseReceiptInfoService;
+import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
+import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 收货管理Controller
@@ -31,6 +36,9 @@ public class PurchaseReceiptInfoController extends BaseController
     @Autowired
     private IPurchaseReceiptInfoService purchaseReceiptInfoService;
 
+    @Autowired
+    private IMasterDataClientInfoService masterDataClientInfoService;
+
     /**
      * 查询收货管理列表
      */
@@ -39,6 +47,28 @@ public class PurchaseReceiptInfoController extends BaseController
 
         startPage();
         List<PurchaseReceiptInfo> list = purchaseReceiptInfoService.selectPurchaseReceiptInfoList(purchaseReceiptInfo);
+
+        // 取得所有客户主数据
+        List<MasterDataClientInfo> clientList = masterDataClientInfoService.selectMasterDataClientInfoList(new MasterDataClientInfo());
+        // 客户主数据列表转成Map（key：baseId, value：companyName）
+        Map<String, String> clientMap = clientList
+                .stream()
+                .collect(Collectors.toMap(MasterDataClientInfo::getBaseId, MasterDataClientInfo::getCompanyName));
+
+        list.stream().forEach(element -> {
+            element.setSupplierRealName(clientMap.get(element.getSupplierName()));
+        });
+
+        list.stream().forEach(element -> {
+            if (element.getCheckQuantity().compareTo(0L) > 0) {
+                // 已收货
+                element.setReceiptStatus("2");
+            } else {
+                // 待收货
+                element.setReceiptStatus("1");
+            }
+        });
+
         return getDataTable(list);
     }
 

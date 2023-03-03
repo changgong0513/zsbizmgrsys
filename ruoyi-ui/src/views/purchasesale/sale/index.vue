@@ -1132,6 +1132,8 @@ export default {
     },
     /** 取得发货列表 */
     getDeliverList() {
+      this.selRow.saleContractId = this.selRow.contractId;
+      console.log("@@@@@@" + JSON.stringify(this.selRow));
       listDeliver(this.selRow).then(response => {
         this.deliverList = response.rows;
         this.totalDeliver = response.total;

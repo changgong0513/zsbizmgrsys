@@ -49,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="deliverId != null  and deliverId != ''"> and deliver_id like concat('%', #{deliverId}, '%')</if>
             <if test="saleOrderId != null  and saleOrderId != ''"> and sale_order_id like concat('%', #{saleOrderId}, '%')</if>
+            <if test="saleContractId != null  and saleContractId != ''"> and sale_contract_id = #{saleContractId}</if>
             <if test="handledBy != null  and handledBy != ''"> and handled_by like concat('%', #{handledBy}, '%')</if>
             <if test="deliverDate != null "> and deliver_date = #{deliverDate}</if>
             <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>

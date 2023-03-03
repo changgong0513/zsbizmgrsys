@@ -119,7 +119,11 @@
       <el-table-column label="经办人" align="center" prop="handledBy" width="150" :show-overflow-tooltip="true" />
       <el-table-column label="仓库名称" align="center" prop="warehouseName" width="240" :show-overflow-tooltip="true" />
       <el-table-column label="物料名称" align="center" prop="materialName" width="150" :show-overflow-tooltip="true" />
-      <el-table-column label="订单状态" align="center" prop="orderStatus" width="100" />
+      <el-table-column label="订单状态" align="center" prop="receiptStatus" width="100">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.receipt_order_status" :value="scope.row.receiptStatus"/>
+        </template>
+      </el-table-column>
     </el-table>
     
     <pagination
@@ -596,7 +600,7 @@ export default {
   name: "Purchase",
   dicts: ['purchasesale_purchase_type', 'purchasesale_belong_dept', 'masterdata_warehouse_measurement_unit', 
           'purchasesale_arrival_terms', 'purchasesale_settlement_method', 'purchasesale_receipt_order_status', 
-          'purchasesale_transport_mode'],
+          'purchasesale_transport_mode', 'receipt_order_status'],
   data() {
     return {
       // 遮罩层
