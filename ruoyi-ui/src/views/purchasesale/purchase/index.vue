@@ -98,23 +98,23 @@
     <el-table v-loading="loading" :data="purchaseList" @selection-change="handleSelectionChange"
     @row-dblclick="handleView">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="订单编号" align="center" prop="orderId" width="150" />
-      <el-table-column label="业务日期" align="center" prop="businessDate" width="100">
+      <el-table-column label="订单编号" align="center" prop="orderId" width="225" />
+      <el-table-column label="业务日期" align="center" prop="businessDate" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.businessDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="所属部门" align="center" prop="deptName" width="100" />
-      <el-table-column label="经办人" align="center" prop="handledBy" width="100" :show-overflow-tooltip="true" />
-      <el-table-column label="供应商名称" align="center" prop="supplierRealName" width="240" :show-overflow-tooltip="true" />
-      <el-table-column label="订单状态" align="center" prop="orderStatus" width="80">
+      <el-table-column label="所属部门" align="center" prop="deptName" width="150" />
+      <el-table-column label="经办人" align="center" prop="handledBy" width="150" :show-overflow-tooltip="true" />
+      <el-table-column label="供应商名称" align="center" prop="supplierRealName" width="300" :show-overflow-tooltip="true" />
+      <el-table-column label="订单状态" align="center" prop="orderStatus" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.purchase_mgr_order_status" :value="scope.row.orderStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="物料名称" align="center" prop="materialName" width="100" :show-overflow-tooltip="true" />
-      <el-table-column label="核算金额" align="center" prop="checkMoney" width="100" />
-      <el-table-column label="完成率" align="center" prop="completionRate" width="100" />
+      <el-table-column label="物料名称" align="center" prop="materialName" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="核算金额" align="center" prop="checkMoney" width="150" />
+      <el-table-column label="完成率" align="center" prop="completionRate" width="150" />
     </el-table>
     
     <pagination
@@ -126,7 +126,7 @@
     />
 
     <!-- 添加或修改采购收货销售发货管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <!-- 合同编号 -->
@@ -297,7 +297,7 @@
                 v-model="form.arrivalTerms"
                 placeholder="到账条件"
                 clearable
-                style="width: 150px"
+                style="width: 130px"
               >
                 <el-option
                   v-for="dict in dict.type.purchasesale_arrival_terms"
