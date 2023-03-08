@@ -128,17 +128,17 @@
     <el-table v-loading="loading" :data="deliverList" @selection-change="handleSelectionChange"
       @row-dblclick="handleView">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="发货编号" align="center" prop="deliverId" width="150" />
-      <el-table-column label="发货日期" align="center" prop="deliverDate" width="100">
+      <el-table-column label="发货编号" align="center" prop="deliverId" width="300" />
+      <el-table-column label="发货日期" align="center" prop="deliverDate" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.deliverDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="销售订单" align="center" prop="saleContractId" width="150" />
-      <el-table-column label="经办人" align="center" prop="handledBy" width="150" :show-overflow-tooltip="true" />
-      <el-table-column label="仓库名称" align="center" prop="warehouseName" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="销售订单" align="center" prop="saleContractId" width="300" />
+      <el-table-column label="经办人" align="center" prop="handledBy" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="仓库名称" align="center" prop="warehouseName" width="300" :show-overflow-tooltip="true" />
       <el-table-column label="物料名称" align="center" prop="materialName" width="200" :show-overflow-tooltip="true" />
-      <el-table-column label="订单状态" align="center" prop="deliverStatus" width="100">
+      <el-table-column label="订单状态" align="center" prop="deliverStatus" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.deliver_status" :value="scope.row.deliverStatus"/>
         </template>
@@ -154,15 +154,9 @@
     />
 
     <!-- 添加或修改采购收货销售发货管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-row>
-          <!-- 发货编号 -->
-          <!-- <el-col :span="8">
-            <el-form-item label="发货编号" prop="deliverId">
-              <el-input v-model="form.deliverId" :disabled="this.isUpdate" placeholder="请输入发货编号" style="width: 240px" />
-            </el-form-item>
-          </el-col> -->
           <!-- 销售合同编号 -->
           <el-col :span="8">
             <el-form-item label="销售合同编号" prop="saleContractId">
@@ -489,7 +483,7 @@
           <!-- 备注 -->
           <el-col :span="24">
             <el-form-item label="备注" prop="deliverRemark">
-              <el-input v-model="form.deliverRemark" type="textarea" maxlength="128"
+              <el-input v-model="form.deliverRemark" type="textarea" maxlength="128" style="width: 940px"
                 show-word-limit />
             </el-form-item>
           </el-col>
@@ -502,7 +496,7 @@
     </el-dialog>
 
     <!--查看销售发货详细对话框 -->
-    <el-dialog :title="title" :visible.sync="openDetail" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
           <!-- 发货编号 -->
@@ -659,9 +653,6 @@
           <!-- 运输方式 -->
           <el-col :span="8">
             <el-form-item label="运输方式" prop="transportMode">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_transport_mode" :value="formDetail.transportMode"/>
-              </template> -->
               <el-select
                 v-model="formDetail.transportMode"
                 clearable
@@ -722,7 +713,7 @@
           <!-- 备注 -->
           <el-col :span="24">
             <el-form-item label="备注" prop="deliverRemark">
-              <el-input v-model="formDetail.deliverRemark" :disabled="true" />
+              <el-input v-model="formDetail.deliverRemark" :disabled="true" style="width: 940px;" />
             </el-form-item>
           </el-col>
         </el-row>

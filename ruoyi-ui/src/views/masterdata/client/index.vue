@@ -85,17 +85,17 @@
       @selection-change="handleSelectionChange"
       @row-dblclick="handleView">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column label="公司名称" align="center" prop="companyName" :show-overflow-tooltip="true" width="240" />
+      <el-table-column label="公司名称" align="center" prop="companyName" :show-overflow-tooltip="true" width="300" />
       <el-table-column label="联系人姓名" align="center" prop="contactsName" width="150" />
       <el-table-column label="联系人电话" align="center" prop="contactsMobile"  width="150" />
-      <el-table-column label="发票类型" align="center" prop="invoiceType" width="150">
+      <el-table-column label="发票类型" align="center" prop="invoiceType" width="200">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.masterdata_invoice_type" :value="scope.row.invoiceType"/>
         </template>
       </el-table-column>
-      <el-table-column label="收件人姓名" align="center" prop="sjrxm" width="140" />
-      <el-table-column label="收件人电话" align="center" prop="sjrdh"  width="140" />
-      <el-table-column label="收件人地址" align="center" prop="sjrdz" :show-overflow-tooltip="true" width="240" />
+      <el-table-column label="收件人姓名" align="center" prop="sjrxm" width="150" />
+      <el-table-column label="收件人电话" align="center" prop="sjrdh"  width="150" />
+      <el-table-column label="收件人地址" align="center" prop="sjrdz" :show-overflow-tooltip="true" class-name="small-padding fixed-width" />
     </el-table>
 
     <pagination
@@ -110,7 +110,7 @@
     <el-dialog 
       :title="title" 
       :visible.sync="open" 
-      width="50%" 
+      width="1150px" 
       append-to-body
       :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
@@ -185,7 +185,7 @@
                 v-model="form.companyAdress" 
                 placeholder="请输入公司地址"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -194,7 +194,7 @@
                 v-model="form.companyWebsite" 
                 placeholder="请输入公司网址"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -237,7 +237,7 @@
                 v-model="form.contactsOfficeLocation" 
                 placeholder="请输入办公地点"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -340,7 +340,7 @@
                 v-model="form.invoiceAddress" 
                 placeholder="请输入发票地址" 
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -354,7 +354,7 @@
     <!-- 客户数据详细 -->
     <el-dialog title="客户数据详细" 
       :visible.sync="openDetail" 
-      width="50%" 
+      width="1150px" 
       append-to-body 
       v-show="showDetail" 
       :close-on-click-modal="false">
@@ -436,7 +436,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -446,7 +446,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -493,7 +493,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -604,7 +604,7 @@
                 placeholder="" 
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>

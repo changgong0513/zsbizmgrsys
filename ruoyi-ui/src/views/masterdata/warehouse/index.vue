@@ -136,7 +136,7 @@
     />
 
     <!-- 添加或修改仓库数据对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="90%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="8">
@@ -144,7 +144,7 @@
               <el-input 
                 v-model="form.warehouseCode" 
                 placeholder="请输入仓库编码" 
-                style="width: 280px"
+                style="width: 200px"
                 maxlength="64"
                 show-word-limit />
             </el-form-item>
@@ -154,7 +154,7 @@
               <el-input 
                 v-model="form.warehouseName" 
                 placeholder="请输入仓库名称" 
-                style="width: 280px"
+                style="width: 200px"
                 maxlength="128"
                 show-word-limit />
             </el-form-item>
@@ -165,7 +165,7 @@
                 v-model="form.warehouseRegion"
                 placeholder="区划"
                 clearable
-                style="width: 280px"
+                style="width: 200px"
               >
                 <el-option
                   v-for="dict in dict.type.masterdata_warehouse_region"
@@ -183,7 +183,7 @@
               <el-input 
                 v-model="form.warehouseAddress" 
                 placeholder="请输入仓库地址" 
-                style="width: 280px"
+                style="width: 200px"
                 maxlength="256"
                 show-word-limit />
             </el-form-item>
@@ -193,7 +193,7 @@
               <el-select
                 v-model="form.managementDepartment"
                 placeholder="管理部门"
-                style="width: 280px"
+                style="width: 200px"
               >
                 <el-option
                   v-for="dict in dict.type.masterdata_management_department"
@@ -211,7 +211,7 @@
                 v-model="form.warehouseManager"
                 placeholder="请输入管理人员"
                 clearable
-                style="width: 280px"
+                style="width: 200px"
               />
             </el-form-item>
           </el-col>
@@ -219,12 +219,12 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="联系方式1" prop="contactMobile1">
-              <el-input v-model="form.contactMobile1" placeholder="请输入手机号码" style="width: 280px" />
+              <el-input v-model="form.contactMobile1" placeholder="请输入手机号码" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="联系方式2" prop="contactMobile2">
-              <el-input v-model="form.contactMobile2" placeholder="请输入手机号码" style="width: 280px" />
+              <el-input v-model="form.contactMobile2" placeholder="请输入手机号码" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -234,7 +234,7 @@
                 v-model="form.warehouseCategory"
                 placeholder="仓库类别"
                 clearable
-                style="width: 280px"
+                style="width: 200px"
               >
                 <el-option
                   v-for="dict in dict.type.masterdata_warehouse_category"
@@ -249,12 +249,12 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="占地面积" prop="useArea">
-              <el-input v-model="form.useArea" placeholder="请输入占地面积" style="width: 280px" />
+              <el-input v-model="form.useArea" placeholder="请输入占地面积" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="最大容量" prop="maximumCapacity">
-              <el-input v-model="form.maximumCapacity" placeholder="请输入最大容量" style="width: 280px" />
+              <el-input v-model="form.maximumCapacity" placeholder="请输入最大容量" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -263,7 +263,7 @@
                 v-model="form.measurementUnit"
                 placeholder="计量单位"
                 clearable
-                style="width: 280px"
+                style="width: 200px"
               >
                 <el-option
                   v-for="dict in dict.type.masterdata_warehouse_measurement_unit"
@@ -278,7 +278,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注" prop="remarks">
-              <el-input v-model="form.warehouseRemarks" placeholder="请输入备注" />
+              <el-input v-model="form.warehouseRemarks" placeholder="请输入备注" style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -290,7 +290,7 @@
     </el-dialog>
 
     <!-- 仓库数据详细 -->
-    <el-dialog title="仓库数据详细" :visible.sync="openDetail" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog title="仓库数据详细" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="8">
@@ -448,7 +448,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
-              <el-input v-model="formDetail.warehouseRemarks" placeholder="请输入备注" :disabled="true" />
+              <el-input v-model="formDetail.warehouseRemarks" placeholder="请输入备注" :disabled="true" style="width: 940px"/>
             </el-form-item>
           </el-col>
         </el-row>

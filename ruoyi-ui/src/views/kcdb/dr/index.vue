@@ -159,7 +159,7 @@
     />
 
     <!-- 添加或修改存库调拨对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <!-- 收货部门 -->
@@ -331,7 +331,7 @@
     </el-dialog>
 
     <!-- 查看存库调入详细对话框 -->
-    <el-dialog :title="title" :visible.sync="openDetail" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="80px">
         <el-row>
           <el-col :span="8">

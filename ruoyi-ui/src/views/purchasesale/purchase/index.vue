@@ -114,7 +114,7 @@
       </el-table-column>
       <el-table-column label="物料名称" align="center" prop="materialName" width="200" :show-overflow-tooltip="true" />
       <el-table-column label="核算金额" align="center" prop="checkMoney" width="150" />
-      <el-table-column label="完成率" align="center" prop="completionRate" width="150" />
+      <el-table-column label="完成率" align="center" prop="completionRate" class-name="small-padding fixed-width" />
     </el-table>
     
     <pagination
@@ -414,13 +414,13 @@
     </el-dialog>
 
     <!-- 采购管理数据详细 -->
-    <el-dialog title="采购管理数据详细" :visible.sync="openDetail" width="60%" append-to-body :close-on-click-modal="false">
+    <el-dialog title="采购管理数据详细" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
           <!-- 订单编号 -->
           <el-col :span="8">
             <el-form-item label="订单编号">
-              <el-input v-model="formDetail.orderId" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.orderId" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 采购类型 -->
@@ -429,7 +429,7 @@
               <el-select
                 v-model="formDetail.purchaseType"
                 placeholder="采购类型"
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
               >
                 <el-option
@@ -444,7 +444,7 @@
           <!-- 合同编号 -->
           <el-col :span="8">
             <el-form-item label="合同编号" prop="contractId">
-              <el-input v-model="formDetail.contractId" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.contractId" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -452,7 +452,7 @@
           <!-- 经办人 -->
           <el-col :span="8">
             <el-form-item label="经办人" prop="handledBy">
-              <el-input v-model="formDetail.handledBy" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.handledBy" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 所属部门 -->
@@ -462,7 +462,7 @@
                 :options="deptOptions" 
                 :show-count="true" 
                 placeholder="请选择所属部门" 
-                style="width: 200px;"
+                style="width: 240px;"
                 :disabled="true" />
             </el-form-item>
           </el-col>
@@ -474,7 +474,7 @@
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择业务日期"
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true">
               </el-date-picker>
             </el-form-item>
@@ -485,7 +485,7 @@
               <el-input 
                 v-model="formDetail.materialName" 
                 placeholder="请输入物料名称" 
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
                 maxlength="64"
                 show-word-limit />
@@ -496,7 +496,7 @@
           <!-- 采购数量 -->
           <el-col :span="8">
             <el-form-item label="采购数量" prop="purchaseQuantity">
-              <el-input v-model="formDetail.purchaseQuantity" placeholder="请输入采购数量" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.purchaseQuantity" placeholder="请输入采购数量" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 供应商名称 -->
@@ -505,7 +505,7 @@
               <el-input 
                 v-model="formDetail.supplierRealName" 
                 placeholder="请输入供应商名称" 
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
                 maxlength="128"
                 show-word-limit />
@@ -514,7 +514,7 @@
           <!-- 单价 -->
           <el-col :span="8">
             <el-form-item label="单价" prop="unitPrice">
-              <el-input v-model="formDetail.unitPrice" placeholder="请输入单价" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.unitPrice" placeholder="请输入单价" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -526,7 +526,7 @@
                 v-model="formDetail.meteringUnit"
                 placeholder="计量单位"
                 clearable
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
               >
                 <el-option
@@ -546,7 +546,7 @@
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择预计到货期"
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true">
               </el-date-picker>
             </el-form-item>
@@ -559,7 +559,7 @@
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择要求交货期"
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true">
               </el-date-picker>
             </el-form-item>
@@ -569,7 +569,7 @@
           <!-- 账期 -->
           <el-col :span="8">
             <el-form-item label="账期" prop="accountPeriod">
-              <el-input v-model="formDetail.accountPeriod" placeholder="请输入账期" style="width: 200px" :disabled="true" />
+              <el-input v-model="formDetail.accountPeriod" placeholder="请输入账期" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 到账条件 -->
@@ -600,7 +600,7 @@
                 v-model="formDetail.settlementMethod"
                 placeholder="结算方式"
                 clearable
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
               >
                 <el-option
@@ -709,25 +709,25 @@
     </el-dialog>
 
     <!--查看收货详细对话框 -->
-    <el-dialog :title="title" :visible.sync="openReceiptDetail" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="openReceiptDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formReceiptDetail" :model="formReceiptDetail" label-width="100px">
         <el-row>
           <!-- 收货编号 -->
           <el-col :span="8">
             <el-form-item label="收货编号" prop="receiptId">
-              <el-input v-model="formReceiptDetail.receiptId" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.receiptId" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 采购订单编号 -->
           <el-col :span="8">
             <el-form-item label="采购订单编号" prop="purchaseOrderId">
-              <el-input v-model="formReceiptDetail.purchaseOrderId" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.purchaseOrderId" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 采购合同编号 -->
           <el-col :span="8">
             <el-form-item label="采购合同编号" prop="purchaseContractId">
-              <el-input v-model="formReceiptDetail.purchaseContractId" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.purchaseContractId" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -735,19 +735,19 @@
           <!-- 经办人 -->
           <el-col :span="8">
             <el-form-item label="经办人" prop="handledBy">
-              <el-input v-model="formReceiptDetail.handledBy" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.handledBy" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 收货日期 -->
           <el-col :span="8">
             <el-form-item label="收货日期" prop="receiptDate">
-              <el-input v-model="formReceiptDetail.receiptDate" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.receiptDate" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 供应商名称 -->
           <el-col :span="8">
             <el-form-item label="供应商名称" prop="supplierRealName">
-              <el-input v-model="formReceiptDetail.supplierRealName" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.supplierRealName" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -755,19 +755,19 @@
           <!-- 物料名称 -->
           <el-col :span="8">
             <el-form-item label="物料名称" prop="materialName">
-              <el-input v-model="formReceiptDetail.materialName" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.materialName" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 仓库编号 -->
           <el-col :span="8">
             <el-form-item label="仓库编号" prop="warehouseCode">
-              <el-input v-model="formReceiptDetail.warehouseCode" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.warehouseCode" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 仓库名称 -->
           <el-col :span="8">
             <el-form-item label="仓库名称" prop="warehouseName">
-              <el-input v-model="formReceiptDetail.warehouseName" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.warehouseName" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -775,13 +775,13 @@
           <!-- 批次号 -->
           <el-col :span="8">
             <el-form-item label="批次号" prop="batchNo">
-              <el-input v-model="formReceiptDetail.batchNo" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.batchNo" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 车船编号 -->
           <el-col :span="8">
             <el-form-item label="车船编号" prop="ccbh">
-              <el-input v-model="formReceiptDetail.ccbh" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.ccbh" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 运输方式 -->
@@ -791,7 +791,7 @@
                 v-model="formReceiptDetail.transportMode"
                 placeholder=""
                 clearable
-                style="width: 200px"
+                style="width: 240px"
                 :disabled="true"
               >
                 <el-option
@@ -808,19 +808,19 @@
           <!-- 运输单号 -->
           <el-col :span="8">
             <el-form-item label="运输单号" prop="transportNumber">
-              <el-input v-model="formReceiptDetail.transportNumber" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.transportNumber" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 预期收货数量 -->
           <el-col :span="8">
             <el-form-item label="预期收货数量" prop="expectReceiptQuantity">
-              <el-input v-model="formReceiptDetail.expectReceiptQuantity" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.expectReceiptQuantity" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 核算数量 -->
           <el-col :span="8">
             <el-form-item label="核算数量" prop="checkQuantity">
-              <el-input v-model="formReceiptDetail.checkQuantity" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.checkQuantity" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -828,19 +828,19 @@
           <!-- 核算单价 -->
           <el-col :span="8">
             <el-form-item label="核算单价" prop="checkPrice">
-              <el-input v-model="formReceiptDetail.checkPrice" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.checkPrice" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 核算金额 -->
           <el-col :span="8">
             <el-form-item label="核算金额" prop="checkMoney">
-              <el-input v-model="formReceiptDetail.checkMoney" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.checkMoney" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 合同单价 -->
           <el-col :span="8">
             <el-form-item label="合同单价" prop="htdj">
-              <el-input v-model="formReceiptDetail.htdj" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.htdj" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -848,13 +848,13 @@
           <!-- 货损数量 -->
           <el-col :span="8">
             <el-form-item label="货损数量" prop="cargoDamageQuantity">
-              <el-input v-model="formReceiptDetail.cargoDamageQuantity" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.cargoDamageQuantity" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 货损金额 -->
           <el-col :span="8">
             <el-form-item label="货损金额" prop="cargoDamageMoney">
-              <el-input v-model="formReceiptDetail.cargoDamageMoney" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.cargoDamageMoney" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -862,7 +862,7 @@
           <!-- 备注 -->
           <el-col :span="24">
             <el-form-item label="备注" prop="receiptRemark">
-              <el-input v-model="formReceiptDetail.receiptRemark" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.receiptRemark" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -872,19 +872,19 @@
           <!-- 水分值 -->
           <el-col :span="8">
             <el-form-item label="水分值" prop="dryCalWaterValue">
-              <el-input v-model="formReceiptDetail.dryCalWaterValue" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.dryCalWaterValue" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 烘干率 -->
           <el-col :span="8">
             <el-form-item label="烘干率" prop="dryCalDryingRate">
-              <el-input v-model="formReceiptDetail.dryCalDryingRate" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.dryCalDryingRate" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 比例范围 -->
           <el-col :span="8">
             <el-form-item label="比例范围" prop="dryCalScaleRange">
-              <el-input v-model="formReceiptDetail.dryCalScaleRange" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.dryCalScaleRange" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -892,13 +892,13 @@
           <!-- 结算重量 -->
           <el-col :span="8">
             <el-form-item label="结算重量" prop="dryCalSettlementWeight">
-              <el-input v-model="formReceiptDetail.dryCalSettlementWeight" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.dryCalSettlementWeight" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <!-- 计算结果 -->
           <el-col :span="16">
             <el-form-item label="计算结果" prop="dryCalResult">
-              <el-input v-model="formReceiptDetail.dryCalResult" placeholder="" style="width: 200px" :disabled="true" />
+              <el-input v-model="formReceiptDetail.dryCalResult" placeholder="" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>

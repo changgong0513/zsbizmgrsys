@@ -85,18 +85,18 @@
       @selection-change="handleSelectionChange"
       @row-dblclick="handleView">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column label="公司名称" align="center" prop="companyName" :show-overflow-tooltip="true" width="200" />
+      <el-table-column label="公司名称" align="center" prop="companyName" :show-overflow-tooltip="true" width="350" />
       <el-table-column label="联系人姓名" align="center" prop="contactsName" width="150" />
       <el-table-column label="联系人电话" align="center" prop="contactsMobile"  width="150" />
-      <el-table-column label="发票类型" align="center" prop="invoiceType" width="150">
+      <el-table-column label="发票类型" align="center" prop="invoiceType" width="200">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.masterdata_invoice_type" :value="scope.row.invoiceType"/>
         </template>
       </el-table-column>
-      <el-table-column label="收件人姓名" align="center" prop="sjrxm" width="140" />
-      <el-table-column label="收件人电话" align="center" prop="sjrdh"  width="140" />
-      <el-table-column label="收件人地址" align="center" prop="sjrdz" :show-overflow-tooltip="true" width="200" />
-      <el-table-column label="链接" align="center" prop="link" :show-overflow-tooltip="true" width="80">
+      <el-table-column label="收件人姓名" align="center" prop="sjrxm" width="150" />
+      <el-table-column label="收件人电话" align="center" prop="sjrdh"  width="150" />
+      <el-table-column label="收件人地址" align="center" prop="sjrdz" :show-overflow-tooltip="true" width="300" />
+      <el-table-column label="链接" align="center" prop="link" :show-overflow-tooltip="true" class-name="small-padding fixed-width" >
         <template  slot-scope="scope">
           <el-link type="primary" style="font-size: 10px;" :href="scope.row.link" target="_blank">信用公示</el-link>
         </template>
@@ -112,7 +112,7 @@
     />
 
     <!-- 添加或修改供应商数据对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <h3>基本信息<el-link type="primary" style="font-size: 10px; margin-left: 20px;" href="https://www.gsxt.gov.cn/" target="_blank">信用公示</el-link></h3>
         <el-row>
@@ -185,7 +185,7 @@
                 v-model="form.companyAdress" 
                 placeholder="请输入公司地址"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -194,7 +194,7 @@
                 v-model="form.companyWebsite" 
                 placeholder="请输入公司网址"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -239,7 +239,7 @@
                 v-model="form.contactsOfficeLocation" 
                 placeholder="请输入办公地点"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -344,7 +344,7 @@
                 v-model="form.invoiceAddress" 
                 placeholder="请输入发票地址" 
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -356,7 +356,7 @@
     </el-dialog>
 
     <!-- 供应商数据详细 -->
-    <el-dialog title="供应商数据详细" :visible.sync="openDetail" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog title="供应商数据详细" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" :rules="rules" label-width="100px">
         <h3>基本信息</h3>
         <el-row>
@@ -438,7 +438,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -448,7 +448,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -495,7 +495,7 @@
                 placeholder=""
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -606,7 +606,7 @@
                 placeholder="" 
                 :disabled="true"
                 maxlength="128"
-                show-word-limit />
+                show-word-limit style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>

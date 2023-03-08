@@ -143,17 +143,17 @@
     />
 
     <!-- 添加或修改库区数据对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="8">
             <el-form-item label="库区编码" prop="kqCode">
-              <el-input v-model="form.kqCode" placeholder="请输入库区编码" style="width: 280px" />
+              <el-input v-model="form.kqCode" placeholder="请输入库区编码" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="库区名称" prop="kqName">
-              <el-input v-model="form.kqName" placeholder="请输入库区名称" style="width: 280px" />
+              <el-input v-model="form.kqName" placeholder="请输入库区名称" style="width: 200px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -191,7 +191,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注" prop="kqRemarks">
-              <el-input v-model="form.kqRemarks" type="textarea" placeholder="请输入内容" />
+              <el-input v-model="form.kqRemarks" type="textarea" placeholder="请输入内容" style="width: 940px" />
             </el-form-item>
           </el-col>
         </el-row>

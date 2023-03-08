@@ -109,17 +109,17 @@
     <el-table v-loading="loading" :data="receiptList" @selection-change="handleSelectionChange"
       @row-dblclick="handleView">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="收货编号" align="center" prop="receiptId" width="150" />
-      <el-table-column label="收货日期" align="center" prop="receiptDate" width="100">
+      <el-table-column label="收货编号" align="center" prop="receiptId" width="300" />
+      <el-table-column label="收货日期" align="center" prop="receiptDate" width="200">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.receiptDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" align="center" prop="purchaseOrderId" width="150" />
-      <el-table-column label="经办人" align="center" prop="handledBy" width="150" :show-overflow-tooltip="true" />
-      <el-table-column label="仓库名称" align="center" prop="warehouseName" width="240" :show-overflow-tooltip="true" />
-      <el-table-column label="物料名称" align="center" prop="materialName" width="150" :show-overflow-tooltip="true" />
-      <el-table-column label="订单状态" align="center" prop="receiptStatus" width="100">
+      <el-table-column label="采购订单" align="center" prop="purchaseOrderId" width="300" />
+      <el-table-column label="经办人" align="center" prop="handledBy" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="仓库名称" align="center" prop="warehouseName" width="300" :show-overflow-tooltip="true" />
+      <el-table-column label="物料名称" align="center" prop="materialName" width="200" :show-overflow-tooltip="true" />
+      <el-table-column label="订单状态" align="center" prop="receiptStatus" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.receipt_order_status" :value="scope.row.receiptStatus"/>
         </template>
@@ -135,7 +135,7 @@
     />
 
     <!-- 添加或修改采购收货销售发货管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="65%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-row>
           <!-- 采购合同编号 -->
@@ -216,7 +216,6 @@
           <!-- 仓库编号 -->
           <el-col :span="8">
             <el-form-item label="仓库编号" prop="warehouseCode">
-              <!-- <el-input v-model="form.warehouseCode" placeholder="请输入仓库编号" style="width: 240px" /> -->
               <el-select
                 v-model="form.warehouseCode"
                 filterable
@@ -390,7 +389,7 @@
     </el-dialog>
 
     <!--查看采购收货详细对话框 -->
-    <el-dialog :title="title" :visible.sync="openDetail" width="65%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
           <!-- 收货编号 -->

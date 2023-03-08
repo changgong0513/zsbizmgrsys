@@ -127,26 +127,26 @@
     <el-table v-loading="loading" :data="contractList" @selection-change="handleSelectionChange"
       @row-dblclick="handleUpdate">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="合同编号" align="center" prop="contractId" width="200" />
-      <el-table-column label="签约日期" align="center" prop="signDate" width="100">
+      <el-table-column label="合同编号" align="center" prop="contractId" width="300" />
+      <el-table-column label="签约日期" align="center" prop="signDate" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="合同名称" align="center" prop="contractName" width="200" :show-overflow-tooltip="true" />
-      <el-table-column label="合同类型" align="center" prop="contractType" width="80">
+      <el-table-column label="合同名称" align="center" prop="contractName" width="300" :show-overflow-tooltip="true" />
+      <el-table-column label="合同类型" align="center" prop="contractType" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.contractmgr_contract_type" :value="scope.row.contractType"/>
         </template>
       </el-table-column>
       <el-table-column label="客户名称" align="center" prop="companyName" width="350" :show-overflow-tooltip="true" />
       <el-table-column label="合同总价" align="center" prop="contractTotal" width="100" />
-      <el-table-column label="合同状态" align="center" prop="localContractStatus" width="100">
+      <el-table-column label="合同状态" align="center" prop="localContractStatus" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.local_contract_status" :value="scope.row.localContractStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="上传合同" align="center" class-name="small-padding fixed-width"  width="100">
+      <el-table-column label="上传合同" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-upload
             ref="uploadRef"
@@ -172,7 +172,7 @@
     />
 
     <!-- 添加或修改合同内容对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-row>
           <el-col :span="8">
@@ -356,7 +356,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="合同备注" prop="contractRemark">
-              <el-input v-model="form.contractRemark" placeholder="请输入合同备注" style="width: 720px"
+              <el-input v-model="form.contractRemark" placeholder="请输入合同备注" style="width: 940px"
                 maxlength="256" show-word-limit />
             </el-form-item>
           </el-col>

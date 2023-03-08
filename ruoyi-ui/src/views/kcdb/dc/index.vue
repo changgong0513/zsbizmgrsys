@@ -144,7 +144,7 @@
     />
 
     <!-- 添加或修改库存调拨对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="80%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="8">
@@ -319,7 +319,7 @@
     </el-dialog>
 
     <!-- 查看存库调拨详细对话框 -->
-    <el-dialog :title="title" :visible.sync="openDetail" width="50%" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="title" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="80px">
         <el-row>
           <el-col :span="8">
@@ -329,9 +329,6 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="fhbm">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_belong_dept" :value="formDetail.fhbm"/>
-              </template> -->
               <treeselect v-model="formDetail.fhbm" 
                 :options="deptOptions" :show-count="true" 
                 :disabled="true" />
@@ -339,9 +336,6 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="调拨类型" prop="lx">
-              <!-- <template>
-                <dict-tag :options="dict.type.kcdb_db_type" :value="formDetail.lx"/>
-              </template> -->
               <el-select
                 v-model="form.lx"
                 clearable
@@ -370,9 +364,6 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="运输方式" prop="ysfs">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_transport_mode" :value="formDetail.ysfs"/>
-              </template> -->
               <el-select
                 v-model="formDetail.ysfs"
                 clearable
@@ -391,9 +382,6 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="结算方式" prop="jsfs">
-              <!-- <template>
-                <dict-tag :options="dict.type.purchasesale_settlement_method" :value="formDetail.jsfs"/>
-              </template> -->
               <el-select
                 v-model="formDetail.jsfs"
                 clearable
