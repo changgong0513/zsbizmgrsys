@@ -94,8 +94,10 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
             String supplierName = elment.getSupplierName();
             MasterDataClientInfo supplierData = masterDataClientInfoMapper
                     .selectMasterDataClientInfoByBaseId(supplierName);
-            String supplierRealName = supplierData.getCompanyName();
-            elment.setSupplierRealName(supplierRealName);
+            if (supplierData != null) {
+                String supplierRealName = supplierData.getCompanyName();
+                elment.setSupplierRealName(supplierRealName);
+            }
         });
 
         return findPurchaseOrderList;
@@ -267,8 +269,10 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
             String supplierName = element.getSupplierName();
             MasterDataClientInfo supplierData = masterDataClientInfoMapper
                     .selectMasterDataClientInfoByBaseId(supplierName);
-            String supplierRealName = supplierData.getCompanyName();
-            element.setSupplierRealName(supplierRealName);
+            if (supplierData != null) {
+                String supplierRealName = supplierData.getCompanyName();
+                element.setSupplierRealName(supplierRealName);
+            }
         });
     }
 

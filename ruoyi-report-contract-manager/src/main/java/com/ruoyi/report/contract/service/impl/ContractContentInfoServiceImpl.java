@@ -848,12 +848,17 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             // 供应商名称为供应商编码（KHXXXXXX）的场合
             purchaseInfo.setSupplierName(contractInfo.getOppositeCompanyName());
         } else {
-            // 供应商名称为汉字名称的场合
-            MasterDataClientInfo param = new MasterDataClientInfo();
-            param.setCompanyName(contractInfo.getOppositeCompanyName());
-            List<MasterDataClientInfo> masterDataClientInfoList = masterDataClientInfoMapper
-                    .selectMasterDataClientInfoList(param);
-            purchaseInfo.setSupplierName(masterDataClientInfoList.get(0).getBaseId());
+            // 供应商名称为非编号的场合
+            String oppositeCompanyName = contractInfo.getOppositeCompanyName();
+            if (StringUtils.isNotBlank(oppositeCompanyName)) {
+                MasterDataClientInfo param = new MasterDataClientInfo();
+                param.setCompanyName(contractInfo.getOppositeCompanyName());
+                List<MasterDataClientInfo> masterDataClientInfoList = masterDataClientInfoMapper
+                        .selectMasterDataClientInfoList(param);
+                purchaseInfo.setSupplierName(masterDataClientInfoList.get(0).getBaseId());
+            } else {
+                purchaseInfo.setSupplierName(StringUtils.EMPTY);
+            }
         }
         // 单价 -> 合同单价
         purchaseInfo.setUnitPrice(contractInfo.getContractPrice());
