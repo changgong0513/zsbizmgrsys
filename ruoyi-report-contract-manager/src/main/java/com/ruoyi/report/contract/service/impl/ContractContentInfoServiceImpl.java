@@ -862,8 +862,8 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
         }
         // 单价 -> 合同单价
         purchaseInfo.setUnitPrice(contractInfo.getContractPrice());
-        // 计量单位 -> 平方米
-        purchaseInfo.setMeteringUnit("3");
+        // 计量单位 ->  默认值为吨
+        purchaseInfo.setMeteringUnit("1");
         // 预期到货日期 -> 交货日期
         purchaseInfo.setArrivalDate(contractInfo.getDeliveryDate());
         // 要求交货期 —> 交货日期
