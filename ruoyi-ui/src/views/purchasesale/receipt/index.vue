@@ -317,7 +317,7 @@
           <!-- 合同单价 -->
           <el-col :span="8">
             <el-form-item label="合同单价" prop=" htdj">
-              <el-input v-model="form.htdj" placeholder="请输入核算数量" style="width: 240px" />
+              <el-input v-model="form.htdj" placeholder="请输入合同单价" style="width: 240px" />
             </el-form-item>
           </el-col>
           <!-- 核算金额 -->
@@ -813,7 +813,8 @@ export default {
       this.form.supplierName = purchaseContract.supplierName;  // 供应商编号
       this.form.supplierRealName = purchaseContract.supplierRealName;  // 供应商名称
       this.form.materialName = purchaseContract.materialName;  // 物料名称
-      this.form.checkPrice = purchaseContract.unitPrice; // 核算单价
+      this.form.checkPrice = purchaseContract.unitPrice; // 核算单价 -> 合同单价
+      this.form.htdj =  purchaseContract.unitPrice; // 合同单价 -> 合同单价
     },
     /** 查询采购收货销售发货管理列表 */
     getList() {
