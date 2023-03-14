@@ -140,7 +140,7 @@
         </template>
       </el-table-column>
       <el-table-column label="客户名称" align="center" prop="companyName" width="350" :show-overflow-tooltip="true" />
-      <el-table-column label="合同总价" align="center" prop="contractTotal" width="100" />
+      <el-table-column label="合同金额" align="center" prop="contractTotal" width="100" />
       <el-table-column label="合同状态" align="center" prop="localContractStatus" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.local_contract_status" :value="scope.row.localContractStatus"/>
@@ -317,8 +317,11 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8" v-show="displayContractTotal">
+          <!-- <el-col :span="8" v-show="displayContractTotal">
             <el-form-item label="合同总价" prop="contractTotal">{{calContractTotal}}</el-form-item>
+          </el-col> -->
+          <el-col :span="8">
+            <el-form-item label="合同金额" prop="contractTotal">{{calContractTotal}}</el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="交货方式" prop="deliveryMethod">
@@ -330,14 +333,19 @@
               <el-input v-model="form.portToFactoryFare" placeholder="请输入港口到厂运费" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <el-col :span="8" v-show="!displayContractTotal">
+          <!-- <el-col :span="8" v-show="!displayContractTotal">
             <el-form-item label="港口到港口运费" prop="portToPortFare">
               <el-input v-model="form.portToPortFare" placeholder="请输入港口到港口运费" style="width: 200px" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
-          <el-col :span="8" v-show="displayContractTotal">
+          <!-- <el-col :span="8" v-show="displayContractTotal">
+            <el-form-item label="港口到港口运费" prop="portToPortFare">
+              <el-input v-model="form.portToPortFare" placeholder="请输入港口到港口运费" style="width: 200px" />
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="8">
             <el-form-item label="港口到港口运费" prop="portToPortFare">
               <el-input v-model="form.portToPortFare" placeholder="请输入港口到港口运费" style="width: 200px" />
             </el-form-item>
@@ -564,7 +572,7 @@ export default {
       remoteLoadingSClientName: false,
       isAdmin: false,
       user: {},
-      displayContractTotal: true
+      // displayContractTotal: true
     };
   },
   filters:{
@@ -705,7 +713,7 @@ export default {
       this.showApproval = false;
       this.form.contractActionType = '0';
       this.form.ourCompanyName = '1'
-      this.displayContractTotal = false;
+      // this.displayContractTotal = false;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -717,11 +725,11 @@ export default {
         this.form.constractIsExist = response.data.constractIsExist;
         this.title = "修改合同数据";
         this.isUpdate = true;
-        if (this.form.contractStatus == 'MANUALADD' || this.form.contractStatus == '7IMPORT') {
-          this.displayContractTotal = false;
-        } else {
-          this.displayContractTotal = true;
-        }
+        // if (this.form.contractStatus == 'MANUALADD' || this.form.contractStatus == '7IMPORT') {
+        //   this.displayContractTotal = false;
+        // } else {
+        //   this.displayContractTotal = true;
+        // }
       });
 
       getContractAdditional(contractId).then(response => {
@@ -769,6 +777,7 @@ export default {
 
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.contractTotal = this.calContractTotal; // 合同金额赋值
           if (this.isUpdate) {
             this.form.contractActionType = actionType;
             updateContract(this.form).then(response => {
