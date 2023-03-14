@@ -65,22 +65,22 @@ public class PurchaseReceiptInfo extends BaseEntity
     private String transportNumber;
 
     /** 预期收货数量 */
-    private Long expectReceiptQuantity;
+    private BigDecimal expectReceiptQuantity;
 
     /** 核算数量 */
-    private Long checkQuantity;
+    private BigDecimal checkQuantity;
 
     /** 核算单价 */
-    private Long checkPrice;
+    private BigDecimal checkPrice;
 
     /** 核算金额 */
-    private Long checkMoney;
+    private BigDecimal checkMoney;
 
     /** 货损数量 */
-    private Long cargoDamageQuantity;
+    private BigDecimal cargoDamageQuantity;
 
     /** 货损金额 */
-    private Long cargoDamageMoney;
+    private BigDecimal cargoDamageMoney;
 
     /** 备注 */
     private String receiptRemark;
@@ -112,207 +112,188 @@ public class PurchaseReceiptInfo extends BaseEntity
     /** 收货状态 */
     private String receiptStatus;
 
-    public void setReceiptId(String receiptId) 
-    {
+    public String getReceiptId() {
+        return receiptId;
+    }
+
+    public void setReceiptId(String receiptId) {
         this.receiptId = receiptId;
     }
 
-    public String getReceiptId() 
-    {
-        return receiptId;
+    public String getPurchaseOrderId() {
+        return purchaseOrderId;
     }
-    public void setPurchaseOrderId(String purchaseOrderId) 
-    {
+
+    public void setPurchaseOrderId(String purchaseOrderId) {
         this.purchaseOrderId = purchaseOrderId;
     }
 
-    public String getPurchaseOrderId() 
-    {
-        return purchaseOrderId;
+    public String getPurchaseContractId() {
+        return purchaseContractId;
     }
-    public void setPurchaseContractId(String purchaseContractId) 
-    {
+
+    public void setPurchaseContractId(String purchaseContractId) {
         this.purchaseContractId = purchaseContractId;
     }
 
-    public String getPurchaseContractId() 
-    {
-        return purchaseContractId;
+    public String getHandledBy() {
+        return handledBy;
     }
-    public void setHandledBy(String handledBy) 
-    {
+
+    public void setHandledBy(String handledBy) {
         this.handledBy = handledBy;
     }
 
-    public String getHandledBy() 
-    {
-        return handledBy;
+    public Date getReceiptDate() {
+        return receiptDate;
     }
-    public void setReceiptDate(Date receiptDate) 
-    {
+
+    public void setReceiptDate(Date receiptDate) {
         this.receiptDate = receiptDate;
     }
 
-    public Date getReceiptDate() 
-    {
-        return receiptDate;
+    public String getSupplierName() {
+        return supplierName;
     }
-    public void setSupplierName(String supplierName) 
-    {
+
+    public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
     }
 
-    public String getSupplierName() 
-    {
-        return supplierName;
+    public String getSupplierRealName() {
+        return supplierRealName;
     }
-    public void setMaterialName(String materialName) 
-    {
+
+    public void setSupplierRealName(String supplierRealName) {
+        this.supplierRealName = supplierRealName;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
         this.materialName = materialName;
     }
 
-    public String getMaterialName() 
-    {
-        return materialName;
+    public String getWarehouseCode() {
+        return warehouseCode;
     }
-    public void setWarehouseCode(String warehouseCode) 
-    {
+
+    public void setWarehouseCode(String warehouseCode) {
         this.warehouseCode = warehouseCode;
     }
 
-    public String getWarehouseCode() 
-    {
-        return warehouseCode;
+    public String getWarehouseName() {
+        return warehouseName;
     }
-    public void setWarehouseName(String warehouseName) 
-    {
+
+    public void setWarehouseName(String warehouseName) {
         this.warehouseName = warehouseName;
     }
 
-    public String getWarehouseName() 
-    {
-        return warehouseName;
+    public String getBatchNo() {
+        return batchNo;
     }
-    public void setBatchNo(String batchNo) 
-    {
+
+    public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
     }
 
-    public String getBatchNo() 
-    {
-        return batchNo;
+    public String getTransportMode() {
+        return transportMode;
     }
-    public void setTransportMode(String transportMode) 
-    {
+
+    public void setTransportMode(String transportMode) {
         this.transportMode = transportMode;
     }
 
-    public String getTransportMode() 
-    {
-        return transportMode;
+    public String getTransportNumber() {
+        return transportNumber;
     }
-    public void setTransportNumber(String transportNumber) 
-    {
+
+    public void setTransportNumber(String transportNumber) {
         this.transportNumber = transportNumber;
     }
 
-    public String getTransportNumber() 
-    {
-        return transportNumber;
+    public BigDecimal getExpectReceiptQuantity() {
+        return expectReceiptQuantity;
     }
-    public void setExpectReceiptQuantity(Long expectReceiptQuantity) 
-    {
+
+    public void setExpectReceiptQuantity(BigDecimal expectReceiptQuantity) {
         this.expectReceiptQuantity = expectReceiptQuantity;
     }
 
-    public Long getExpectReceiptQuantity() 
-    {
-        return expectReceiptQuantity;
+    public BigDecimal getCheckQuantity() {
+        return checkQuantity;
     }
-    public void setCheckQuantity(Long checkQuantity) 
-    {
+
+    public void setCheckQuantity(BigDecimal checkQuantity) {
         this.checkQuantity = checkQuantity;
     }
 
-    public Long getCheckQuantity() 
-    {
-        return checkQuantity;
+    public BigDecimal getCheckPrice() {
+        return checkPrice;
     }
-    public void setCheckPrice(Long checkPrice) 
-    {
+
+    public void setCheckPrice(BigDecimal checkPrice) {
         this.checkPrice = checkPrice;
     }
 
-    public Long getCheckPrice() 
-    {
-        return checkPrice;
+    public BigDecimal getCheckMoney() {
+        return checkMoney;
     }
-    public void setCheckMoney(Long checkMoney) 
-    {
+
+    public void setCheckMoney(BigDecimal checkMoney) {
         this.checkMoney = checkMoney;
     }
 
-    public Long getCheckMoney() 
-    {
-        return checkMoney;
+    public BigDecimal getCargoDamageQuantity() {
+        return cargoDamageQuantity;
     }
-    public void setCargoDamageQuantity(Long cargoDamageQuantity) 
-    {
+
+    public void setCargoDamageQuantity(BigDecimal cargoDamageQuantity) {
         this.cargoDamageQuantity = cargoDamageQuantity;
     }
 
-    public Long getCargoDamageQuantity() 
-    {
-        return cargoDamageQuantity;
+    public BigDecimal getCargoDamageMoney() {
+        return cargoDamageMoney;
     }
-    public void setCargoDamageMoney(Long cargoDamageMoney) 
-    {
+
+    public void setCargoDamageMoney(BigDecimal cargoDamageMoney) {
         this.cargoDamageMoney = cargoDamageMoney;
     }
 
-    public Long getCargoDamageMoney() 
-    {
-        return cargoDamageMoney;
+    public String getReceiptRemark() {
+        return receiptRemark;
     }
-    public void setReceiptRemark(String receiptRemark) 
-    {
+
+    public void setReceiptRemark(String receiptRemark) {
         this.receiptRemark = receiptRemark;
     }
 
-    public String getReceiptRemark() 
-    {
-        return receiptRemark;
+    public Double getDryCalWaterValue() {
+        return dryCalWaterValue;
     }
-    public void setDryCalWaterValue(Double dryCalWaterValue)
-    {
+
+    public void setDryCalWaterValue(Double dryCalWaterValue) {
         this.dryCalWaterValue = dryCalWaterValue;
     }
 
-    public Double getDryCalWaterValue()
-    {
-        return dryCalWaterValue;
+    public Double getDryCalDryingRate() {
+        return dryCalDryingRate;
     }
-    public void setDryCalDryingRate(Double dryCalDryingRate)
-    {
+
+    public void setDryCalDryingRate(Double dryCalDryingRate) {
         this.dryCalDryingRate = dryCalDryingRate;
     }
 
-    public Double getDryCalDryingRate()
-    {
-        return dryCalDryingRate;
-    }
-    public void setDryCalScaleRange(Double dryCalScaleRange)
-    {
-        this.dryCalScaleRange = dryCalScaleRange;
-    }
-
-    public Double getDryCalScaleRange()
-    {
+    public Double getDryCalScaleRange() {
         return dryCalScaleRange;
     }
-    public void setDryCalResult(Double dryCalResult)
-    {
-        this.dryCalResult = dryCalResult;
+
+    public void setDryCalScaleRange(Double dryCalScaleRange) {
+        this.dryCalScaleRange = dryCalScaleRange;
     }
 
     public Double getDryCalSettlementWeight() {
@@ -323,32 +304,36 @@ public class PurchaseReceiptInfo extends BaseEntity
         this.dryCalSettlementWeight = dryCalSettlementWeight;
     }
 
-    public Double getDryCalResult()
-    {
+    public Double getDryCalResult() {
         return dryCalResult;
     }
-    public void setBizVersion(Long bizVersion) 
-    {
-        this.bizVersion = bizVersion;
+
+    public void setDryCalResult(Double dryCalResult) {
+        this.dryCalResult = dryCalResult;
     }
 
-    public Long getBizVersion() 
-    {
+    public Long getBizVersion() {
         return bizVersion;
     }
 
-    public String getCcbh() { return ccbh; }
-    public void setCcbh(String ccbh) { this.ccbh = ccbh; }
-
-    public BigDecimal getHtdj() { return htdj; }
-    public void setHtdj(BigDecimal htdj) { this.htdj = htdj; }
-
-    public String getSupplierRealName() {
-        return supplierRealName;
+    public void setBizVersion(Long bizVersion) {
+        this.bizVersion = bizVersion;
     }
 
-    public void setSupplierRealName(String supplierRealName) {
-        this.supplierRealName = supplierRealName;
+    public String getCcbh() {
+        return ccbh;
+    }
+
+    public void setCcbh(String ccbh) {
+        this.ccbh = ccbh;
+    }
+
+    public BigDecimal getHtdj() {
+        return htdj;
+    }
+
+    public void setHtdj(BigDecimal htdj) {
+        this.htdj = htdj;
     }
 
     public String getReceiptStatus() {

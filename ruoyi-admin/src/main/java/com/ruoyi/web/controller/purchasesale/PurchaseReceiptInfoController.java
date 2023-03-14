@@ -60,7 +60,7 @@ public class PurchaseReceiptInfoController extends BaseController
         });
 
         list.stream().forEach(element -> {
-            if (element.getCheckQuantity().compareTo(0L) > 0) {
+            if (element.getCheckQuantity().compareTo(new BigDecimal(0)) > 0) {
                 // 已收货
                 element.setReceiptStatus("2");
             } else {
