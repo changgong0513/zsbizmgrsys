@@ -1242,6 +1242,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.supplierName = this.form.supplierRealName;
           if (this.isUpdate) {
             updatePurchase(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

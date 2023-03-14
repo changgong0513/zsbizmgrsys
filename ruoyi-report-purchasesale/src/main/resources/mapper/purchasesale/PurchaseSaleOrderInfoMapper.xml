@@ -288,7 +288,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="businessDate != null">business_date = #{businessDate},</if>
             <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
             <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
-            <if test="supplierName != null and supplierName != ''">supplier_name = #{supplierName},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="unitPrice != null">unit_price = #{unitPrice},</if>
             <if test="meteringUnit != null and meteringUnit != ''">metering_unit = #{meteringUnit},</if>
             <if test="arrivalDate != null">arrival_date = #{arrivalDate},</if>
