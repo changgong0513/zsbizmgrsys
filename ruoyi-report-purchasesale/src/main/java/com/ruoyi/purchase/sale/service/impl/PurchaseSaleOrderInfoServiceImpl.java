@@ -236,7 +236,7 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
      * @param contractType
      */
     @Override
-    public void setPurchaseOrderStatusAndCompletionRate(List<PurchaseSaleOrderInfo> list, final String contractType) {
+    public void setPurchaseOrderStatusAndCompletionRate(List<PurchaseSaleOrderInfo> list) {
 
         if (list == null || list.size() == 0) {
             return;

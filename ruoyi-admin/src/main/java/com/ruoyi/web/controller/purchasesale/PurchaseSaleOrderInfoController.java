@@ -80,7 +80,7 @@ public class PurchaseSaleOrderInfoController extends BaseController {
         }
 
         // 设置采购合同状态和完成率
-        purchaseSaleOrderInfoService.setPurchaseOrderStatusAndCompletionRate(list, CONST_CONTRACT_TYPE_PURCHASE);
+        purchaseSaleOrderInfoService.setPurchaseOrderStatusAndCompletionRate(list);
 
         return getDataTable(list);
     }
