@@ -169,7 +169,37 @@ public class PurchaseSaleOrderInfoController extends BaseController {
     @PutMapping
     public AjaxResult edit(@RequestBody PurchaseSaleOrderInfo purchaseSaleOrderInfo) {
 
-        purchaseSaleOrderInfo.setSupplierName(purchaseSaleOrderInfo.getSupplierRealName());
+        String supplierRealName = purchaseSaleOrderInfo.getSupplierRealName();
+        if (StringUtils.isNotBlank(supplierRealName)) {
+            if (!StringUtils.startsWith(supplierRealName, "GYS") && !StringUtils.startsWith(supplierRealName, "KH")) {
+                // 取得所有客户主数据
+                List<MasterDataClientInfo> clientList = masterDataClientInfoService.
+                        selectMasterDataClientInfoList(new MasterDataClientInfo());
+
+                if (StringUtils.equals(purchaseSaleOrderInfo.getPurchaseType(), "P")) {
+                    // 供应商列表转成Map（key：companyName, value：baseId）
+                    Map<String, String> supplierNameMap = clientList
+                            .stream()
+                            .filter(element -> element.getBaseId().startsWith("GYS"))
+                            .collect(Collectors.toMap(MasterDataClientInfo::getCompanyName, MasterDataClientInfo::getBaseId));
+
+                    purchaseSaleOrderInfo.setSupplierName(supplierNameMap.get(supplierRealName));
+                } else {
+                    // 客户列表转成Map（key：companyName, value：baseId）
+                    Map<String, String> clientMap = clientList
+                            .stream()
+                            .filter(element -> element.getBaseId().startsWith("KH"))
+                            .collect(Collectors.toMap(MasterDataClientInfo::getCompanyName, MasterDataClientInfo::getBaseId));
+
+                    purchaseSaleOrderInfo.setSupplierName(clientMap.get(supplierRealName));
+                }
+            } else {
+                purchaseSaleOrderInfo.setSupplierName(supplierRealName);
+            }
+        } else {
+            purchaseSaleOrderInfo.setSupplierName(supplierRealName);
+        }
+
         purchaseSaleOrderInfo.setBizVersion(1L);
         purchaseSaleOrderInfo.setCreateTime(DateUtils.getNowDate());
         purchaseSaleOrderInfo.setUpdateTime(DateUtils.getNowDate());
