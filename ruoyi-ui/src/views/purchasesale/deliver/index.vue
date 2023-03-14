@@ -206,14 +206,14 @@
           </el-col>
           <!-- 客户姓名 -->
           <el-col :span="8">
-            <el-form-item label="客户姓名" prop="clientName">
+            <el-form-item label="客户名称" prop="clientName">
               <el-select
                 v-model="form.clientName"
                 filterable
                 remote
                 clearable
                 reserve-keyword
-                placeholder="请输入客户编号关键字"
+                placeholder="请输入客户名称关键字"
                 style="width: 200px"
                 :remote-method="remoteMethodClientName"
                 :loading="remoteLoadingSClientName"
@@ -848,7 +848,7 @@ export default {
       optionsSaleContract: [],
       listSaleContract: [],
       remoteLoadingSaleContract: false,
-      // 客户编号选择用
+      // 客户名称选择用
       optionsClientName: [],
       listClientName: [],
       remoteLoadingSClientName: false,
@@ -894,7 +894,6 @@ export default {
         this.remoteLoadingSaleContract = true;
         this.queryParams.saleContractId = query;
         this.queryParams.contractType = "S";
-        console.log("select远程方法调用" + JSON.stringify(this.queryParams));
         listPurchase(this.queryParams).then(response => {
           this.remoteLoadingSaleContract = false;
           this.listSaleContract = response.rows;
@@ -915,7 +914,6 @@ export default {
         this.remoteLoadingSClientName = true;
         this.queryParams.companyName = query;
         this.queryParams.recordFlag = 2;
-        console.log("select远程方法调用" + JSON.stringify(this.queryParams));
         listClient(this.queryParams).then(response => {
           this.remoteLoadingSClientName = false;
           this.listClientName = response.rows;
@@ -935,7 +933,6 @@ export default {
       if (query !== '') {
         this.remoteLoadingMaterialId = true;
         this.queryParams.materialId = query;
-        console.log("取得物料名称远程方法调用查询参数：" + JSON.stringify(this.queryParams));
         listMaterialData(this.queryParams).then(response => {
           this.remoteLoadingMaterialId = false;
           this.listMaterialId = response.rows;
@@ -955,7 +952,6 @@ export default {
       if (query !== '') {
         this.remoteLoadingMaterialName = true;
         this.queryParams.materialName = query;
-        console.log("取得物料名称远程方法调用查询参数：" + JSON.stringify(this.queryParams));
         listMaterialData(this.queryParams).then(response => {
           this.remoteLoadingMaterialName = false;
           this.listMaterialName = response.rows;
@@ -977,7 +973,6 @@ export default {
         this.queryParams.warehouseCode = query;
         listWarehouse(this.queryParams).then(response => {
           this.remoteLoadingWarehouse = false;
-          console.log(JSON.stringify(response.rows));
           this.purchaseOrderListWarehouse = response.rows;
           this.purchaseOptionsWarehouse = response.rows.map(item => {
             return { value: `${item.warehouseCode}`, label: `${item.warehouseCode}` };
@@ -997,7 +992,6 @@ export default {
         this.queryParams.warehouseName = query;
         listWarehouse(this.queryParams).then(response => {
           this.remoteLoadingWarehouseName = false;
-          console.log(JSON.stringify(response.rows));
           this.ListWarehouseName = response.rows;
           this.optionsWarehouseName = response.rows.map(item => {
             return { value: `${item.warehouseCode}`, label: `${item.warehouseName}` };
@@ -1033,13 +1027,9 @@ export default {
     },
     /** 客户姓名下拉列表框，选择值改变后回调方法 */
     selChangeClientName(selValue) {
-      console.log("输入的客户姓名关键字是：" + selValue);
-
       let selClient = this.listClientName.find(item => {
         return item.baseId === selValue;
       });
-      
-      console.log("选择的客户数据是：" + JSON.stringify(selClient));
 
       this.form.clientId = selClient.baseId; // 客户编号
     },
@@ -1065,8 +1055,7 @@ export default {
     },
     /** 仓库编号下拉列表框，选择值改变后回调方法 */
     selChangeWarehouse(selValue) {
-      console.log("选择的仓库编号是：" + selValue);
-
+      
       let warehouse = this.purchaseOrderListWarehouse.find(item => {
         return item.warehouseCode === selValue;
       });
@@ -1075,7 +1064,6 @@ export default {
     },
     /** 仓库编号下拉列表框，选择值改变后回调方法 */
     selChangeWarehouseId(selValue) {
-      console.log("选择的仓库编号是：" + selValue);
       this.form.warehouseCode = selValue; // 仓库名称
     },
     /** 查询采购收货销售发货管理列表 */
