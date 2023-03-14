@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { listMaterialData, getMaterialData, delMaterialData, addMaterialData, updatMaterialData } from "@/api/masterdata/material";
+import { listMaterialData, getMaterialData, delMaterialData, addMaterialData, updateMaterialData } from "@/api/masterdata/material";
 
 export default {
   name: "Material",
@@ -291,8 +291,8 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.actionFlag == "update") {
-            updatMaterialData(this.form).then(response => {
+          if (this.actionFlag == "update") {
+            updateMaterialData(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
