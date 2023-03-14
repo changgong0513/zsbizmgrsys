@@ -550,6 +550,9 @@ export default {
         ],
         contractPrice: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的合同单价", trigger: "blur" }
+        ],
+        companyName: [
+          { required: true, message: "对方单位名称不能为空", trigger: "change" }
         ]
       },
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
