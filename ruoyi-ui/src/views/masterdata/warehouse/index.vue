@@ -509,7 +509,7 @@ export default {
       // 表单参数
       form: {
         warehouseCategory: 5,
-        measurementUnit: 3
+        measurementUnit: 1
       },
       //
       formDetail: {},
