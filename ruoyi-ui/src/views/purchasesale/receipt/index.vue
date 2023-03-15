@@ -356,10 +356,10 @@
               <el-input v-model="form.expectReceiptQuantity" placeholder="请输入卸货数量" style="width: 240px" />
             </el-form-item>
           </el-col>
-          <!-- 核算数量 -->
+          <!-- 结算数量 -->
           <el-col :span="8">
-            <el-form-item label="核算数量" prop="checkQuantity">
-              <el-input v-model="form.checkQuantity" placeholder="请输入核算数量" style="width: 240px" />
+            <el-form-item label="结算数量" prop="checkQuantity">
+              <el-input v-model="form.checkQuantity" placeholder="请输入结算数量" style="width: 240px" />
             </el-form-item>
           </el-col>
           <!-- 核算单价 -->
@@ -552,9 +552,9 @@
               <el-input v-model="formDetail.expectReceiptQuantity" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <!-- 核算数量 -->
+          <!-- 结算数量 -->
           <el-col :span="8">
-            <el-form-item label="核算数量" prop="checkQuantity">
+            <el-form-item label="结算数量" prop="checkQuantity">
               <el-input v-model="formDetail.checkQuantity" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
@@ -715,13 +715,33 @@ export default {
           { required: true, message: "运输单号不能为空", trigger: "blur" }
         ],
         expectReceiptQuantity: [
-          { required: true, message: "预期收货数量不能为空", trigger: "blur" }
+          { required: true, message: "预期收货数量不能为空", trigger: "blur" },
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的预期收货数量", trigger: "blur" }
         ],
         checkQuantity: [
-          { required: true, message: "核算数量不能为空", trigger: "blur" }
+          { required: true, message: "结算数量不能为空", trigger: "blur" },
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的结算数量", trigger: "blur" }
         ],
         ccbh: [
           { required: true, message: "车船编号不能为空", trigger: "blur" }
+        ],
+        checkPrice: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的核算单价", trigger: "blur" }
+        ],
+        htdj: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的合同单价", trigger: "blur" }
+        ],
+        dryCalWaterValue: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的潮粮水分", trigger: "blur" }
+        ],
+        dryCalDryingRate: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的预计烘干水分", trigger: "blur" }
+        ],
+        dryCalScaleRange: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的烘干比例", trigger: "blur" }
+        ],
+        dryCalSettlementWeight: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的结算重量", trigger: "blur" }
         ]
       },
       isUpdate: false,
@@ -781,7 +801,7 @@ export default {
       
       return 0;
     },
-       /** 货损数量（货损数量=卸货数量-核算数量） */
+       /** 货损数量（货损数量=卸货数量-结算数量） */
     calCargoDamageQuantity: function () {
       if (this.form.expectReceiptQuantity && this.form.checkQuantity) {
         return Number(this.form.expectReceiptQuantity) * Number(this.form.checkQuantity)

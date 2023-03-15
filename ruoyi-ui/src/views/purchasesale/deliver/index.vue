@@ -373,10 +373,10 @@
               <el-input v-model="form.deliverQuantity" placeholder="请输入发货数量" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <!-- 核算数量 -->
+          <!-- 结算数量 -->
           <el-col :span="8">
-            <el-form-item label="核算数量" prop="checkQuantity">
-              <el-input v-model="form.checkQuantity" placeholder="请输入核算数量" style="width: 200px" />
+            <el-form-item label="结算数量" prop="checkQuantity">
+              <el-input v-model="form.checkQuantity" placeholder="请输入结算数量" style="width: 200px" />
             </el-form-item>
           </el-col>
           <!-- 核算金额 -->
@@ -616,9 +616,9 @@
               <el-input v-model="formDetail.deliverQuantity" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <!-- 核算数量 -->
+          <!-- 结算数量 -->
           <el-col :span="8">
-            <el-form-item label="核算数量" prop="checkQuantity">
+            <el-form-item label="结算数量" prop="checkQuantity">
               <el-input v-model="formDetail.checkQuantity" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
@@ -820,7 +820,7 @@ export default {
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的发货数量", trigger: "blur" }
         ],
         checkQuantity: [
-          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的核算数量", trigger: "blur" }
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的结算数量", trigger: "blur" }
         ],
         checkPrice: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的核算单价", trigger: "blur" }

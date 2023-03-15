@@ -67,7 +67,7 @@ public class PurchaseReceiptInfo extends BaseEntity
     /** 预期收货数量 */
     private BigDecimal expectReceiptQuantity;
 
-    /** 核算数量 */
+    /** 结算数量 */
     private BigDecimal checkQuantity;
 
     /** 核算单价 */

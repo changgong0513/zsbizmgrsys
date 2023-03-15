@@ -71,7 +71,7 @@ public class SaleDeliverInfo extends BaseEntity
     /** 发货数量 */
     private BigDecimal deliverQuantity;
 
-    /** 核算数量 */
+    /** 结算数量 */
     private BigDecimal checkQuantity;
 
     /** 核算单价 */
