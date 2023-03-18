@@ -475,8 +475,8 @@
     <pagination
       v-show="totalContractSyncResult > 0"
       :total="totalContractSyncResult"
-      :page.sync="queryParamsContractSyncResult.pageNumContractSyncResult"
-      :limit.sync="queryParamsContractSyncResult.pageSizeContractSyncResult"
+      :page.sync="queryParamsContractSyncResult.pageNum"
+      :limit.sync="queryParamsContractSyncResult.pageSize"
       @pagination="getListContractSyncResult"
     />
     <div slot="footer" class="dialog-footer">
@@ -567,8 +567,8 @@ export default {
       },
       // 合同同步结果查询参数
       queryParamsContractSyncResult: {
-        pageNumContractSyncResult: 1,
-        pageSizeContractSyncResult: 10,
+        pageNum: 1,
+        pageSize: 10,
         contractId: null
       },
       // 表单参数

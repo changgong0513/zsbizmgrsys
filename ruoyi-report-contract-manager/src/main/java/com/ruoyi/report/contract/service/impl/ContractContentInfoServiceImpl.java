@@ -260,7 +260,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 String id = ids.get(i);
                 System.out.println("审批实例ID：" + id);
                 ContractContentInfo contract = getContractData(accessToken, id, contractSyncLog);
-                if (contract!= null && StringUtils.isNotBlank(contract.getContractId())) {
+                if (contract != null && StringUtils.isNotBlank(contract.getContractId())) {
                     if (StringUtils.equals(contractSyncLog.getSyncStatus(), "1")) {
                         // 设置合同所属部门编号
                         if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
