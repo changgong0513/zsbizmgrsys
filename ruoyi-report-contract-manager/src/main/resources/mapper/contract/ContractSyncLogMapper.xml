@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.report.contract.mapper.ContractSyncLogMapper">
+    
+    <resultMap type="ContractSyncLog" id="ContractSyncLogResult">
+        <result property="syncLogId"    column="sync_log_id"    />
+        <result property="contractId"    column="contract_id"    />
+        <result property="contractType"    column="contract_type"    />
+        <result property="syncTime"    column="sync_time"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="syncStatus"    column="sync_status"    />
+        <result property="statusDescription"    column="status_description"    />
+    </resultMap>
+
+    <sql id="selectContractSyncLogVo">
+        select sync_log_id, contract_id, contract_type, sync_time, dept_id, dept_name, sync_status, status_description from contract_sync_log
+    </sql>
+
+    <select id="selectContractSyncLogList" parameterType="ContractSyncLog" resultMap="ContractSyncLogResult">
+        <include refid="selectContractSyncLogVo"/>
+        <where>  
+            <if test="contractId != null  and contractId != ''"> and contract_id = #{contractId}</if>
+            <if test="contractType != null  and contractType != ''"> and contract_type = #{contractType}</if>
+            <if test="syncTime != null "> and sync_time = #{syncTime}</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="syncStatus != null  and syncStatus != ''"> and sync_status = #{syncStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectContractSyncLogBySyncLogId" parameterType="String" resultMap="ContractSyncLogResult">
+        <include refid="selectContractSyncLogVo"/>
+        where sync_log_id = #{syncLogId}
+    </select>
+        
+    <insert id="insertContractSyncLog" parameterType="ContractSyncLog">
+        insert into contract_sync_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="syncLogId != null and syncLogId != ''">sync_log_id,</if>
+            <if test="contractId != null and contractId != ''">contract_id,</if>
+            <if test="contractType != null and contractType != ''">contract_type,</if>
+            <if test="syncTime != null">sync_time,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="syncStatus != null and syncStatus != ''">sync_status,</if>
+            <if test="statusDescription != null">status_description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="syncLogId != null and syncLogId != ''">#{syncLogId},</if>
+            <if test="contractId != null and contractId != ''">#{contractId},</if>
+            <if test="contractType != null and contractType != ''">#{contractType},</if>
+            <if test="syncTime != null">#{syncTime},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="syncStatus != null and syncStatus != ''">#{syncStatus},</if>
+            <if test="statusDescription != null">#{statusDescription},</if>
+         </trim>
+    </insert>
+
+    <update id="updateContractSyncLog" parameterType="ContractSyncLog">
+        update contract_sync_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="contractId != null and contractId != ''">contract_id = #{contractId},</if>
+            <if test="contractType != null and contractType != ''">contract_type = #{contractType},</if>
+            <if test="syncTime != null">sync_time = #{syncTime},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="syncStatus != null and syncStatus != ''">sync_status = #{syncStatus},</if>
+            <if test="statusDescription != null">status_description = #{statusDescription},</if>
+        </trim>
+        where sync_log_id = #{syncLogId}
+    </update>
+
+    <delete id="deleteContractSyncLogBySyncLogId" parameterType="String">
+        delete from contract_sync_log where sync_log_id = #{syncLogId}
+    </delete>
+
+    <delete id="deleteContractSyncLogBySyncLogIds" parameterType="String">
+        delete from contract_sync_log where sync_log_id in 
+        <foreach item="syncLogId" collection="array" open="(" separator="," close=")">
+            #{syncLogId}
+        </foreach>
+    </delete>
+</mapper>

@@ -18,11 +18,13 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.fpgl.domain.FpglMainInfo;
 import com.ruoyi.fpgl.mapper.FpglMainInfoMapper;
@@ -30,12 +32,15 @@ import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.purchase.sale.mapper.PurchaseSaleOrderInfoMapper;
 import com.ruoyi.report.contract.domain.ContractApprovalInfo;
 import com.ruoyi.report.contract.domain.ContractApprovalRecordsInfo;
+import com.ruoyi.report.contract.domain.ContractSyncLog;
 import com.ruoyi.report.contract.mapper.ContractApprovalInfoMapper;
 import com.ruoyi.report.contract.mapper.ContractApprovalRecordsInfoMapper;
+import com.ruoyi.report.contract.mapper.ContractSyncLogMapper;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataClientInfoMapper;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
+import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.zjzy.domain.ZjzyFkInfo;
 import com.ruoyi.zjzy.mapper.ZjzyFkInfoMapper;
 import org.slf4j.Logger;
@@ -46,6 +51,7 @@ import com.ruoyi.report.contract.mapper.ContractContentInfoMapper;
 import com.ruoyi.report.contract.domain.ContractContentInfo;
 import com.ruoyi.report.contract.service.IContractContentInfoService;
 
+import javax.annotation.Resource;
 import javax.validation.Validator;
 
 /**
@@ -82,6 +88,12 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
 
     @Autowired
     private FpglMainInfoMapper fpglMainInfoMapper;
+
+    @Resource
+    private ContractSyncLogMapper contractSyncLogMapper;
+
+    @Resource
+    private ISysDeptService sysDeptService;
 
     @Autowired
     protected Validator validator;
@@ -239,58 +251,79 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             List<String> ids = getContract(accessToken, processCode);
             int size = ids.size();
             for (int i = 0; i < size; i++) {
+                // 合同同步日志
+                ContractSyncLog contractSyncLog = new ContractSyncLog();
+                contractSyncLog.setSyncLogId(IdUtils.fastUUID().replace("-", ""));
+                contractSyncLog.setSyncTime(DateUtils.getNowDate());
+                contractSyncLog.setSyncStatus("1");
+
                 String id = ids.get(i);
                 System.out.println("审批实例ID：" + id);
-                ContractContentInfo contract = getContractData(accessToken, id);
-                if (StringUtils.isNotBlank(contract.getContractId())) {
-                    // 设置合同所属部门编号
-                    if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
-                        contract.setBelongDeptId(209L);
-                    } else if (StringUtils.equals(processCode, "PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC")) {
-                        contract.setBelongDeptId(214L);
-                    } else {
-                        contract.setBelongDeptId(0L);
-                    }
+                ContractContentInfo contract = getContractData(accessToken, id, contractSyncLog);
+                if (contract!= null && StringUtils.isNotBlank(contract.getContractId())) {
+                    if (StringUtils.equals(contractSyncLog.getSyncStatus(), "1")) {
+                        // 设置合同所属部门编号
+                        if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
+                            contract.setBelongDeptId(209L);
+                        } else if (StringUtils.equals(processCode, "PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC")) {
+                            contract.setBelongDeptId(214L);
+                        } else {
+                            contract.setBelongDeptId(0L);
+                        }
 
-                    // 检查合同是否已经导入合同表
-                    ContractContentInfo selectContract = null;
-                    selectContract = contractContentInfoMapper
-                            .selectContractContentInfoByContractId(contract.getContractId());
-                    if (selectContract == null) {
-                        contract.setBizVersion(1L);
-                        contract.setCreateTime(DateUtils.getNowDate());
-                        contract.setUpdateTime(DateUtils.getNowDate());
-                        contract.setCreateBy(SecurityUtils.getUsername());
-                        contract.setUpdateBy(SecurityUtils.getUsername());
-                        contractContentInfoMapper.insertContractContentInfo(contract);
-                    } else {
-                        contract.setUpdateTime(DateUtils.getNowDate());
-                        contract.setUpdateBy(SecurityUtils.getUsername());
-                        contractContentInfoMapper.updateContractContentInfo(contract);
-                    }
+                        contractSyncLog.setDeptId(contract.getBelongDeptId());
+                        SysDept sysDept = sysDeptService.selectDeptById(contract.getBelongDeptId());
+                        if (sysDept != null) {
+                            contractSyncLog.setDeptName(sysDept.getDeptName());
+                        }
 
-                    // 取得审批数据，添加到审批表和审批记录表
-                    ContractApprovalInfo ccontractApprovalInfo = getContractApprovaData(accessToken, id);
+                        // 检查合同是否已经导入合同表
+                        ContractContentInfo selectContract = null;
+                        selectContract = contractContentInfoMapper
+                                .selectContractContentInfoByContractId(contract.getContractId());
+                        if (selectContract == null) {
+                            contract.setBizVersion(1L);
+                            contract.setCreateTime(DateUtils.getNowDate());
+                            contract.setUpdateTime(DateUtils.getNowDate());
+                            contract.setCreateBy(SecurityUtils.getUsername());
+                            contract.setUpdateBy(SecurityUtils.getUsername());
+                            contractContentInfoMapper.insertContractContentInfo(contract);
+                        } else {
+                            contract.setUpdateTime(DateUtils.getNowDate());
+                            contract.setUpdateBy(SecurityUtils.getUsername());
+                            contractContentInfoMapper.updateContractContentInfo(contract);
+                        }
 
-                    // 检查审批数据是否已经导入合同审批信息表
-                    ContractApprovalInfo selContractApprovalInfo = null;
-                    selContractApprovalInfo = contractApprovalInfoMapper.selectContractApprovalInfoByApprovalId(ccontractApprovalInfo.getApprovalId());
-                    if (selContractApprovalInfo == null) {
-                        ccontractApprovalInfo.setBizVersion(1L);
-                        ccontractApprovalInfo.setCreateTime(DateUtils.getNowDate());
-                        ccontractApprovalInfo.setUpdateTime(DateUtils.getNowDate());
-                        ccontractApprovalInfo.setCreateBy(SecurityUtils.getUsername());
-                        ccontractApprovalInfo.setUpdateBy(SecurityUtils.getUsername());
-                        contractApprovalInfoMapper.insertContractApprovalInfo(ccontractApprovalInfo);
-                    } else {
-                        ccontractApprovalInfo.setBizVersion(1L);
-                        ccontractApprovalInfo.setUpdateTime(DateUtils.getNowDate());
-                        ccontractApprovalInfo.setUpdateBy(SecurityUtils.getUsername());
-                        contractApprovalInfoMapper.updateContractApprovalInfo(ccontractApprovalInfo);
+                        // 取得审批数据，添加到审批表和审批记录表
+                        ContractApprovalInfo ccontractApprovalInfo = getContractApprovaData(accessToken, id);
+
+                        // 检查审批数据是否已经导入合同审批信息表
+                        ContractApprovalInfo selContractApprovalInfo = null;
+                        selContractApprovalInfo = contractApprovalInfoMapper.selectContractApprovalInfoByApprovalId(ccontractApprovalInfo.getApprovalId());
+                        if (selContractApprovalInfo == null) {
+                            ccontractApprovalInfo.setBizVersion(1L);
+                            ccontractApprovalInfo.setCreateTime(DateUtils.getNowDate());
+                            ccontractApprovalInfo.setUpdateTime(DateUtils.getNowDate());
+                            ccontractApprovalInfo.setCreateBy(SecurityUtils.getUsername());
+                            ccontractApprovalInfo.setUpdateBy(SecurityUtils.getUsername());
+                            contractApprovalInfoMapper.insertContractApprovalInfo(ccontractApprovalInfo);
+                        } else {
+                            ccontractApprovalInfo.setBizVersion(1L);
+                            ccontractApprovalInfo.setUpdateTime(DateUtils.getNowDate());
+                            ccontractApprovalInfo.setUpdateBy(SecurityUtils.getUsername());
+                            contractApprovalInfoMapper.updateContractApprovalInfo(ccontractApprovalInfo);
+                        }
                     }
                 } else {
                     // 合同编号为空的场合
                     contractIdIsEmptyList.add(id);
+                    contractSyncLog.setContractId("empty");
+                    contractSyncLog.setStatusDescription("同步合同编号为空，请确认。");
+                    contractSyncLog.setSyncStatus("0");
+                }
+
+                if (StringUtils.equals(contractSyncLog.getSyncStatus(), "0")) {
+                    contractSyncLogMapper.insertContractSyncLog(contractSyncLog);
                 }
             }
 
@@ -582,7 +615,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                     new com.aliyun.dingtalkworkflow_1_0.models
                             .ListProcessInstanceIdsRequest()
                             .setProcessCode(processCode)
-                            .setStartTime(1667232000000L) // 2022-11-01 00:00:00------至今
+                            .setStartTime(1669824000000L) // 2022-12-01 00:00:00------至今
                             .setNextToken(nextToken)
                             .setMaxResults(20L);
             try {
@@ -669,7 +702,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
      * @param accessToken
      * @param id
      */
-    private ContractContentInfo getContractData(final String accessToken, final String id) {
+    private ContractContentInfo getContractData(final String accessToken, final String id, final ContractSyncLog contractSyncLog) {
         com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceHeaders getProcessInstanceHeaders = new com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceHeaders();
         getProcessInstanceHeaders.xAcsDingtalkAccessToken = accessToken;
         com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceRequest getProcessInstanceRequest = new com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceRequest()
@@ -691,8 +724,15 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 System.out.println(item.getName() + "------" + item.getValue());
                 // 货物名称
                 if (StringUtils.equals(item.getName(), "货物名称")) {
-                    contract.setGoodsId(String.valueOf(materialMap.get(item.getValue())));
-                    contract.setGoodsName(item.getValue());
+                    if (StringUtils.isNotBlank(item.getValue())) {
+                        contract.setGoodsId(String.valueOf(materialMap.get(item.getValue())));
+                        contract.setGoodsName(item.getValue());
+                    } else {
+                        contractSyncLog.setSyncStatus("0");
+                        contractSyncLog.setStatusDescription("同步的货物名称内容不正确，请确认。");
+                        throw  new Exception("同步的货物名称内容不正确，请确认。");
+                    }
+
                 }
                 // 合同类型
                 if (StringUtils.equals(item.getName(), "合同类型")) {
@@ -704,7 +744,11 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                         contract.setContractType("S");
                     } else {
                         // 其他合同类型
-                        contract.setContractType("Q");
+                        //contract.setContractType("Q");
+                        contractSyncLog.setContractType(item.getValue());
+                        contractSyncLog.setSyncStatus("0");
+                        contractSyncLog.setStatusDescription("同步的合同类型不是收购合同或者销售合同，请确认。");
+                        throw  new Exception("同步的合同类型不是收购合同或者销售合同，请确认。");
                     }
                 }
                 // 合同名称
@@ -716,6 +760,8 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                     if (!StringUtils.contains(item.getValue(), "/")) {
                         contract.setContractId(item.getValue());
                     } else {
+                        contractSyncLog.setSyncStatus("0");
+                        contractSyncLog.setStatusDescription("同步的合同编号包含非法字符[/]，请确认。");
                         throw new Exception("同步的合同编号包含非法字符[/]");
                     }
                 }

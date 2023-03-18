@@ -65,11 +65,20 @@
       <el-col :span="1.5">
         <el-button
           type="primary"
-          plain
-          icon="el-icon-refresh"
+          
+          icon="el-icon-check"
           size="mini"
           @click="handleContractSync"
         >合同同步</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          
+          icon="el-icon-star-off"
+          size="mini"
+          @click="handleContractSyncResult"
+        >同步结果</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -453,12 +462,35 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 合同同步结果列表 start -->
+    <el-dialog :title="titleContractSyncResult" :visible.sync="openContractSyncResult" 
+      width="80%" append-to-body :close-on-click-modal="false">
+      <el-table v-loading="loadingContractSyncResult" :data="listContractSyncResult">
+      <el-table-column label="合同编号" align="center" prop="contractId" />
+      <el-table-column label="合同类型" align="center" prop="contractType" />
+      <el-table-column label="同步时间" align="center" prop="syncTime" />
+      <el-table-column label="部门名称" align="center" prop="deptName" />
+      <el-table-column label="状态描述" align="center" prop="statusDescription" class-name="small-padding fixed-width" />
+    </el-table>
+    <pagination
+      v-show="totalContractSyncResult > 0"
+      :total="totalContractSyncResult"
+      :page.sync="queryParamsContractSyncResult.pageNumContractSyncResult"
+      :limit.sync="queryParamsContractSyncResult.pageSizeContractSyncResult"
+      @pagination="getListContractSyncResult"
+    />
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="closeContractSyncResult">关 闭</el-button>
+    </div>
+    </el-dialog>
+    <!-- 合同同步结果列表 end -->
   </div>
 </template>
 
 <script>
 import { listContract, getContract, addContract, delContract, updateContract, 
-  syncContract, uploadFile, getContractAdditional, delteFile, getContractApprovalInfoByContractId } from "@/api/contract/contract";
+  syncContract, uploadFile, getContractAdditional, delteFile, getContractApprovalInfoByContractId, 
+  listContractSyncResultData } from "@/api/contract/contract";
 import { listMaterialData } from "@/api/masterdata/material";
 import { listClient } from "@/api/masterdata/client";
 import { download } from "@/utils/request";
@@ -473,6 +505,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 合同同步结果遮罩层
+      loadingContractSyncResult: true,
       // 选中数组
       ids: [],
       // 子表选中数据
@@ -488,14 +522,22 @@ export default {
       showApprovalSwitch: true,
       // 总条数
       total: 1,
+      // 合同同步结果总条数
+      totalContractSyncResult: 1,
       // 合同管理表格数据
       contractList: [],
+      // 合同同步结果表格数据
+      listContractSyncResult: [],
       // 弹出层标题
       title: "",
+      // 合同同步结果弹出层标题
+      titleContractSyncResult: "",
       // 是否显示弹出层
       open: false,
-      // 是否显示和合同详细弹出层
+      // 是否显示合同详细弹出层
       openDetail: false,
+      // 是否显示合同同步结果列表弹出层
+      openContractSyncResult: false,
       // 用户导入参数
       upload: {
         // 是否显示弹出层（用户导入）
@@ -522,6 +564,12 @@ export default {
         leftContractTotal: null,
         rightContractTotal: null,
         materialName: null
+      },
+      // 合同同步结果查询参数
+      queryParamsContractSyncResult: {
+        pageNumContractSyncResult: 1,
+        pageSizeContractSyncResult: 10,
+        contractId: null
       },
       // 表单参数
       form: {},
@@ -932,6 +980,27 @@ export default {
       } else {
         this.isAdmin = false;
       }
+    },
+    /** 同步结果按钮操作 */
+    handleContractSyncResult() {
+      this.openContractSyncResult = true;
+      this.titleContractSyncResult = "查看合同同步结果";
+      this.getListContractSyncResult();
+    },
+    /** 查询合同同步结果列表 */
+    getListContractSyncResult() {
+      this.loadingContractSyncResult = true;
+      listContractSyncResultData(this.queryParamsContractSyncResult).then(response => {
+        this.listContractSyncResult = response.rows;
+        this.totalContractSyncResult = response.total;
+        this.loadingContractSyncResult = false;
+      });
+
+
+    },
+    /** 关闭查看合同同步结果列表按钮 */
+    closeContractSyncResult() {
+     this.openContractSyncResult = false;
     }
   }
 };

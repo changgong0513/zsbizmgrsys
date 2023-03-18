@@ -103,4 +103,11 @@ export function getContractApprovalRecordsByApprovalId(approvalId) {
   })
 }
 
-
+// 查询合同同步结果数据列表
+export function listContractSyncResultData(query) {
+  return request({
+    url: '/contract/mgr/sync/result',
+    method: 'get',
+    params: query
+  })
+}

@@ -2,9 +2,11 @@ package com.ruoyi.report.contract.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.config.RuoYiConfig;
@@ -18,9 +20,7 @@ import com.ruoyi.common.utils.file.MimeTypeUtils;
 import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseSaleOrderInfoService;
 import com.ruoyi.report.contract.domain.*;
-import com.ruoyi.report.contract.service.IContractAdditionalInfoService;
-import com.ruoyi.report.contract.service.IContractApprovalInfoService;
-import com.ruoyi.report.contract.service.IContractApprovalRecordsInfoService;
+import com.ruoyi.report.contract.service.*;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
@@ -31,7 +31,6 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.report.contract.service.IContractContentInfoService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +62,9 @@ public class ContractContentInfoController extends BaseController
 
     @Autowired
     private IMasterDataClientInfoService masterDataClientInfoService;
+
+    @Resource
+    private IContractSyncLogService contractSyncLogService;
 
     /**
      * 查询合同管理列表
@@ -410,6 +412,26 @@ public class ContractContentInfoController extends BaseController
         List<ContractApprovalRecordsInfo> list = contractApprovalRecordsInfoService
                 .getContractApprovalRecordsByApprovalId(approvalId);
         return getDataTable(list);
+    }
+
+    /**
+     * 合同同步结果数据列表
+     *
+     * @param contractSyncLog
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/sync/result")
+    public TableDataInfo syncResult(ContractSyncLog contractSyncLog) throws Exception {
+
+        // 设置请求分页数据
+        startPage();
+
+        // 查询合同同步结果数据列表
+        List<ContractSyncLog> listContractSyncLog = contractSyncLogService.selectContractSyncLogList(contractSyncLog);
+
+        // 响应请求分页数据
+        return getDataTable(listContractSyncLog);
     }
 
     private static final File createAbsoluteFile(String uploadDir, String fileName)
