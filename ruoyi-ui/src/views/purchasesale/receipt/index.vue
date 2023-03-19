@@ -372,20 +372,26 @@
         <el-row>
           <!-- 合同单价 -->
           <el-col :span="8">
-            <el-form-item label="合同单价" prop=" htdj">
+            <el-form-item label="合同单价" prop="htdj">
               <el-input v-model="form.htdj" placeholder="请输入合同单价" style="width: 240px" />
+            </el-form-item>
+          </el-col>
+          <!-- 发货数量 -->
+          <el-col :span="8">
+            <el-form-item label="发货数量" prop="fhsl">
+              <el-input v-model="form.fhsl" placeholder="请输入发货数量" style="width: 240px" />
             </el-form-item>
           </el-col>
           <!-- 核算金额 -->
           <el-col :span="8">
             <el-form-item label="核算金额" prop="checkMoney" style="width: 240px">{{calCheckMoney}}</el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <!-- 货损金额 -->
           <el-col :span="8">
             <el-form-item label="货损金额" prop="cargoDamageMoney" style="width: 240px">{{calCargoDamageMoney}}</el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <!-- 货损数量 -->
           <el-col :span="8">
             <el-form-item label="货损数量" prop="cargoDamageQuantity">{{calCargoDamageQuantity}}</el-form-item>
@@ -448,10 +454,10 @@
     <el-dialog :title="title" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
-          <!-- 收货编号 -->
+          <!-- 采购合同编号 -->
           <el-col :span="8">
-            <el-form-item label="收货编号" prop="receiptId">
-              <el-input v-model="formDetail.receiptId" :disabled="true" style="width: 200px" />
+            <el-form-item label="采购合同编号" prop="purchaseContractId">
+              <el-input v-model="formDetail.purchaseContractId" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
           <!-- 采购订单编号 -->
@@ -460,20 +466,14 @@
               <el-input v-model="formDetail.purchaseOrderId" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <!-- 采购合同编号 -->
-          <el-col :span="8">
-            <el-form-item label="采购合同编号" prop="purchaseContractId">
-              <el-input v-model="formDetail.purchaseContractId" :disabled="true" style="width: 200px" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
           <!-- 经办人 -->
           <el-col :span="8">
             <el-form-item label="经办人" prop="handledBy">
               <el-input v-model="formDetail.handledBy" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <!-- 收货日期 -->
           <el-col :span="8">
             <el-form-item label="收货日期" prop="receiptDate">
@@ -486,14 +486,14 @@
               <el-input v-model="formDetail.supplierName" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <!-- 物料名称 -->
           <el-col :span="8">
             <el-form-item label="物料名称" prop="materialName">
               <el-input v-model="formDetail.materialName" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <!-- 仓库编号 -->
           <el-col :span="8">
             <el-form-item label="仓库编号" prop="warehouseCode">
@@ -506,14 +506,14 @@
               <el-input v-model="formDetail.warehouseName" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <!-- 批次号 -->
           <el-col :span="8">
             <el-form-item label="批次号" prop="batchNo">
               <el-input v-model="formDetail.batchNo" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <!-- 车船编号 -->
           <el-col :span="8">
             <el-form-item label="车船编号" prop="ccbh">
@@ -538,14 +538,14 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <!-- 运输单号 -->
           <el-col :span="8">
             <el-form-item label="运输单号" prop="transportNumber">
               <el-input v-model="formDetail.transportNumber" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <!-- 卸货数量 -->
           <el-col :span="8">
             <el-form-item label="卸货数量" prop="expectReceiptQuantity">
@@ -558,24 +558,30 @@
               <el-input v-model="formDetail.checkQuantity" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <!-- 核算单价 -->
           <el-col :span="8">
             <el-form-item label="核算单价" prop="checkPrice">
               <el-input v-model="formDetail.checkPrice" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
-          <!-- 核算金额 -->
-          <el-col :span="8">
-            <el-form-item label="核算金额" prop="checkMoney">
-              <el-input v-model="formDetail.checkMoney" :disabled="true" style="width: 200px" />
-            </el-form-item>
-          </el-col>
+        </el-row>
+        <el-row>
           <!-- 合同单价 -->
           <el-col :span="8">
             <el-form-item label="合同单价" prop="htdj">
               <el-input v-model="formDetail.htdj" :disabled="true" style="width: 200px" />
+            </el-form-item>
+          </el-col>
+          <!-- 发货数量 -->
+          <el-col :span="8">
+            <el-form-item label="发货数量" prop="fhsl">
+              <el-input v-model="formDetail.fhsl" :disabled="true" style="width: 240px" />
+            </el-form-item>
+          </el-col>
+          <!-- 核算金额 -->
+          <el-col :span="8">
+            <el-form-item label="核算金额" prop="checkMoney">
+              <el-input v-model="formDetail.checkMoney" :disabled="true" style="width: 200px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -730,6 +736,9 @@ export default {
         ],
         htdj: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的合同单价", trigger: "blur" }
+        ],
+        fhsl: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的发货数量", trigger: "blur" }
         ],
         dryCalWaterValue: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的潮粮水分", trigger: "blur" }
@@ -1006,6 +1015,8 @@ export default {
         expectReceiptQuantity: null,
         checkQuantity: null,
         checkPrice: null,
+        htdj: null,
+        fhsl: null,
         checkMoney: null,
         cargoDamageQuantity: null,
         cargoDamageMoney: null,

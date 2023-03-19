@@ -112,6 +112,9 @@ public class PurchaseReceiptInfo extends BaseEntity
     /** 收货状态 */
     private String receiptStatus;
 
+    /** 发货数量 */
+    private BigDecimal fhsl;
+
     public String getReceiptId() {
         return receiptId;
     }
@@ -342,6 +345,14 @@ public class PurchaseReceiptInfo extends BaseEntity
 
     public void setReceiptStatus(String receiptStatus) {
         this.receiptStatus = receiptStatus;
+    }
+
+    public BigDecimal getFhsl() {
+        return fhsl;
+    }
+
+    public void setFhsl(BigDecimal fhsl) {
+        this.fhsl = fhsl;
     }
 
     @Override

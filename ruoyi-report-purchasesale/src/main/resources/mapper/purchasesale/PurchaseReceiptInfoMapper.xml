@@ -31,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dryCalResult"    column="dry_cal_result"    />
         <result property="ccbh"    column="ccbh"    />
         <result property="htdj"    column="htdj"    />
+        <result property="fhsl"    column="fhsl"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -45,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             transport_mode, transport_number, expect_receipt_quantity, check_quantity, check_price,
             check_money, cargo_damage_quantity, cargo_damage_money, receipt_remark, dry_cal_water_value,
             dry_cal_drying_rate, dry_cal_scale_range, dry_cal_settlement_weight, dry_cal_result, ccbh,
-            htdj, create_by, create_time, update_by, update_time, biz_version
+            htdj, fhsl, create_by, create_time, update_by, update_time, biz_version
         from
             purchase_receipt_info
     </sql>
@@ -101,6 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dryCalResult != null">dry_cal_result,</if>
             <if test="ccbh != null">ccbh,</if>
             <if test="htdj != null">htdj,</if>
+            <if test="fhsl != null">fhsl,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -134,6 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dryCalResult != null">#{dryCalResult},</if>
             <if test="ccbh != null">#{ccbh},</if>
             <if test="htdj != null">#{htdj},</if>
+            <if test="fhsl != null">#{fhsl},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -170,6 +173,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dryCalResult != null">dry_cal_result = #{dryCalResult},</if>
             <if test="ccbh != null">ccbh = #{ccbh},</if>
             <if test="htdj != null">htdj = #{htdj},</if>
+            <if test="fhsl != null">fhsl = #{fhsl},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
