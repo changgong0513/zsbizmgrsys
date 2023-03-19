@@ -253,9 +253,8 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             for (int i = 0; i < size; i++) {
                 // 合同同步日志
                 ContractSyncLog contractSyncLog = new ContractSyncLog();
-                contractSyncLog.setSyncLogId(IdUtils.fastUUID().replace("-", ""));
-                contractSyncLog.setSyncTime(DateUtils.getNowDate());
-                contractSyncLog.setSyncStatus("1");
+                contractSyncLog.setSyncTime(DateUtils.getNowDate()); // 合同同步时间
+                contractSyncLog.setSyncStatus("1"); // 合同同步状态
 
                 String id = ids.get(i);
                 System.out.println("审批实例ID：" + id);
@@ -271,6 +270,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                             contract.setBelongDeptId(0L);
                         }
 
+                        contractSyncLog.setSyncLogId(id); // 合同同步编号
                         contractSyncLog.setDeptId(contract.getBelongDeptId());
                         SysDept sysDept = sysDeptService.selectDeptById(contract.getBelongDeptId());
                         if (sysDept != null) {
@@ -289,6 +289,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                             contract.setUpdateBy(SecurityUtils.getUsername());
                             contractContentInfoMapper.insertContractContentInfo(contract);
                         } else {
+                            contractSyncLog.setSyncStatus("2");
                             contract.setUpdateTime(DateUtils.getNowDate());
                             contract.setUpdateBy(SecurityUtils.getUsername());
                             contractContentInfoMapper.updateContractContentInfo(contract);
@@ -317,13 +318,22 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 } else {
                     // 合同编号为空的场合
                     contractIdIsEmptyList.add(id);
-                    contractSyncLog.setContractId("empty");
-                    contractSyncLog.setStatusDescription("同步合同编号为空，请确认。");
-                    contractSyncLog.setSyncStatus("0");
+                    contractSyncLog.setSyncLogId(id); // 同步日志编号
+                    contractSyncLog.setContractId("empty"); // 合同编号
+                    contractSyncLog.setStatusDescription("同步合同编号为空，请确认。"); // 同步状态描述
+                    contractSyncLog.setSyncStatus("0"); // 合同同步状态
                 }
 
                 if (StringUtils.equals(contractSyncLog.getSyncStatus(), "0")) {
-                    contractSyncLogMapper.insertContractSyncLog(contractSyncLog);
+                    // 合同同步状态为0的场合，准备写入合同同步日志表
+                    String searchValue = contractSyncLog.getSyncLogId();
+                    if (StringUtils.isNotBlank(searchValue)) {
+                        ContractSyncLog selectContractSyncLog = contractSyncLogMapper.selectContractSyncLogBySyncLogId(searchValue);
+                        if (selectContractSyncLog == null) {
+                            // 写入合同同步日志表
+                            contractSyncLogMapper.insertContractSyncLog(contractSyncLog);
+                        }
+                    }
                 }
             }
 
