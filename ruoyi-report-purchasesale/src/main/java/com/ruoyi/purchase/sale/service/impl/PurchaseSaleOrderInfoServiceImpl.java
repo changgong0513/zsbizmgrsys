@@ -246,9 +246,12 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
         list.stream().forEach(element -> {
             // 采购数量（来自于采购管理）
             long purchaseQuantity = element.getPurchaseQuantity();
+            double minPurchaseQuantity = purchaseQuantity * 0.9;
+            double maxPurchaseQuantity = purchaseQuantity + purchaseQuantity * 0.1;
             // 核算数量（来自于收货管理）
             long checkQuantity = element.getCheckQuantity();
-            if (0 == Long.compare(purchaseQuantity, checkQuantity)) {
+            if (1 == Double.compare(checkQuantity, minPurchaseQuantity) &&
+                    1 == Double.compare(maxPurchaseQuantity, checkQuantity)) {
                 // 采购数量（来自于采购管理） == 核算数量（来自于收货管理）
                 // 订单状态：已关闭
                 element.setOrderStatus("1");
