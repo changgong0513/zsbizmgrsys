@@ -12,9 +12,14 @@
       </el-form-item>
       <!-- 所属部门 -->
       <el-form-item label="所属部门" prop="belongDept">
-        <treeselect v-model="queryParams.belongDept" 
-          :options="deptOptions" :show-count="true" 
-          placeholder="请选择所属部门" style="width: 240px;" />
+        <el-select v-model="queryParams.belongDept" placeholder="请选择所属部门" style="width: 240px;">
+          <el-option
+            v-for="item in deptOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <!-- 供应商名称 -->
       <el-form-item label="供应商名称" prop="supplierName">
@@ -172,11 +177,14 @@
           <!-- 所属部门 -->
           <el-col :span="8">
             <el-form-item label="所属部门" prop="belongDept">
-              <treeselect v-model="form.belongDept" 
-                :options="deptOptions" 
-                :show-count="true" 
-                placeholder="请选择所属部门" 
-                style="width: 240px;" />
+              <el-select v-model="form.belongDept" placeholder="请选择所属部门" style="width: 240px;">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <!-- 业务日期 -->
@@ -458,12 +466,14 @@
           <!-- 所属部门 -->
           <el-col :span="8">
             <el-form-item label="所属部门">
-              <treeselect v-model="formDetail.belongDept" 
-                :options="deptOptions" 
-                :show-count="true" 
-                placeholder="请选择所属部门" 
-                style="width: 240px;"
-                :disabled="true" />
+              <el-select v-model="formDetail.belongDept" placeholder="请选择所属部门" style="width: 240px;" :disabled="true">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <!-- 业务日期 -->
@@ -916,16 +926,13 @@ import { listPurchase, getPurchase, delPurchase, addPurchase, updatePurchase, de
 import { listReceipt } from "@/api/purchasesale/receipt";
 import { listClient } from "@/api/masterdata/client";
 import { getToken } from "@/utils/auth";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Purchase",
   dicts: ['contractmgr_contract_type', 'purchasesale_belong_dept', 'masterdata_warehouse_measurement_unit', 
           'purchasesale_arrival_terms', 'purchasesale_settlement_method', 'contractmgr_contract_approval_status', 
           'purchase_mgr_order_status', 'purchasesale_transport_mode'],
-  components: { Treeselect },
   // 文件上传用
   props: {
     // 值
@@ -1400,8 +1407,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     }
   }

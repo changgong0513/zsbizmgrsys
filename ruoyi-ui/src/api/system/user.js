@@ -133,3 +133,11 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+
+// 查询部门下拉列表
+export function deptSelect() {
+  return request({
+    url: '/system/user/deptSelect',
+    method: 'get'
+  })
+}

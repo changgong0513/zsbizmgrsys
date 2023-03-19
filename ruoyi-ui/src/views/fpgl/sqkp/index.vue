@@ -266,11 +266,14 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="fpglBelongDept">
-              <treeselect v-model="form.fpglBelongDept" 
-                :options="deptOptions" 
-                :show-count="true" 
-                placeholder="请选择所属部门" 
-                style="width: 240px;" />
+              <el-select v-model="form.fpglBelongDept" placeholder="请选择所属部门" style="width: 240px">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="16">
@@ -291,14 +294,11 @@
 <script>
 import { listMain, listFpmx, addMain, updateMain, uploadFile, getContractAdditional } from "@/api/fpgl/fpgl";
 import { getToken } from "@/utils/auth";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Main",
   dicts: ['fpgl_order_type', 'fpgl_fp_status', 'fpgl_kplx', 'fpgl_kpsl'],
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -523,8 +523,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     },
     /** 文件上传 */

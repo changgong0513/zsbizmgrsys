@@ -87,12 +87,14 @@
     <el-dialog :title="titleFkrl" :visible.sync="openFkrl" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="认领部门" prop="fkrlBmbh">
-          <treeselect 
-            v-model="form.fkrlBmbh" 
-            :options="deptOptions" 
-            :show-count="true" 
-            placeholder="请选择认领部门" 
-            style="width: 240px;" />
+          <el-select v-model="form.fkrlBmbh" placeholder="请选择认领部门" style="width: 240px;">
+            <el-option
+              v-for="item in deptOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="批次号" prop="fkrlPch">
           <el-select
@@ -170,14 +172,11 @@ import { listFk, addFk, updateFk, fkSync, addFkrl, listFkrlDetailList } from "@/
 import { getHkrlHtbh } from "@/api/zjzy/hkrl";
 import { listClient } from "@/api/masterdata/client";
 import { listPch } from "@/api/masterdata/pch";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Fk",
   dicts: ['zjzy_hkrl_status'],
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -464,8 +463,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     },
      // 付款认领详情取消按钮

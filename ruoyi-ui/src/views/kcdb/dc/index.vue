@@ -3,9 +3,14 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <!-- 发货部门（库存调出） -->
       <el-form-item label="所属部门" prop="fhbm">
-        <treeselect v-model="queryParams.fhbm" 
-          :options="deptOptions" :show-count="true" 
-          placeholder="请选择所属部门" style="width: 240px;" />
+        <el-select v-model="queryParams.fhbm" placeholder="请选择所属部门" style="width: 240px;">
+          <el-option
+            v-for="item in deptOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <!-- 发货仓库名称（库存调出） -->
       <el-form-item label="仓库名称" prop="fhck">
@@ -149,9 +154,14 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="fhbm">
-              <treeselect v-model="form.fhbm" 
-                :options="deptOptions" :show-count="true" 
-                placeholder="请选择所属部门" style="width: 240px;" />
+              <el-select v-model="queryParams.fhbm" placeholder="请选择所属部门" style="width: 240px;">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -329,9 +339,14 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="fhbm">
-              <treeselect v-model="formDetail.fhbm" 
-                :options="deptOptions" :show-count="true" 
-                :disabled="true" />
+              <el-select v-model="queryParams.fhbm" placeholder="请选择所属部门" style="width: 240px;">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -454,14 +469,11 @@ import { listKcdb, getKcdb, delKcdb, addKcdb, updateKcdb } from "@/api/kcdb/kcdb
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { listMaterialData } from "@/api/masterdata/material";
 import { listDeptPch } from "@/api/masterdata/pch";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Kcdb",
   dicts: ['kcdb_db_type', 'purchasesale_belong_dept', 'purchasesale_transport_mode' ,'purchasesale_settlement_method'],
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -740,8 +752,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     },
     /** 取得批次号下拉列表 */

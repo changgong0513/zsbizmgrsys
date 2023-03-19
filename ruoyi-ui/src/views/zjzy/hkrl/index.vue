@@ -217,12 +217,14 @@
     <el-dialog :title="titleHkrl" :visible.sync="openHkrl" width="500px" append-to-body>
       <el-form ref="formHkrl" :model="formHkrl" :rules="rulesHkrl" label-width="110px">
         <el-form-item label="认领部门" prop="hkrlBmbh">
-          <treeselect 
-            v-model="formHkrl.hkrlBmbh" 
-            :options="deptOptions" 
-            :show-count="true" 
-            placeholder="请选择认领部门" 
-            style="width: 240px;" />
+          <el-select v-model="formHkrl.hkrlBmbh" placeholder="请选择认领部门" style="width: 240px;">
+            <el-option
+              v-for="item in deptOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="批次号" prop="hkrlPch">
           <el-select
@@ -300,14 +302,11 @@ import { listHkrl, getHkrl, delHkrl, addHk, updateHkrl, getHkrlHtbh, addHkrl, li
 import { listClient } from "@/api/masterdata/client";
 import { listPch } from "@/api/masterdata/pch";
 import { getToken } from "@/utils/auth";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Hkrl",
   dicts: ['zjzy_hkrl_status'],
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -669,8 +668,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     },
     // 回款认领详情取消按钮

@@ -24,11 +24,14 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="belongDept">
-              <treeselect v-model="queryParams.belongDept" 
-                :options="deptOptions" 
-                :show-count="true" 
-                placeholder="请选择所属部门" 
-                style="width: 260px;" />
+              <el-select v-model="queryParams.belongDept" placeholder="请选择所属部门" style="width: 260px;">
+                <el-option
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -147,11 +150,14 @@
           <el-input v-model="form.pchmc" placeholder="请输入名称" style="width: 260px;" />
         </el-form-item>
         <el-form-item label="所属部门" prop="belongDept">
-          <treeselect v-model="form.belongDept" 
-            :options="deptOptions" 
-            :show-count="true" 
-            placeholder="请选择所属部门" 
-            style="width: 260px;" />
+          <el-select v-model="form.belongDept" placeholder="请选择所属部门" style="width: 260px;">
+            <el-option
+              v-for="item in deptOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属年份" prop="ssnf">
           <el-date-picker clearable
@@ -194,14 +200,11 @@
 
 <script>
 import { listPch, getPch, delPch, addPch, updatePch } from "@/api/masterdata/pch";
-import { deptTreeSelect } from "@/api/system/user";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Pch",
   dicts: ['masterdata_pch_status'],
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -360,8 +363,12 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getDeptTree() {
-      deptTreeSelect().then(response => {
-        this.deptOptions = response.data;
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
       });
     }
   }
