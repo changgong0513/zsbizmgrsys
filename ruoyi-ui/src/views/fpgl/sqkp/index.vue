@@ -1,3 +1,4 @@
+<!-- 发票管理-申请开票-业务员角色用 -->
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
@@ -83,24 +84,24 @@
     </el-row>
 
     <el-table v-loading="loading" :data="mainList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="30" align="center" />
-      <el-table-column label="订单编号" align="center" prop="orderId" />
-      <el-table-column label="订单类型" align="center" prop="contractType">
+      <!-- <el-table-column type="selection" align="center" width="55" /> -->
+      <el-table-column label="订单编号" align="center" prop="orderId" width="200" />
+      <el-table-column label="订单类型" align="center" prop="contractType" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fpgl_order_type" :value="scope.row.contractType"/>
         </template>
       </el-table-column>
-      <el-table-column label="我方单位名称" align="center" prop="ourCompanyName" />
-      <el-table-column label="客户名称" align="center" prop="realSupplierName" />
-      <el-table-column label="物料名称" align="center" prop="materialName" />
-      <el-table-column label="合同金额" align="center" prop="contractTotal" />
-      <el-table-column label="已开票金额" align="center" prop="fpglKpje" />
-      <el-table-column label="发票状态" align="center" prop="fpglFpzt">
+      <!-- <el-table-column label="我方单位名称" align="center" prop="ourCompanyName" width="300" /> -->
+      <el-table-column label="客户名称" align="center" prop="realSupplierName" width="300" />
+      <el-table-column label="物料名称" align="center" prop="materialName" width="200" />
+      <el-table-column label="合同金额" align="center" prop="contractTotal" width="200" />
+      <el-table-column label="已开票金额" align="center" prop="fpglKpje" width="200" />
+      <el-table-column label="发票状态" align="center" prop="fpglFpzt" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fpgl_fp_status" :value="scope.row.fpglFpzt"/>
         </template>
       </el-table-column>
-      <el-table-column label="上传附件" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="上传附件" align="center" width="100">
         <template slot-scope="scope">
           <el-upload
             ref="uploadRef"
@@ -136,34 +137,48 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改发票管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="70%" append-to-body :close-on-click-modal="false">
+    <!-- 添加或修改发票管理对话框 start -->
+    <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="8">
-            <el-form-item label="订单编号" prop="orderId">{{form.orderId}}</el-form-item>
+            <el-form-item label="订单编号" prop="orderId">
+              <el-input v-model="form.orderId" placeholder="请输入订单编号" style="width: 240px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="客户名称" prop="supplierName">{{form.realSupplierName}}</el-form-item>
+            <el-form-item label="客户名称" prop="supplierName">
+              <el-input v-model="form.realSupplierName" placeholder="请输入客户名称" style="width: 240px" :disabled="true" />
+            </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="客户税号" prop="taxNumber">{{form.taxNumber}}</el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="物料名称" prop="materialName">{{form.materialName}}</el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="合同金额" prop="contractTotal">{{form.contractTotal}}</el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="已开票金额" prop="fpglKpjeAlready">{{calKpjeAlready}}</el-form-item>
+            <el-form-item label="客户税号" prop="taxNumber">
+              <el-input v-model="form.taxNumber" placeholder="请输入客户税号" style="width: 240px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="申请人" prop="fpglSqr">{{form.fpglSqr}}</el-form-item>
+            <el-form-item label="物料名称" prop="materialName">
+              <el-input v-model="form.materialName" placeholder="请输入物料名称" style="width: 240px" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="合同金额" prop="contractTotal">
+              <el-input v-model="form.contractTotal" placeholder="请输入合同金额" style="width: 240px" :disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="已开票金额" prop="fpglKpjeAlready">
+              <el-input v-model="form.fpglKpjeAlready" placeholder="请输入已开票金额" style="width: 240px" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="申请人" prop="fpglSqr">
+              <el-input v-model="form.fpglSqr" placeholder="请输入申请人" style="width: 240px" :disabled="true" />
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -206,11 +221,13 @@
             :limit.sync="kpmxPageSize"
             @pagination="getKpmxList"
           />
+          <el-divider></el-divider>
+          <h3>开票项</h3>
         </el-row>
-        <el-divider></el-divider>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="开票明细" prop="fpglKpmx">{{form.materialName}}
+            <el-form-item label="开票明细" prop="fpglKpmx">
+              <el-input v-model="form.materialName" placeholder="请输入开票明细" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -263,7 +280,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <!-- <el-row>
           <el-col :span="8">
             <el-form-item label="所属部门" prop="fpglBelongDept">
               <el-select v-model="form.fpglBelongDept" placeholder="请选择所属部门" style="width: 240px">
@@ -281,13 +298,14 @@
               <el-input v-model="form.fpglFpno" placeholder="请输入发票号用,分割，连续的可以使用-连接" />
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 添加或修改发票管理对话框 end -->
   </div>
 </template>
 
@@ -338,12 +356,12 @@ export default {
         fpglKpRate: [
           { required: true, message: "开票税率不能为空", trigger: "blur" }
         ],
-        fpglBelongDept: [
-          { required: true, message: "所属部门不能为空", trigger: "change" }
-        ],
-        fpglFpno: [
-          { required: true, message: "发票号不能为空", trigger: "blur" }
-        ]
+        // fpglBelongDept: [
+        //   { required: true, message: "所属部门不能为空", trigger: "change" }
+        // ],
+        // fpglFpno: [
+        //   { required: true, message: "发票号不能为空", trigger: "blur" }
+        // ]
       },
       // 弹出层标题
       title: "",
@@ -447,7 +465,7 @@ export default {
       this.contractAdditionalList = [];
       listFpmx(row.orderId).then(response => {
         this.open = true;
-        this.title = "开票";
+        this.title = "申请开票";
         this.form = row;
         this.form.fpglKpjeAlready = this.form.fpglKpje;
         this.form.fpglKpsl = "";
@@ -480,6 +498,13 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      if (this.form.contractTotal && this.form.fpglKpje) {
+        if (Number(this.form.fpglKpje) - Number(this.form.contractTotal) > 0.0000001) {
+          this.$modal.msgError("开票金额应小于等于合同金额！");
+          return;
+        }
+      }
+
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.isUpdate) {
@@ -533,13 +558,11 @@ export default {
     },
     /** 文件上传 */
     handleChange(file, fileList, uploadOrderId) {
-      console.log("申请开票上传附件的订单编号：" + uploadOrderId);
       if(file != null){
         let formData = new FormData();
         formData.append('file', file.raw)
         formData.append('uploadContractId', uploadOrderId)
         uploadFile(formData).then(response => {
-          console.log(response)
           this.$modal.msgSuccess("上传成功！");
           getContractAdditional(uploadContractId).then(response => {
               response.rows.forEach(element => {

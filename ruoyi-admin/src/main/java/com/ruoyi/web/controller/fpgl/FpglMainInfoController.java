@@ -67,20 +67,24 @@ public class FpglMainInfoController extends BaseController
 
         startPage();
 
-        List<FpglListInfo> fpDetailList = new ArrayList<>();
-        List<FpglListInfo> calculatedFpglList = new ArrayList<>();
+        // 发票申请对话框，发票审批详细列表
+        List<FpglListInfo> fpDetailList = null;
 
+        // 设置发票申请人为当前登录用户
         fpglListInfo.setFpglSqr(getUsername());
 
-        Long deptId = getDeptId();
-        fpglListInfo.setDeptId(deptId);
-        if (Long.compare(deptId, 201) == 0) {
+        // 设置部门编号为当前登录用户所在部门
+        fpglListInfo.setDeptId(getDeptId());
+
+        if (Long.compare(getDeptId(), 201) == 0) {
             // 当前登录用户所属部门为财务部
             fpDetailList = fpglMainInfoService.selectFpglListForCw(fpglListInfo);
         } else {
             // 当前登录用户所属部门为非财务部
             fpDetailList = fpglMainInfoService.selectFpglList(fpglListInfo);
         }
+
+        List<FpglListInfo> calculatedFpglList = new ArrayList<>();
 
         // 实现每个订单编号对应的多条记录，开票金额求和后聚合成一条记录
         Map<String, List<FpglListInfo>> map = fpDetailList.stream()
@@ -195,6 +199,7 @@ public class FpglMainInfoController extends BaseController
 
         fpglMainInfo.setFpglKprq(DateUtils.parseDate(DateUtils.getDate()));
         fpglMainInfo.setFpglSqr(getUsername());
+        fpglMainInfo.setFpglBelongDept(String.valueOf(getDeptId()));
         fpglMainInfo.setBizVersion(1L);
         fpglMainInfo.setCreateTime(DateUtils.getNowDate());
         fpglMainInfo.setUpdateTime(DateUtils.getNowDate());
