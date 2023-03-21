@@ -2,6 +2,7 @@ package com.ruoyi.purchase.sale.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.purchase.sale.domain.KcckInfo;
 import com.ruoyi.purchase.sale.domain.PurchaseReceiptInfo;
 import com.ruoyi.purchase.sale.mapper.PurchaseReceiptInfoMapper;
 import com.ruoyi.purchase.sale.service.IPurchaseReceiptInfoService;
@@ -101,5 +102,15 @@ public class PurchaseReceiptInfoServiceImpl implements IPurchaseReceiptInfoServi
     public int deletePurchaseReceiptInfoByReceiptId(String receiptId)
     {
         return purchaseReceiptInfoMapper.deletePurchaseReceiptInfoByReceiptId(receiptId);
+    }
+
+    /**
+     * 查询库存列表
+     *
+     * @param kcckInfo 收货管理
+     * @return 收货管理集合
+     */
+    public List<KcckInfo> selectKcckInfoList(KcckInfo kcckInfo) {
+        return purchaseReceiptInfoMapper.selectKcckInfoList(kcckInfo);
     }
 }

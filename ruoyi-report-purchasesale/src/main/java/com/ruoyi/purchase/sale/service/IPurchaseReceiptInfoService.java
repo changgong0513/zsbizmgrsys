@@ -1,5 +1,6 @@
 package com.ruoyi.purchase.sale.service;
 
+import com.ruoyi.purchase.sale.domain.KcckInfo;
 import com.ruoyi.purchase.sale.domain.PurchaseReceiptInfo;
 
 import java.util.List;
@@ -66,4 +67,12 @@ public interface IPurchaseReceiptInfoService
      * @return 结果
      */
     public int deletePurchaseReceiptInfoByReceiptId(String receiptId);
+
+    /**
+     * 查询库存列表
+     *
+     * @param kcckInfo 收货管理
+     * @return 收货管理集合
+     */
+    public List<KcckInfo> selectKcckInfoList(KcckInfo kcckInfo);
 }

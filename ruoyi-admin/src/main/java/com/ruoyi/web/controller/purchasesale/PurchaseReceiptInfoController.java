@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.purchase.sale.domain.KcckInfo;
 import com.ruoyi.purchase.sale.domain.PurchaseReceiptInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseReceiptInfoService;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
@@ -141,5 +142,27 @@ public class PurchaseReceiptInfoController extends BaseController
     public AjaxResult remove(@PathVariable String[] receiptIds)
     {
         return toAjax(purchaseReceiptInfoService.deletePurchaseReceiptInfoByReceiptIds(receiptIds));
+    }
+
+    /**
+     * 查询库存列表
+     *
+     * @param kcckInfo
+     * @return
+     */
+    @GetMapping("/kc/list")
+    public TableDataInfo kc(KcckInfo kcckInfo) {
+
+        startPage();
+
+        List<KcckInfo> list = purchaseReceiptInfoService.selectKcckInfoList(kcckInfo);
+
+        list.stream().forEach(element -> {
+            if (element.getSumReceiptQuantity() != null && element.getMaximumCapacity() != null) {
+                element.setAvailableCapacity(element.getMaximumCapacity().subtract(element.getSumReceiptQuantity()));
+            }
+        });
+
+        return getDataTable(list);
     }
 }

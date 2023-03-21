@@ -39,7 +39,7 @@
       </el-form-item>
       <!-- 管理部门 -->
       <el-form-item label="管理部门" prop="managementDepartment">
-        <el-select v-model="queryParams.managementDepartment" placeholder="请选择所属部门" style="width: 200px" >
+        <el-select v-model="queryParams.managementDepartment" placeholder="请选择管理部门" style="width: 200px" >
           <el-option
             v-for="item in deptOptions"
             :key="item.value"
@@ -105,11 +105,7 @@
           <dict-tag :options="dict.type.masterdata_warehouse_region" :value="scope.row.warehouseRegion"/>
         </template>
       </el-table-column> 
-      <el-table-column label="管理部门" align="center" prop="managementDepartment" :show-overflow-tooltip="true" width="240">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.masterdata_management_department" :value="scope.row.managementDepartment"/>
-        </template>
-      </el-table-column>
+      <el-table-column label="管理部门" align="center" prop="managementDepartmentName" :show-overflow-tooltip="true" width="240" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope" v-if="scope.row.roleId !== 1">
           <el-button

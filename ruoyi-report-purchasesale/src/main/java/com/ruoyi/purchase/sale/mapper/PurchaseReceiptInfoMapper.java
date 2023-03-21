@@ -1,6 +1,8 @@
 package com.ruoyi.purchase.sale.mapper;
 
 import java.util.List;
+
+import com.ruoyi.purchase.sale.domain.KcckInfo;
 import com.ruoyi.purchase.sale.domain.PurchaseReceiptInfo;
 
 /**
@@ -65,4 +67,12 @@ public interface PurchaseReceiptInfoMapper
      * @return 结果
      */
     public int deletePurchaseReceiptInfoByReceiptIds(String[] receiptIds);
+
+    /**
+     * 查询库存列表
+     *
+     * @param kcckInfo 收货管理
+     * @return 收货管理集合
+     */
+    public List<KcckInfo> selectKcckInfoList(KcckInfo kcckInfo);
 }

@@ -37,7 +37,11 @@ public class MasterDataWarehouseBaseInfo extends BaseEntity
 
     /** 管理部门 */
     @Excel(name = "管理部门")
-    private Integer managementDepartment;
+    private Long managementDepartment;
+
+    /** 管理部门 */
+    @Excel(name = "管理部门名称")
+    private String managementDepartmentName;
 
     /** 管理人员 */
     @Excel(name = "管理人员")
@@ -79,149 +83,140 @@ public class MasterDataWarehouseBaseInfo extends BaseEntity
     @Excel(name = "版本号")
     private Long bizVersion;
 
-    public void setWarehouseId(String warehouseId)
-    {
+    public String getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public String getWarehouseId()
-    {
-        return warehouseId;
+    public String getWarehouseCode() {
+        return warehouseCode;
     }
-    public void setWarehouseCode(String warehouseCode)
-    {
+
+    public void setWarehouseCode(String warehouseCode) {
         this.warehouseCode = warehouseCode;
     }
 
-    public String getWarehouseCode()
-    {
-        return warehouseCode;
+    public String getWarehouseName() {
+        return warehouseName;
     }
-    public void setWarehouseName(String warehouseName)
-    {
+
+    public void setWarehouseName(String warehouseName) {
         this.warehouseName = warehouseName;
     }
 
-    public String getWarehouseName()
-    {
-        return warehouseName;
+    public Integer getWarehouseRegion() {
+        return warehouseRegion;
     }
-    public void setWarehouseRegion(Integer warehouseRegion)
-    {
+
+    public void setWarehouseRegion(Integer warehouseRegion) {
         this.warehouseRegion = warehouseRegion;
     }
 
-    public Integer getWarehouseRegion()
-    {
-        return warehouseRegion;
+    public String getWarehouseAddress() {
+        return warehouseAddress;
     }
-    public void setWarehouseAddress(String warehouseAddress)
-    {
+
+    public void setWarehouseAddress(String warehouseAddress) {
         this.warehouseAddress = warehouseAddress;
     }
 
-    public String getWarehouseAddress()
-    {
-        return warehouseAddress;
+    public Long getManagementDepartment() {
+        return managementDepartment;
     }
-    public void setManagementDepartment(Integer managementDepartment)
-    {
+
+    public void setManagementDepartment(Long managementDepartment) {
         this.managementDepartment = managementDepartment;
     }
 
-    public Integer getManagementDepartment()
-    {
-        return managementDepartment;
+    public String getManagementDepartmentName() {
+        return managementDepartmentName;
     }
-    public void setWarehouseManager(String warehouseManager)
-    {
+
+    public void setManagementDepartmentName(String managementDepartmentName) {
+        this.managementDepartmentName = managementDepartmentName;
+    }
+
+    public String getWarehouseManager() {
+        return warehouseManager;
+    }
+
+    public void setWarehouseManager(String warehouseManager) {
         this.warehouseManager = warehouseManager;
     }
 
-    public String getWarehouseManager()
-    {
-        return warehouseManager;
+    public String getContactMobile1() {
+        return contactMobile1;
     }
-    public void setContactMobile1(String contactMobile1)
-    {
+
+    public void setContactMobile1(String contactMobile1) {
         this.contactMobile1 = contactMobile1;
     }
 
-    public String getContactMobile1()
-    {
-        return contactMobile1;
+    public String getContactMobile2() {
+        return contactMobile2;
     }
-    public void setContactMobile2(String contactMobile2)
-    {
+
+    public void setContactMobile2(String contactMobile2) {
         this.contactMobile2 = contactMobile2;
     }
 
-    public String getContactMobile2()
-    {
-        return contactMobile2;
+    public Integer getWarehouseCategory() {
+        return warehouseCategory;
     }
-    public void setWarehouseCategory(Integer warehouseCategory)
-    {
+
+    public void setWarehouseCategory(Integer warehouseCategory) {
         this.warehouseCategory = warehouseCategory;
     }
 
-    public Integer getWarehouseCategory()
-    {
-        return warehouseCategory;
+    public Long getUseArea() {
+        return useArea;
     }
-    public void setUseArea(Long useArea)
-    {
+
+    public void setUseArea(Long useArea) {
         this.useArea = useArea;
     }
 
-    public Long getUseArea()
-    {
-        return useArea;
+    public Long getMaximumCapacity() {
+        return maximumCapacity;
     }
-    public void setMaximumCapacity(Long maximumCapacity)
-    {
+
+    public void setMaximumCapacity(Long maximumCapacity) {
         this.maximumCapacity = maximumCapacity;
     }
 
-    public Long getMaximumCapacity()
-    {
-        return maximumCapacity;
+    public Integer getMeasurementUnit() {
+        return measurementUnit;
     }
-    public void setMeasurementUnit(Integer measurementUnit)
-    {
+
+    public void setMeasurementUnit(Integer measurementUnit) {
         this.measurementUnit = measurementUnit;
     }
 
-    public Integer getMeasurementUnit()
-    {
-        return measurementUnit;
+    public String getBuildDate() {
+        return buildDate;
     }
-    public void setBuildDate(String buildDate)
-    {
+
+    public void setBuildDate(String buildDate) {
         this.buildDate = buildDate;
     }
 
-    public String getBuildDate()
-    {
-        return buildDate;
+    public String getWarehouseRemarks() {
+        return warehouseRemarks;
     }
-    public void setWarehouseRemarks(String warehouseRemarks)
-    {
+
+    public void setWarehouseRemarks(String warehouseRemarks) {
         this.warehouseRemarks = warehouseRemarks;
     }
 
-    public String getWarehouseRemarks()
-    {
-        return warehouseRemarks;
-    }
-    public void setBizVersion(Long bizVersion)
-    {
-        this.bizVersion = bizVersion;
+    public Long getBizVersion() {
+        return bizVersion;
     }
 
-    public Long getBizVersion()
-    {
-        return bizVersion;
+    public void setBizVersion(Long bizVersion) {
+        this.bizVersion = bizVersion;
     }
 
     @Override

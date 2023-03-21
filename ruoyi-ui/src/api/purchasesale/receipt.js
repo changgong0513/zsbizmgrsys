@@ -42,3 +42,13 @@ export function delReceipt(receiptId) {
     method: 'delete'
   })
 }
+
+// 查询库存列表
+export function listKc(query) {
+  return request({
+    url: '/receipt/mgr/kc/list',
+    method: 'get',
+    params: query
+  })
+}
+

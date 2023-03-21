@@ -193,4 +193,79 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{receiptId}
         </foreach>
     </delete>
+
+    <!-- 库存查看用 start -->
+    <resultMap type="KcckInfo" id="KcckInfoResult">
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="warehouseRegion"    column="warehouse_region"    />
+        <result property="warehouseAddress"    column="warehouse_address"    />
+        <result property="warehouseCategory"    column="warehouse_category"    />
+        <result property="maximumCapacity"    column="maximum_capacity"    />
+        <result property="contactMobile1"    column="contact_mobile1"    />
+        <result property="warehouseManager"    column="warehouse_manager"    />
+        <result property="sumReceiptQuantity"    column="sum_receipt_quantity"    />
+        <result property="sumSaleQuantity"    column="sum_sale_quantity"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="bizVersion"    column="biz_version"    />
+    </resultMap>
+
+    <sql id="selectKcckInfoVo">
+        select
+	        ttt2.warehouse_code, ttt2.warehouse_name, ttt2.warehouse_region, ttt2.warehouse_address,
+	        ttt2.warehouse_category, ttt2.maximum_capacity, ttt2.contact_mobile1, ttt2.warehouse_manager,
+	        ttt1.sum_receipt_quantity, ttt1.sum_sale_quantity
+        from
+        (
+            select
+                tt1.warehouse_code,
+                tt1.sum_receipt_quantity,
+                tt2.sum_sale_quantity
+            from
+                (
+                select
+                    t2.warehouse_code,
+                    sum( t2.check_quantity ) as sum_receipt_quantity
+                from
+                    master_data_warehouse_base_info t1,
+                    purchase_receipt_info t2
+                where
+                    t1.warehouse_code = t2.warehouse_code
+                group by
+                    t2.warehouse_code
+                ) tt1,
+                (
+                select
+                    t2.warehouse_code,
+                    sum( t2.check_quantity ) as sum_sale_quantity
+                from
+                    master_data_warehouse_base_info t1,
+                    sale_deliver_info t2
+                where
+                    t1.warehouse_code = t2.warehouse_code
+                group by
+                    t2.warehouse_code
+                ) tt2
+	        where
+		        tt1.warehouse_code = tt2.warehouse_code
+	    ) ttt1, master_data_warehouse_base_info ttt2
+    </sql>
+
+    <select id="selectKcckInfoList" parameterType="KcckInfo" resultMap="KcckInfoResult">
+        <include refid="selectKcckInfoVo"/>
+        <where>
+            ttt1.warehouse_code = ttt2.warehouse_code
+            <if test="warehouseCode != null  and warehouseCode != ''"> and ttt2.warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and ttt2.warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="warehouseRegion != null  and warehouseRegion != ''"> and ttt2.warehouse_region = #{warehouseRegion}</if>
+            <if test="warehouseAddress != null  and warehouseAddress != ''"> and ttt2.warehouse_address like concat('%', #{warehouseAddress}, '%')</if>
+            <if test="warehouseCategory != null  and warehouseCategory != ''"> and ttt2.warehouse_category = #{warehouseCategory}</if>
+        </where>
+    </select>
+    <!-- 库存查看用 end -->
+
+
 </mapper>

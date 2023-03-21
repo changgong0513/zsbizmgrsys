@@ -1,10 +1,15 @@
 package com.ruoyi.report.masterdata.controller;
 
 import java.util.List;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.report.masterdata.domain.MasterdataPchInfo;
+import com.ruoyi.system.service.ISysDeptService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +42,9 @@ public class MasterDataWarehouseBaseInfoController extends BaseController
     @Autowired
     private IMasterDataWarehouseBaseInfoService masterDataWarehouseBaseInfoService;
 
+    @Resource
+    private ISysDeptService sysDeptService;
+
     /**
      * 查询仓库管理列表
      */
@@ -45,7 +53,16 @@ public class MasterDataWarehouseBaseInfoController extends BaseController
     public TableDataInfo list(MasterDataWarehouseBaseInfo masterDataWarehouseBaseInfo)
     {
         startPage();
-        List<MasterDataWarehouseBaseInfo> list = masterDataWarehouseBaseInfoService.selectMasterDataWarehouseBaseInfoList(masterDataWarehouseBaseInfo);
+
+        List<MasterDataWarehouseBaseInfo> list = masterDataWarehouseBaseInfoService
+                .selectMasterDataWarehouseBaseInfoList(masterDataWarehouseBaseInfo);
+        list.stream().forEach(elment -> {
+            if (elment.getManagementDepartment() != null) {
+                SysDept dept = sysDeptService.selectDeptById(elment.getManagementDepartment());
+                elment.setManagementDepartmentName(dept.getDeptName());
+            }
+        });
+
         return getDataTable(list);
     }
 
