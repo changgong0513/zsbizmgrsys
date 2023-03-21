@@ -51,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectContractContentInfoList" parameterType="ContractContentInfo" resultMap="ContractContentInfoResult">
         <include refid="selectContractContentInfoVo"/>
         <where>
+            local_contract_status != '6'
             <if test="goodsId != null  and goodsId != ''"> and goods_id = #{goodsId}</if>
             <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
             <if test="contractType != null  and contractType != ''"> and contract_type = #{contractType}</if>
@@ -186,6 +187,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where contract_id = #{contractId}
     </update>
 
+    <!--
     <delete id="deleteContractContentInfoByContractId" parameterType="String">
         delete from contract_content_info where contract_id = #{contractId}
     </delete>
@@ -196,4 +198,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{contractId}
         </foreach>
     </delete>
+    -->
+    <delete id="deleteContractContentInfoByContractId" parameterType="String">
+        update contract_content_info set local_contract_status = '6' where contract_id = #{contractId}
+    </delete>
+
+    <delete id="deleteContractContentInfoByContractIds" parameterType="String">
+        update contract_content_info set local_contract_status = '6' where contract_id in
+        <foreach item="contractId" collection="array" open="(" separator="," close=")">
+            #{contractId}
+        </foreach>
+    </delete>
+
 </mapper>
