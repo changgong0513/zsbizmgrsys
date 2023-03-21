@@ -39,18 +39,13 @@
       </el-form-item>
       <!-- 管理部门 -->
       <el-form-item label="管理部门" prop="managementDepartment">
-        <el-select
-          v-model="queryParams.managementDepartment"
-          placeholder="管理部门"
-          clearable
-          style="width: 200px"
-        >
+        <el-select v-model="queryParams.managementDepartment" placeholder="请选择所属部门" style="width: 200px" >
           <el-option
-            v-for="dict in dict.type.masterdata_management_department"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
+            v-for="item in deptOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -190,17 +185,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="管理部门" prop="managementDepartment">
-              <el-select
-                v-model="form.managementDepartment"
-                placeholder="管理部门"
-                style="width: 200px"
-              >
+              <el-select v-model="form.managementDepartment" placeholder="请选择所属部门" style="width: 200px" >
                 <el-option
-                  v-for="dict in dict.type.masterdata_management_department"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="parseInt(dict.value)"
-                />
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="parseInt(item.value)">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -348,18 +339,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="管理部门">
-              <el-select
-                v-model="formDetail.managementDepartment"
-                placeholder="管理部门"
-                :disabled="true"
-                style="width: 200px"
-              >
+              <el-select v-model="formDetail.managementDepartment" placeholder="请选择所属部门" :disabled="true" style="width: 200px" >
                 <el-option
-                  v-for="dict in dict.type.masterdata_management_department"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="parseInt(dict.value)"
-                />
+                  v-for="item in deptOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="parseInt(item.value)">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -463,6 +449,7 @@
 <script>
 import { uuid } from "@/utils/xmy";
 import { listWarehouse, getWarehouse, addWarehouse, updateWarehous, delWarehous } from "@/api/masterdata/warehouse";
+import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Warehouse",
@@ -558,11 +545,14 @@ export default {
         ]
       }, 
       // warehouseId: uuid(32, 10)
-      warehouseId: null
+      warehouseId: null,
+      // 部门树选项
+      deptOptions: []
     };
   },
   created() {
     this.getList();
+    this.getDeptTree();
   },
   methods: {
     /** 查询仓库列表 */
@@ -574,6 +564,16 @@ export default {
           this.loading = false;
         }
       );
+    },
+    /** 查询部门下拉树结构 */
+    getDeptTree() {
+      deptSelect().then(response => {
+        this.deptOptions = response.data.map(item => {
+            return { value: `${item.deptId}`, label: `${item.deptName}` };
+          }).filter(item => {
+            return item.value != 100 && item.value != 103;
+          });
+      });
     },
     // 取消按钮
     cancel() {
@@ -597,7 +597,6 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.warehouseId)
-      console.log("ids = " + this.ids);
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -621,7 +620,6 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log("进入提交");
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.warehouseId != undefined) {
@@ -631,9 +629,7 @@ export default {
               this.getList();
             });
           } else {
-            console.log("@@@@@@提交添加");
             this.form.warehouseId = this.warehouseId;
-            console.log("@@@@@@提交添加的warehouseId=" + this.form.warehouseId);
             addWarehouse(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -665,7 +661,6 @@ export default {
     },
     // 库区维护
     toKq(row) {
-      // console.log("选择的仓库数据: " + JSON.stringify(row));
       this.$router.push({ path: "/warehouse/kq", query: { selWarehouseRow: row } });
     }
   }
