@@ -148,11 +148,16 @@
     <el-dialog :title="titleFkrlDetail" :visible.sync="openFkrlDetail" 
       width="80%" append-to-body :close-on-click-modal="false">
       <el-table v-loading="loading" :data="listFkrlDetail">
-      <el-table-column label="认领部门" align="center" prop="deptName" />
-      <el-table-column label="批次号" align="center" prop="fkrlPch" />
-      <el-table-column label="合同编号" align="center" prop="fkrlHtbh" />
-      <el-table-column label="认领金额" align="center" prop="fkrlJe" />
-    </el-table>
+        <el-table-column label="认领时间" align="center" prop="createTime">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="认领部门" align="center" prop="deptName" />
+        <el-table-column label="批次号" align="center" prop="fkrlPch" />
+        <el-table-column label="合同编号" align="center" prop="fkrlHtbh" />
+        <el-table-column label="认领金额" align="center" prop="fkrlJe" />
+      </el-table>
     <pagination
       v-show="fkrlDetailTotal > 0"
       :total="fkrlDetailTotal"

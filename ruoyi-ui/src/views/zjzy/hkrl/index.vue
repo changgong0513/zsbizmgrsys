@@ -278,11 +278,16 @@
     <el-dialog :title="titleHkrlDetail" :visible.sync="openHkrlDetail" 
       width="80%" append-to-body :close-on-click-modal="false">
       <el-table v-loading="loading" :data="listHkrlDetail">
-      <el-table-column label="认领部门" align="center" prop="deptName" />
-      <el-table-column label="批次号" align="center" prop="hkrlPch" />
-      <el-table-column label="合同编号" align="center" prop="hkrlHtbh" />
-      <el-table-column label="认领金额" align="center" prop="hkrlJe" />
-    </el-table>
+        <el-table-column label="认领时间" align="center" prop="createTime">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="认领部门" align="center" prop="deptName" />
+        <el-table-column label="批次号" align="center" prop="hkrlPch" />
+        <el-table-column label="合同编号" align="center" prop="hkrlHtbh" />
+        <el-table-column label="认领金额" align="center" prop="hkrlJe" />
+      </el-table>
     <pagination
       v-show="hkrlDetailTotal > 0"
       :total="hkrlDetailTotal"
