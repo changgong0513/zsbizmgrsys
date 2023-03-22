@@ -222,10 +222,23 @@ public class ContractContentInfoController extends BaseController
     @PostMapping("/sync")
     public AjaxResult sync(ContractContentInfo contractContentInfo) throws Exception {
 
+        System.out.println("-------------------------从钉钉同步合同数据开始-------------------------");
+
+        //初始时间
+        long startTime = System.currentTimeMillis();
+
         AjaxResult syncReslut = AjaxResult.success();
         if (contractContentInfoService.syncContractContentInfo() == 10001) {
             syncReslut = AjaxResult.error("未取得所有可管理的表单列表");
         }
+
+        //结束时间
+        long endTime = System.currentTimeMillis();
+
+        // 打印
+        System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
+
+        System.out.println("-------------------------从钉钉同步合同数据结束-------------------------");
 
         return syncReslut;
     }

@@ -241,14 +241,14 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
 //        }
 
         // 获取审批实例ID列表(测试数据用)
-        List <String> processCodeList = new ArrayList<>();
-        processCodeList.add("PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B"); // 经营一部-合同审批
-        processCodeList.add("PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC"); // 经营二部-合同审批
+        List <String> processCodeList = setSyncProcessCodeList();
         for (String processCode : processCodeList) {
 
             List<String> contractIdIsEmptyList = new ArrayList<>();
 
-            List<String> ids = getContract(accessToken, processCode);
+            String[] processCodeAndDeptId = processCode.split("@");
+
+            List<String> ids = getContract(accessToken, processCodeAndDeptId[0]);
             int size = ids.size();
             for (int i = 0; i < size; i++) {
                 // 合同同步日志
@@ -257,18 +257,18 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 contractSyncLog.setSyncStatus("1"); // 合同同步状态
 
                 String id = ids.get(i);
-                System.out.println("审批实例ID：" + id);
                 ContractContentInfo contract = getContractData(accessToken, id, contractSyncLog);
                 if (contract != null && StringUtils.isNotBlank(contract.getContractId())) {
                     if (StringUtils.equals(contractSyncLog.getSyncStatus(), "1")) {
                         // 设置合同所属部门编号
-                        if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
-                            contract.setBelongDeptId(209L);
-                        } else if (StringUtils.equals(processCode, "PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC")) {
-                            contract.setBelongDeptId(214L);
-                        } else {
-                            contract.setBelongDeptId(0L);
-                        }
+//                        if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
+//                            contract.setBelongDeptId(209L);
+//                        } else if (StringUtils.equals(processCode, "PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC")) {
+//                            contract.setBelongDeptId(214L);
+//                        } else {
+//                            contract.setBelongDeptId(0L);
+//                        }
+                        contract.setBelongDeptId(Long.parseLong(processCodeAndDeptId[1]));
 
                         contractSyncLog.setSyncLogId(id); // 合同同步编号
                         contractSyncLog.setDeptId(contract.getBelongDeptId());
@@ -335,13 +335,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                         }
                     }
                 }
-            }
-
-            // 合同编号为空汇总
-            System.out.println("Process COde：" + processCode);
-            System.out.println("合同编号为空的审批实例总数：" + contractIdIsEmptyList.size());
-            for (String instanceId : contractIdIsEmptyList) {
-                System.out.println("合同编号为空的审批实例ID：" + instanceId);
             }
         }
 
@@ -574,9 +567,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             try {
                 ListProcessInstanceIdsResponse resp = client.listProcessInstanceIdsWithOptions(listProcessInstanceIdsRequest,
                         listProcessInstanceIdsHeaders, new com.aliyun.teautil.models.RuntimeOptions());
-//                System.out.println("审批实例ID列表：" + resp.getBody().getResult().getList());
                 instanceList.addAll(resp.getBody().getResult().getList());
-//                return resp.getBody().getResult().getList();
             } catch (TeaException err) {
                 if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                     // err 中含有 code 和 message 属性，可帮助开发定位问题
@@ -594,13 +585,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 }
             }
         }
-
-        System.out.println("-------------------------审批实例开始-------------------------");
-        System.out.println("-------------------------获取审批实例ID列表总数："+ instanceList.size() + "-------------------------");
-        for (String isntance : instanceList) {
-            System.out.println(isntance);
-        }
-        System.out.println("-------------------------审批实例结束-------------------------");
 
         return instanceList;
     }
@@ -657,13 +641,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 }
             }
         }
-
-        System.out.println("-------------------------审批实例开始-------------------------");
-        System.out.println("-------------------------获取审批实例ID列表总数："+ instanceList.size() + "-------------------------");
-        for (String instance : instanceList) {
-            System.out.println(instance);
-        }
-        System.out.println("-------------------------审批实例结束-------------------------");
 
         return instanceList;
     }
@@ -722,16 +699,12 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
 
         try {
             GetProcessInstanceResponse resp = client.getProcessInstanceWithOptions(getProcessInstanceRequest, getProcessInstanceHeaders, new com.aliyun.teautil.models.RuntimeOptions());
-            System.out.println("合同状态------" + resp.getBody().getResult().status);
             contract.setContractStatus(resp.getBody().getResult().status);
             contract.setLocalContractStatus("1"); // 本地合同状态：已同步
 
             List<GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues> list = resp.getBody().getResult().formComponentValues;
-            System.out.println("------合同项总数------" + list.size());
-            System.out.println("------以下为合同项内容------");
             for (int i = 0; i < list.size(); i++) {
                 GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues item = list.get(i);
-                System.out.println(item.getName() + "------" + item.getValue());
                 // 货物名称
                 if (StringUtils.equals(item.getName(), "货物名称")) {
                     if (StringUtils.isNotBlank(item.getValue())) {
@@ -1442,5 +1415,77 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
         }
 
         return "0";
+    }
+
+    /**
+     * 设置同步合同审批ProcessCode列表
+     *
+     * @return
+     */
+    private List<String> setSyncProcessCodeList() {
+
+        List<String> processCodeList = new ArrayList<>();
+        processCodeList.add("PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B@209"); // 经营一部-合同审批
+        processCodeList.add("PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC@214"); // 经营二部-合同审批
+        processCodeList.add("PROC-348E896C-3F8A-4E04-A831-E7CA5D301828@215"); // 291农场
+        processCodeList.add("PROC-FB5C0F09-EE6D-4C38-9DD7-6081D8D21472@216"); // 597农场
+        processCodeList.add("PROC-EAE49B11-94A0-431A-8E52-5D8BCB5255CC@217"); // 852农场
+        processCodeList.add("PROC-9D5B3FE0-49C8-4B06-9D4F-4ECB1FDF59EC@218"); // 853农场
+        processCodeList.add("PROC-D699DB1F-0906-4CFE-989E-095B8B12DF63@219"); // 巴彦库
+        processCodeList.add("PROC-571AA361-2B20-43B1-BFEF-F3E7048985CA@220"); // 摆渡版块
+        processCodeList.add("PROC-2E9937D5-5A8C-470D-ABCA-7818184BBBF3@221"); // 赤峰版块
+        processCodeList.add("PROC-307F4B44-9C76-497F-9B3B-301DBDD02D7E@222"); // 创业十一部
+        processCodeList.add("PROC-CA22F065-4D18-4203-B982-A0B8F9344D28@223"); // 大连版块
+        // processCodeList.add("@224"); // 董氏合作，无合同审批ProcessCode
+        processCodeList.add("PROC-F54B67DB-4514-44C1-B9B6-AD6937CF7E10@225"); // 甘旗卡烘干塔
+        processCodeList.add("PROC-BC43CB75-D348-4AFD-BF58-17FF5B8BC077@226"); // 广西版块
+        // processCodeList.add("@227"); // 河西库，无合同审批ProcessCode
+        processCodeList.add("PROC-B29300AA-6B2E-4705-A270-E4B830942942@228"); // 菏泽版块
+        processCodeList.add("PROC-A381599C-57C7-4DC3-BE35-07C574839CA8@229"); // 红旗岭农场
+        processCodeList.add("PROC-E8E3AE6B-DE49-40A1-BEBF-E68C5C3A76EC@230"); // 湖南版块
+        processCodeList.add("PROC-1EE93F9D-5124-44D7-A8F9-66584752853B@231"); // 嘉荫农场
+        processCodeList.add("PROC-905BAAD6-4D93-4637-8074-95D553014523@232"); // 江西版块
+        processCodeList.add("PROC-15E80363-4C7F-4A62-A67F-D8CA8281F7C2@233"); // 金融事业部
+        processCodeList.add("PROC-23D042F0-8465-4C80-9792-9AF95AC539EF@234"); // 进出口事业部
+        processCodeList.add("PROC-F61E556B-09C0-4E1A-BA22-AA87F869EC69@235"); // 经营三部
+        processCodeList.add("PROC-EF776D1B-0355-4753-A579-4E8D359CCB86@236"); // 经营四部
+        processCodeList.add("PROC-08557BF8-6872-4B4F-B029-E2AA980E941C@237"); // 开原版块
+        // processCodeList.add("@238"); // 骊骅事业部，无合同审批ProcessCode
+        processCodeList.add("PROC-ED8C0FDE-DA30-46FA-82E7-E93249AF5FBB@239"); // 辽中版块
+        processCodeList.add("PROC-238EECD7-3DD5-4B7F-B87C-E200CA83BEF7@240"); // 临时合作版块
+        processCodeList.add("PROC-2A086A24-3FBB-47B4-B76F-F7F116497980@241"); // 凌源版块
+        processCodeList.add("PROC-8D88A6B0-241C-40E2-8182-C9E86741DCFC@242"); // 龙江版块
+        processCodeList.add("PROC-1546CFB7-056C-435A-A338-A14C6CE28255@243"); // 农安版块
+        // processCodeList.add("@244"); // 拍卖粮，无合同审批ProcessCode
+        processCodeList.add("PROC-67A68F1B-17C1-43D9-A060-492990F1DE07@245"); // 平台事业部
+        // processCodeList.add("@246"); // 庆阳农场，无合同审批ProcessCode
+        processCodeList.add("PROC-0DB84823-B6AC-4F2A-9362-AC6B5C0175C4@247"); // 饶河版块
+        processCodeList.add("PROC-2D540863-74DC-434D-8570-6F0BA4C64779@248"); // 饶河农场
+        processCodeList.add("PROC-5E8A0797-87CC-469E-AD46-91FB89004A97@249"); // 三宝版块
+        processCodeList.add("PROC-2CAD27CC-CE0C-4B30-91BF-8D5097935C08@250"); // 三道岗版块
+        // processCodeList.add("@251"); // 赎货业务，无合同审批ProcessCode
+        processCodeList.add("PROC-206A68CE-E994-47B3-AC97-DC4E056BFD8E@252"); // 曙光农场
+        // processCodeList.add("@253"); // 双鸭山农场，无合同审批ProcessCode
+        processCodeList.add("PROC-6D395303-1F0D-4056-9C10-0E78B51F529F@254"); // 四方山农场
+        // processCodeList.add("@255"); // 锁利业务，无合同审批ProcessCode
+        processCodeList.add("PROC-C49883C0-86BB-4E9C-A027-11405C5C3FCF@256"); // 泰来版块
+        // processCodeList.add("@257"); // 唐山中粟农牧，无合同审批ProcessCode
+        processCodeList.add("PROC-EAD2CA68-C591-4F7E-9D88-92DC2DD610DA@258"); // 通河版块
+        processCodeList.add("PROC-68334B5B-FE9E-4DFA-96CC-7A84BEE34205@259"); // 通辽版块
+        processCodeList.add("PROC-027C866D-D571-4A9A-AB02-85C343F00C4B@260"); // 万里服务部
+        processCodeList.add("PROC-06DF623F-A483-405F-A44E-49C25765C673@261"); // 翁牛特旗版块
+        // processCodeList.add("@262"); // 香坊农场，无合同审批ProcessCode
+        processCodeList.add("PROC-7F659C70-380F-47D6-81B0-DE6A502F1360@263"); // 小麦事业部
+        processCodeList.add("PROC-139ADD8C-9979-4DAA-9756-31A8651A9BB0@264"); // 新肇版块
+        processCodeList.add("PROC-387C024E-A205-4BD1-87D5-F855F7C4925C@265"); // 业务部
+        processCodeList.add("PROC-C8F7C8C4-29C9-4CC5-B2E3-1DAE208D4201@266"); // 依兰版块
+        processCodeList.add("PROC-38D685F0-C5FA-4D5F-894F-67E641557D5E@267"); // 依兰农场
+        processCodeList.add("PROC-373F06FE-F26B-4968-A4A0-91AB48D1D168@268"); // 友谊农场
+        processCodeList.add("PROC-02CB03AD-D830-4175-B251-D15BCB056B2E@269"); // 云南版块
+        processCodeList.add("PROC-ACFC4E4C-9B03-4E2D-B9BE-07AF9B461EAB@270"); // 运营部
+        processCodeList.add("PROC-2B9E356A-F6C8-4AE4-AFC5-11D6D2483067@271"); // 扎鲁特旗版块
+        // processCodeList.add("@272"); // 中粟（服务部），无合同审批ProcessCode
+
+        return processCodeList;
     }
 }
