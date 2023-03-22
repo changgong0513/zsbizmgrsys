@@ -99,6 +99,13 @@ public class ZjzyFkInfoController extends BaseController
     public TableDataInfo zjzyStatisticslist(ZjzyStatisticsInfo zjzyStatisticsInfo) {
 
         startPage();
+
+        if (getDeptId() == 100 || getDeptId() == 103) {
+            zjzyStatisticsInfo.setTjBmbh(null);
+        } else {
+            zjzyStatisticsInfo.setTjBmbh(String.valueOf(getDeptId()));
+        }
+
         List<ZjzyStatisticsInfo> list = zjzyFkInfoService.selectZjzyStatisticsList(zjzyStatisticsInfo);
 
         zjzyStatisticsInfo.setTjJssj(DateUtils.dateTimeNow());

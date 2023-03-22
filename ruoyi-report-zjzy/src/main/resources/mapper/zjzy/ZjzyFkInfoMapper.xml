@@ -292,9 +292,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ) tt2
             ON tt1.fkrl_bmbh = tt2.hkrl_bmbh AND tt1.fkrl_pch = tt2.hkrl_pch
         ) zjzytj, masterdata_pch_info zsjpch, sys_dept dept
-        WHERE
-            IFNULL(zjzytj.fkrl_pch,zjzytj.hkrl_pch) = zsjpch.pch AND
-            IFNULL(zjzytj.fkrl_bmbh, zjzytj.hkrl_bmbh) = dept.dept_id
     </sql>
 
     <!-- 查询占用统计记录用sql -->
@@ -309,6 +306,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 查询占用统计列表 -->
     <select id="selectZjzyStatisticsList" parameterType="ZjzyStatisticsInfo" resultMap="ZjzyStatisticsInfoResult">
         <include refid="selectZjzyStatisticsListVo"/>
+        <where>
+            ifnull(zjzytj.fkrl_pch, zjzytj.hkrl_pch) = zsjpch.pch and ifnull(zjzytj.fkrl_bmbh, zjzytj.hkrl_bmbh) = dept.dept_id
+            <if test="tjBmbh != null"> and ifnull(zjzytj.fkrl_bmbh, zjzytj.hkrl_bmbh) = #{tjBmbh}</if>
+            <if test="tjPch != null"> and ifnull(zjzytj.fkrl_pch, zjzytj.hkrl_pch) = #{tjPch}</if>
+        </where>
     </select>
 
     <!-- 查询占用统计记录 -->
