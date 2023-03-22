@@ -224,7 +224,7 @@ public class ContractContentInfoController extends BaseController
 
         System.out.println("-------------------------从钉钉同步合同数据开始-------------------------");
 
-        //初始时间
+        // 初始时间
         long startTime = System.currentTimeMillis();
 
         AjaxResult syncReslut = AjaxResult.success();
@@ -232,7 +232,7 @@ public class ContractContentInfoController extends BaseController
             syncReslut = AjaxResult.error("未取得所有可管理的表单列表");
         }
 
-        //结束时间
+        // 结束时间
         long endTime = System.currentTimeMillis();
 
         // 打印
@@ -248,7 +248,23 @@ public class ContractContentInfoController extends BaseController
      */
     @PostMapping("/fk/sync")
     public AjaxResult fkSync() throws Exception {
-        return toAjax(contractContentInfoService.syncFkContractInfo());
+
+        System.out.println("-------------------------从钉钉同步合同数据开始-------------------------");
+
+        // 初始时间
+        long startTime = System.currentTimeMillis();
+
+        contractContentInfoService.syncFkContractInfo();
+
+        // 结束时间
+        long endTime = System.currentTimeMillis();
+
+        // 打印
+        System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
+
+        System.out.println("-------------------------从钉钉同步合同数据结束-------------------------");
+
+        return AjaxResult.success();
     }
 
     /**

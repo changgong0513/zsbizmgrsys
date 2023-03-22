@@ -234,12 +234,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
         // 获取当前企业钉钉访问令牌
         String accessToken = getDingTalkAccessToken();
 
-        // 获取当前企业所有可管理的表单
-//        List <String> processCodeList = getCurrentEnterpriseAllMgrForm(accessToken);
-//        if (processCodeList != null && processCodeList.isEmpty()) {
-//            return 10001; //  未取得所有可管理的表单列表
-//        }
-
         // 获取审批实例ID列表(测试数据用)
         List <String> processCodeList = setSyncProcessCodeList();
         for (String processCode : processCodeList) {
@@ -261,13 +255,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 if (contract != null && StringUtils.isNotBlank(contract.getContractId())) {
                     if (StringUtils.equals(contractSyncLog.getSyncStatus(), "1")) {
                         // 设置合同所属部门编号
-//                        if (StringUtils.equals(processCode, "PROC-14C71A8A-12BA-4CD2-99C7-2B8E9F9DB32B")) {
-//                            contract.setBelongDeptId(209L);
-//                        } else if (StringUtils.equals(processCode, "PROC-7B80921A-0746-4574-8C93-8C47DCC0B2CC")) {
-//                            contract.setBelongDeptId(214L);
-//                        } else {
-//                            contract.setBelongDeptId(0L);
-//                        }
                         contract.setBelongDeptId(Long.parseLong(processCodeAndDeptId[1]));
 
                         contractSyncLog.setSyncLogId(id); // 合同同步编号
@@ -348,33 +335,41 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
      */
     @Override
     public int syncFkContractInfo() throws Exception {
+
         // 获取当前企业钉钉访问令牌
         String accessToken = getDingTalkAccessToken();
 
-        // 获取当前企业所有可管理的表单
-        // getCurrentEnterpriseAllMgrForm(accessToken);
+        // 获取审批实例ID列表(测试数据用)
+        List <String> fkProcessCodeList = setSyncFkProcessCodeList();
+        for (String fkProcessCode : fkProcessCodeList) {
+            String[] fkProcessCodeAndDeptId = fkProcessCode.split("@");
+            List<String> ids = getFkContract(accessToken, fkProcessCodeAndDeptId[0]);
+            int size = ids.size();
+            for (int i = 0; i < size; i++) {
+                String id = ids.get(i);
+                ZjzyFkInfo zjzyFkInfo = getFkContractData(accessToken, id);
+                if (zjzyFkInfo != null) {
+                    zjzyFkInfo.setFkBm(Long.parseLong(fkProcessCodeAndDeptId[1]));
 
-        // 获取付款合同审批实例ID列表(测试数据用)
-        List<String> idsFk = getFkContractForDemo(accessToken);
-        for (String idFk : idsFk) {
-            System.out.println("审批实例ID：" + idFk);
-            ZjzyFkInfo zjzyFkInfo = getFkContractData(accessToken, idFk);
-
-            // 检查合同是否已经导入合同表
-            ZjzyFkInfo selectZjzyFkInfo = zjzyFkInfoMapper
-                    .selectZjzyFkInfoByFkBusinessId(zjzyFkInfo.getFkBusinessId());
-            if (selectZjzyFkInfo == null) {
-                zjzyFkInfo.setBizVersion(1L);
-                zjzyFkInfo.setCreateTime(DateUtils.getNowDate());
-                zjzyFkInfo.setUpdateTime(DateUtils.getNowDate());
-                zjzyFkInfo.setCreateBy(SecurityUtils.getUsername());
-                zjzyFkInfo.setUpdateBy(SecurityUtils.getUsername());
-                zjzyFkInfoMapper.insertZjzyFkInfo(zjzyFkInfo);
-            } else {
-                zjzyFkInfo.setBizVersion(1L);
-                zjzyFkInfo.setUpdateTime(DateUtils.getNowDate());
-                zjzyFkInfo.setUpdateBy(SecurityUtils.getUsername());
-                zjzyFkInfoMapper.updateZjzyFkInfo(zjzyFkInfo);
+                    // 检查合同是否已经导入合同表
+                    ZjzyFkInfo selectZjzyFkInfo = zjzyFkInfoMapper
+                            .selectZjzyFkInfoByFkBusinessId(zjzyFkInfo.getFkBusinessId());
+                    if (selectZjzyFkInfo == null) {
+                        zjzyFkInfo.setBizVersion(1L);
+                        zjzyFkInfo.setCreateTime(DateUtils.getNowDate());
+                        zjzyFkInfo.setUpdateTime(DateUtils.getNowDate());
+                        zjzyFkInfo.setCreateBy(SecurityUtils.getUsername());
+                        zjzyFkInfo.setUpdateBy(SecurityUtils.getUsername());
+                        zjzyFkInfoMapper.insertZjzyFkInfo(zjzyFkInfo);
+                    } else {
+                        zjzyFkInfo.setBizVersion(1L);
+                        zjzyFkInfo.setUpdateTime(DateUtils.getNowDate());
+                        zjzyFkInfo.setUpdateBy(SecurityUtils.getUsername());
+                        zjzyFkInfoMapper.updateZjzyFkInfo(zjzyFkInfo);
+                    }
+                } else {
+                    System.out.println("------zjzyFkInfo is null!");
+                }
             }
         }
 
@@ -466,130 +461,6 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
     }
 
     /**
-     * 获取当前企业所有可管理的表单
-     *
-     * @param accessToken 钉钉访问令牌
-     */
-    private List<String> getCurrentEnterpriseAllMgrForm(final String accessToken) throws Exception {
-
-        com.aliyun.dingtalkworkflow_1_0.Client client = createClient();
-        GetManageProcessByStaffIdHeaders getManageProcessByStaffIdHeaders = new GetManageProcessByStaffIdHeaders();
-        getManageProcessByStaffIdHeaders.xAcsDingtalkAccessToken = accessToken;
-
-//        GetManageProcessByStaffIdRequest getManageProcessByStaffIdRequest = new GetManageProcessByStaffIdRequest()
-//                .setUserId("282350193529366375");
-
-        String[] syncUserIds = new String[] {
-//                "1054566453903766",
-//                "1054582138808487376",
-//                "1023291525-1101082476",
-//                "173703126738684904",
-//                "013123634833456429",
-//                "621832300920030353",
-//                "1054575040791042",
-//                "1002693800788633",
-//                "214729110429276521",
-//                "1729613335655268",
-//                "310864301924151987",
-                "282350193529366375"
-        };
-
-        List<String> processCodeList = new ArrayList<>();
-
-        for (int index = 0; index < syncUserIds.length; index++) {
-
-            GetManageProcessByStaffIdRequest getManageProcessByStaffIdRequest = new GetManageProcessByStaffIdRequest()
-                .setUserId(syncUserIds[index]);
-
-            try {
-                GetManageProcessByStaffIdResponse resp = client
-                        .getManageProcessByStaffIdWithOptions(getManageProcessByStaffIdRequest,
-                                getManageProcessByStaffIdHeaders, new RuntimeOptions());
-
-                int size = resp.getBody().getResult().size();
-                for (int i = 0; i < size; i++) {
-                    GetManageProcessByStaffIdResponseBody.GetManageProcessByStaffIdResponseBodyResult responseBodyResult = null;
-                    responseBodyResult = resp.getBody().getResult().get(i);
-                    System.out.println(responseBodyResult.getFlowTitle() + "------" + responseBodyResult.getProcessCode());
-                    if (StringUtils.contains(responseBodyResult.getFlowTitle(), "合同")) {
-                        // 存储合同表单
-                        processCodeList.add(responseBodyResult.getProcessCode());
-                    }
-                }
-            } catch (TeaException err) {
-                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                    // err 中含有 code 和 message 属性，可帮助开发定位问题
-                    System.out.println("TeaException-[index: " + index + "]-[userId: " + syncUserIds[index] + "]-[code: " + err.code + "]-[message: " + err.message + "]");
-                }
-            } catch (Exception _err) {
-                TeaException err = new TeaException(_err.getMessage(), _err);
-                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                    // err 中含有 code 和 message 属性，可帮助开发定位问题
-                    System.out.println("Exception-[index: " + index + "]-[userId: " + syncUserIds[index] + "]-[code: " + err.code + "]-[message: " + err.message + "]");
-                }
-            }
-        }
-
-        System.out.println("-------------------------合同开始-------------------------");
-        for (String processCode : processCodeList) {
-            System.out.println(processCode);
-        }
-        System.out.println("-------------------------合同结束-------------------------");
-
-        return processCodeList;
-    }
-
-    /**
-     * 获取审批实例ID列表(测试用)
-     *
-     * @param accessToken
-     * @throws Exception
-     */
-    private List<String> getContractForDemo(final String accessToken, List <String> processCodeList) throws Exception {
-
-        com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsHeaders listProcessInstanceIdsHeaders =
-                new com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsHeaders();
-        listProcessInstanceIdsHeaders.xAcsDingtalkAccessToken = accessToken;
-
-        List<String> instanceList = new ArrayList<>();
-        for (int i = 0; i < processCodeList.size(); i++) {
-            String processCode = processCodeList.get(i);
-            long curTime = System.currentTimeMillis();
-            com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest listProcessInstanceIdsRequest =
-                    new com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest()
-//                    .setProcessCode("PROC-53AEE967-1CA5-43CF-9489-CAF178BC1E46") // 测试API
-                    .setProcessCode(processCode)
-//                    .setStartTime(1667232000000L)
-                    .setStartTime(1667232000000L)
-//                    .setEndTime(1675958400000L)
-                    .setNextToken(0L).setMaxResults(10L);
-
-            try {
-                ListProcessInstanceIdsResponse resp = client.listProcessInstanceIdsWithOptions(listProcessInstanceIdsRequest,
-                        listProcessInstanceIdsHeaders, new com.aliyun.teautil.models.RuntimeOptions());
-                instanceList.addAll(resp.getBody().getResult().getList());
-            } catch (TeaException err) {
-                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                    // err 中含有 code 和 message 属性，可帮助开发定位问题
-                    System.out.println("TeaException");
-                    System.out.println(err.code);
-                    System.out.println(err.message);
-                }
-            } catch (Exception _err) {
-                TeaException err = new TeaException(_err.getMessage(), _err);
-                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                    // err 中含有 code 和 message 属性，可帮助开发定位问题
-                    System.out.println("Exception");
-                    System.out.println(err.code);
-                    System.out.println(err.message);
-                }
-            }
-        }
-
-        return instanceList;
-    }
-
-    /**
      * 获取审批实例ID列表
      *
      * @param accessToken
@@ -646,41 +517,88 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
     }
 
     /**
-     * 获取付款合同审批实例ID列表(测试用)
+     * 获取付款合同审批实例ID列表
      *
      * @param accessToken
+     * @param fkProcessCode
+     * @return
      * @throws Exception
      */
-    private List<String> getFkContractForDemo(final String accessToken) throws Exception {
+    private List<String> getFkContract(final String accessToken, final String fkProcessCode) throws Exception {
+
         com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsHeaders listProcessInstanceIdsHeaders = new com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsHeaders();
         listProcessInstanceIdsHeaders.xAcsDingtalkAccessToken = accessToken;
-        com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest listProcessInstanceIdsRequest = new com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest()
-                .setProcessCode("PROC-14DEE72E-B6C8-4D18-B684-06A88E4CC714") // 测试API
-                .setStartTime(1667232000000L)
-                .setNextToken(0L)
-                .setMaxResults(10L);
-        try {
-            ListProcessInstanceIdsResponse resp = client.listProcessInstanceIdsWithOptions(listProcessInstanceIdsRequest, listProcessInstanceIdsHeaders, new com.aliyun.teautil.models.RuntimeOptions());
-            System.out.println("审批实例ID列表：" + resp.getBody().getResult().getList());
-            return resp.getBody().getResult().getList();
-        } catch (TeaException err) {
-            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                // err 中含有 code 和 message 属性，可帮助开发定位问题
-                System.out.println("TeaException");
-                System.out.println(err.code);
-                System.out.println(err.message);
-            }
-        } catch (Exception _err) {
-            TeaException err = new TeaException(_err.getMessage(), _err);
-            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                // err 中含有 code 和 message 属性，可帮助开发定位问题
-                System.out.println("Exception");
-                System.out.println(err.code);
-                System.out.println(err.message);
+
+//        com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest listProcessInstanceIdsRequest = new com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest()
+//                .setProcessCode("PROC-14DEE72E-B6C8-4D18-B684-06A88E4CC714") // 测试API
+//                .setStartTime(1667232000000L)
+//                .setNextToken(0L)
+//                .setMaxResults(10L);
+//        try {
+//            ListProcessInstanceIdsResponse resp = client.listProcessInstanceIdsWithOptions(listProcessInstanceIdsRequest, listProcessInstanceIdsHeaders, new com.aliyun.teautil.models.RuntimeOptions());
+//            System.out.println("审批实例ID列表：" + resp.getBody().getResult().getList());
+//            return resp.getBody().getResult().getList();
+//        } catch (TeaException err) {
+//            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+//                // err 中含有 code 和 message 属性，可帮助开发定位问题
+//                System.out.println("TeaException");
+//                System.out.println(err.code);
+//                System.out.println(err.message);
+//            }
+//        } catch (Exception _err) {
+//            TeaException err = new TeaException(_err.getMessage(), _err);
+//            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+//                // err 中含有 code 和 message 属性，可帮助开发定位问题
+//                System.out.println("Exception");
+//                System.out.println(err.code);
+//                System.out.println(err.message);
+//            }
+//        }
+//
+//        return null;
+
+        // https://open.dingtalk.com/document/orgapp/obtain-an-approval-list-of-instance-ids
+        List<String> instanceList = new ArrayList<>();
+        Long nextToken = 0L;
+        while (nextToken >= 0L) {
+            com.aliyun.dingtalkworkflow_1_0.models.ListProcessInstanceIdsRequest listProcessInstanceIdsRequest =
+                    new com.aliyun.dingtalkworkflow_1_0.models
+                            .ListProcessInstanceIdsRequest()
+                            .setProcessCode(fkProcessCode)
+                            .setStartTime(1669824000000L) // 2022-12-01 00:00:00------至今
+                            .setNextToken(nextToken)
+                            .setMaxResults(20L);
+            try {
+                ListProcessInstanceIdsResponse resp = client.listProcessInstanceIdsWithOptions(listProcessInstanceIdsRequest,
+                        listProcessInstanceIdsHeaders, new com.aliyun.teautil.models.RuntimeOptions());
+                String tempNextToken = resp.getBody().getResult().getNextToken();
+                if (StringUtils.isNotBlank(tempNextToken)) {
+                    nextToken = Long.parseLong(tempNextToken);
+                } else {
+                    break;
+                }
+                instanceList.addAll(resp.getBody().getResult().getList());
+            } catch (TeaException err) {
+                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                    // err 中含有 code 和 message 属性，可帮助开发定位问题
+                    System.out.println("TeaException");
+                    System.out.println(err.code);
+                    System.out.println(err.message);
+                    break;
+                }
+            } catch (Exception _err) {
+                TeaException err = new TeaException(_err.getMessage(), _err);
+                if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                    // err 中含有 code 和 message 属性，可帮助开发定位问题
+                    System.out.println("Exception");
+                    System.out.println(err.code);
+                    System.out.println(err.message);
+                    break;
+                }
             }
         }
 
-        return null;
+        return instanceList;
     }
 
     /**
@@ -937,18 +855,12 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
 
         try {
             GetProcessInstanceResponse resp = client.getProcessInstanceWithOptions(getProcessInstanceRequest, getProcessInstanceHeaders, new com.aliyun.teautil.models.RuntimeOptions());
-            System.out.println("付款合同状态------" + resp.getBody().getResult().status);
             fk.setFkspzt(resp.getBody().getResult().status);
-
-            System.out.println("业务编号------" + resp.getBody().getResult().businessId);
             fk.setFkBusinessId(resp.getBody().getResult().businessId);
 
             List<GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues> list = resp.getBody().getResult().formComponentValues;
-            System.out.println("------付款合同项总数------" + list.size());
-            System.out.println("------以下为付款合同项内容------");
             for (int i = 0; i < list.size(); i++) {
                 GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues item = list.get(i);
-                System.out.println(item.getName() + "------" + item.getValue());
                 // 付款事由
                 if (StringUtils.equals(item.getName(), "付款事由")) {
                     fk.setFkSy(item.getValue());
@@ -983,9 +895,9 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 // 数量
                 if (StringUtils.equals(item.getName(), "数量")) {
                     if (StringUtils.isNotBlank(item.getValue())) {
-                        fk.setFkSl(Long.parseLong(item.getValue()));
+                        fk.setFkSl(new BigDecimal(item.getValue()));
                     } else {
-                        fk.setFkSl(0L);
+                        fk.setFkSl(new BigDecimal(0));
                     }
                 }
                 // 付款金额（元）
@@ -1487,5 +1399,79 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
         // processCodeList.add("@272"); // 中粟（服务部），无合同审批ProcessCode
 
         return processCodeList;
+    }
+
+    /**
+     * 设置同步合同审批ProcessCode列表
+     *
+     * @return
+     */
+    private List<String> setSyncFkProcessCodeList() {
+
+        List<String> fkProcessCodeList = new ArrayList<>();
+        fkProcessCodeList.add("PROC-A5055538-5A84-46CC-A1D1-7AEC15902D22@209"); // 经营一部-经营付款审批
+        fkProcessCodeList.add("PROC-543BC84D-E297-4700-9C93-D41CCC5D0D01@214"); // 经营二部-经营付款审批
+        fkProcessCodeList.add("PROC-F7B289AB-D53A-45E5-979A-45AFE28DCA31@215"); // 291农场
+        fkProcessCodeList.add("PROC-8340317B-C9D8-463E-B45C-5530EDD36778@216"); // 597农场
+        fkProcessCodeList.add("PROC-DA619DB0-BDD0-4FC0-A3EA-23D0B16CB53C@217"); // 852农场
+        fkProcessCodeList.add("PROC-D7D260E0-003D-4D00-85DB-91FFAE9C84F9@218"); // 853农场
+        fkProcessCodeList.add("PROC-2DE10510-C953-4A45-B25F-E96BBB3CBA30@219"); // 巴彦库
+        fkProcessCodeList.add("PROC-9CFF8B74-2CF5-4D0F-BE74-A03B3B5A583D@220"); // 摆渡版块
+        fkProcessCodeList.add("PROC-CEBCB600-8718-46D4-A316-E74A982192D8@221"); // 赤峰版块
+        fkProcessCodeList.add("PROC-7E7031E4-368A-4F8F-B4AF-99943ACD1EB3@222"); // 创业十一部
+        fkProcessCodeList.add("PROC-C9B9011B-881F-4E4A-985E-F0E8EC54F60F@223"); // 大连版块
+        fkProcessCodeList.add("PROC-B333A507-00E1-4DC4-AB3A-96517C514E1E@224"); // 董氏合作
+        // fkProcessCodeList.add("@225"); // 甘旗卡烘干塔，无经营付款审批ProcessCode
+        fkProcessCodeList.add("PROC-E420D9B9-B8B3-405A-BBF6-557497D6273A@226"); // 广西版块
+        fkProcessCodeList.add("PROC-BB06C181-C128-4990-9D51-95C63E5ACD43@227"); // 河西库
+        fkProcessCodeList.add("PROC-6F2932FF-7F02-4BDC-BF05-2EF221CB2594@228"); // 菏泽版块
+        fkProcessCodeList.add("PROC-51FC5CF6-D49F-4977-996B-B5AD5EDB8EE3@229"); // 红旗岭农场
+        fkProcessCodeList.add("PROC-661C1FD8-A120-4100-A09C-6C4957724F49@230"); // 湖南版块
+        fkProcessCodeList.add("PROC-6CB96281-0823-4015-9630-4E534947F4A2@231"); // 嘉荫农场
+        fkProcessCodeList.add("PROC-3657BD04-C09F-41B4-87FD-78B9BDB015B1@232"); // 江西版块
+        // fkProcessCodeList.add("@233"); // 金融事业部，无经营付款审批ProcessCode
+        fkProcessCodeList.add("PROC-C81D090C-7100-49C9-8B19-3C7F4609B7BA@234"); // 进出口事业部
+        fkProcessCodeList.add("PROC-0KYJJ80V-U773EQOPZJBVKIVFNV9S1-TF440KSJ-Y1@235"); // 经营三部
+        fkProcessCodeList.add("PROC-CB85A1E0-9CF9-43DA-8422-026EA5BF7263@236"); // 经营四部
+        fkProcessCodeList.add("PROC-DD9A36CB-7ECF-4C5D-8C93-39E73AE287B5@237"); // 开原版块
+        fkProcessCodeList.add("PROC-A68AAAC6-51AC-4645-8EB1-2685E28CEBB0@238"); // 骊骅事业部
+        fkProcessCodeList.add("PROC-9D3578CA-C4F0-48A6-9719-2195E6DCBF91@239"); // 辽中版块
+        // fkProcessCodeList.add("@240"); // 临时合作版块，无经营付款审批ProcessCode
+        fkProcessCodeList.add("PROC-D97C59D4-7959-416D-8B9F-28FBAC21EEB1@241"); // 凌源版块
+        fkProcessCodeList.add("PROC-CF21E5D1-35D2-4212-A896-CA3FCAFCD073@242"); // 龙江版块
+        fkProcessCodeList.add("PROC-0C654E2C-71DF-4C6A-8AE6-A48F1BE8AD99@243"); // 农安版块
+        fkProcessCodeList.add("PROC-A3237688-9C85-4707-9C31-6015BFEEBF6E@244"); // 拍卖粮
+        fkProcessCodeList.add("PROC-51C2C617-07FA-454F-971A-84F0E173984B@245"); // 平台事业部
+        fkProcessCodeList.add("PROC-F32DF427-FAFF-4435-B9FA-522EF008B808@246"); // 庆阳农场
+        fkProcessCodeList.add("PROC-BD9E9133-0A2B-48EC-A248-4024F0C10295@247"); // 饶河版块
+        fkProcessCodeList.add("PROC-487F700B-2FD6-420F-8A6B-B123F4840827@248"); // 饶河农场
+        fkProcessCodeList.add("PROC-45B9B0CD-3C7C-4FC1-B1C8-B277152D23C7@249"); // 三宝版块
+        fkProcessCodeList.add("PROC-2060839F-1FEA-4852-9DFA-D1E2B9306434@250"); // 三道岗版块
+        fkProcessCodeList.add("PROC-DD7858E6-34E0-4F8C-A836-C4DF733FC6BF@251"); // 赎货业务
+        fkProcessCodeList.add("PROC-6580690A-F2C8-4578-86E4-9964C6FF604D@252"); // 曙光农场
+        fkProcessCodeList.add("PROC-955CF09F-ED9D-4C53-B6F2-F65A07A1C31D@253"); // 双鸭山农场
+        fkProcessCodeList.add("PROC-AECAEAFA-3D6C-4DEC-AAA5-95401C09FEC0@254"); // 四方山农场
+        fkProcessCodeList.add("PROC-ABD127FF-3BA4-4C1C-94E5-5639010DB6EC@255"); // 锁利业务
+        fkProcessCodeList.add("PROC-AAFFFC3C-29DE-4FA9-B451-AC13FAB8EA56@256"); // 泰来版块
+        fkProcessCodeList.add("PROC-1BF5D12E-3C7E-4FDF-924A-75DD317BEE6B@257"); // 唐山中粟农牧
+        fkProcessCodeList.add("PROC-51E43FD0-733E-4388-BCAF-2C265389F9A4@258"); // 通河版块
+        fkProcessCodeList.add("PROC-C68FC176-F1E5-483E-B827-C9E09667FB04@259"); // 通辽版块
+        fkProcessCodeList.add("PROC-CCC8610A-EEEA-4353-ACD0-304DAC4C5F9D@260"); // 万里服务部
+        fkProcessCodeList.add("PROC-7BB2ABD9-F105-4C07-A445-E5015EA82DF4@261"); // 翁牛特旗版块
+        fkProcessCodeList.add("PROC-82522CBD-ABE9-4A03-AC18-5E0D44C8487D@262"); // 香坊农场
+        fkProcessCodeList.add("PROC-88B1514E-5AAD-4011-A58F-62B500412EC5@263"); // 小麦事业部
+        fkProcessCodeList.add("PROC-B6237FDE-8B23-4D8B-84EE-72A2B9C201DA@264"); // 新肇版块
+        fkProcessCodeList.add("PROC-EB629918-FACB-4560-AA56-70A37CCD0FF1@265"); // 业务部
+        fkProcessCodeList.add("PROC-A819BABB-D355-4085-93E8-55EB21E147CE@266"); // 依兰版块
+        fkProcessCodeList.add("PROC-7EB8577E-D5F3-4C73-8FD6-E4AF82D93DB5@267"); // 依兰农场
+        fkProcessCodeList.add("PROC-74E7D56C-95B7-43C3-A093-42FF5A6EAC2B@268"); // 友谊农场
+        fkProcessCodeList.add("PROC-46F5E8AC-BA5C-4D2B-B69F-50E59BB851BC@269"); // 云南版块
+        fkProcessCodeList.add("PROC-99775D91-20CA-4CB8-82D2-5170424DE4AF@270"); // 运营部
+        fkProcessCodeList.add("PROC-E053F5D5-D510-4D8C-B63B-DDF54749564A@271"); // 扎鲁特旗版块(良丰)
+        fkProcessCodeList.add("PROC-82057431-E7C4-445E-9F33-1FA3046D4C1B@271"); // 扎鲁特旗版块(梅花)
+        fkProcessCodeList.add("PROC-79234A80-B2A2-47CE-8C88-652881F61434@271"); // 扎鲁特旗版块(庆丰)
+        // processCodeList.add("@272"); // 中粟（服务部），无经营付款审批ProcessCode
+
+        return fkProcessCodeList;
     }
 }

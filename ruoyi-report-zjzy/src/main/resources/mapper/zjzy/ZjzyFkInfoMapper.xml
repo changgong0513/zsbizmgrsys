@@ -144,6 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fkBz != null">fk_bz,</if>
             <if test="fkSpzt != null">fk_spzt,</if>
             <if test="fkBusinessId != null">fk_business_id,</if>
+            <if test="fkBm != null">fk_bm,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -171,6 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fkBz != null">#{fkBz},</if>
             <if test="fkSpzt != null">#{fkSpzt},</if>
             <if test="fkBusinessId != null">#{fkBusinessId},</if>
+            <if test="fkBm != null">#{fkBm},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -202,6 +204,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fkBz != null">fk_bz = #{fkBz},</if>
             <if test="fkSpzt != null">fk_spzt = #{fkSpzt},</if>
             <if test="fkBusinessId != null">fk_business_id = #{fkBusinessId},</if>
+            <if test="fkBm != null">fk_bm = #{fkBm},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

@@ -65,7 +65,7 @@ public class ZjzyFkInfo extends BaseEntity
 
     /** 数量 */
     @Excel(name = "数量")
-    private Long fkSl;
+    private BigDecimal fkSl;
 
     /** 收款账号 */
     @Excel(name = "收款账号")
@@ -103,6 +103,9 @@ public class ZjzyFkInfo extends BaseEntity
 
     /** 付款认领金额 */
     private BigDecimal fkrlJe;
+
+    /** 付款部门 */
+    private Long fkBm;
 
     public void setFkId(String fkId) 
     {
@@ -212,12 +215,12 @@ public class ZjzyFkInfo extends BaseEntity
     {
         return fkDj;
     }
-    public void setFkSl(Long fkSl) 
+    public void setFkSl(BigDecimal fkSl)
     {
         this.fkSl = fkSl;
     }
 
-    public Long getFkSl() 
+    public BigDecimal getFkSl()
     {
         return fkSl;
     }
@@ -307,6 +310,22 @@ public class ZjzyFkInfo extends BaseEntity
 
     public void setFkrlJe(BigDecimal fkrlJe) {
         this.fkrlJe = fkrlJe;
+    }
+
+    public String getFkSpzt() {
+        return fkSpzt;
+    }
+
+    public void setFkSpzt(String fkSpzt) {
+        this.fkSpzt = fkSpzt;
+    }
+
+    public Long getFkBm() {
+        return fkBm;
+    }
+
+    public void setFkBm(Long fkBm) {
+        this.fkBm = fkBm;
     }
 
     @Override
