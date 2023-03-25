@@ -466,11 +466,12 @@
     <el-dialog :title="titleContractSyncResult" :visible.sync="openContractSyncResult" 
       width="80%" append-to-body :close-on-click-modal="false">
       <el-table v-loading="loadingContractSyncResult" :data="listContractSyncResult">
-      <el-table-column label="合同编号" align="center" prop="contractId" />
-      <el-table-column label="合同类型" align="center" prop="contractType" />
-      <el-table-column label="同步时间" align="center" prop="syncTime" />
-      <el-table-column label="部门名称" align="center" prop="deptName" />
-      <el-table-column label="状态描述" align="center" prop="statusDescription" class-name="small-padding fixed-width" />
+      <el-table-column label="合同编号" align="center" prop="contractId" width="200" />
+      <el-table-column label="合同名称" align="center" prop="contractName" width="300" />
+      <el-table-column label="合同类型" align="center" prop="contractType" width="150" />
+      <el-table-column label="同步时间" align="center" prop="syncTime" width="150" />
+      <el-table-column label="部门名称" align="center" prop="deptName" width="200" />
+      <el-table-column label="状态描述" align="center" prop="statusDescription" class-name="small-padding fixed-width" :show-overflow-tooltip="true" />
     </el-table>
     <pagination
       v-show="totalContractSyncResult > 0"

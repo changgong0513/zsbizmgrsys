@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="ContractSyncLog" id="ContractSyncLogResult">
         <result property="syncLogId"    column="sync_log_id"    />
         <result property="contractId"    column="contract_id"    />
+        <result property="contractName"    column="contract_name"    />
         <result property="contractType"    column="contract_type"    />
         <result property="syncTime"    column="sync_time"    />
         <result property="deptId"    column="dept_id"    />
@@ -16,13 +17,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectContractSyncLogVo">
-        select sync_log_id, contract_id, contract_type, sync_time, dept_id, dept_name, sync_status, status_description from contract_sync_log
+        select sync_log_id, contract_id, contract_name, contract_type, sync_time, dept_id, dept_name, sync_status, status_description from contract_sync_log
     </sql>
 
     <select id="selectContractSyncLogList" parameterType="ContractSyncLog" resultMap="ContractSyncLogResult">
         <include refid="selectContractSyncLogVo"/>
         <where>  
             <if test="contractId != null  and contractId != ''"> and contract_id = #{contractId}</if>
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
             <if test="contractType != null  and contractType != ''"> and contract_type = #{contractType}</if>
             <if test="syncTime != null "> and sync_time = #{syncTime}</if>
             <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
@@ -39,22 +41,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into contract_sync_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="syncLogId != null and syncLogId != ''">sync_log_id,</if>
-            <if test="contractId != null and contractId != ''">contract_id,</if>
-            <if test="contractType != null and contractType != ''">contract_type,</if>
+            <if test="contractId != null">contract_id,</if>
+            <if test="contractName != null">contract_name,</if>
+            <if test="contractType != null">contract_type,</if>
             <if test="syncTime != null">sync_time,</if>
             <if test="deptId != null">dept_id,</if>
             <if test="deptName != null">dept_name,</if>
-            <if test="syncStatus != null and syncStatus != ''">sync_status,</if>
+            <if test="syncStatus != null">sync_status,</if>
             <if test="statusDescription != null">status_description,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="syncLogId != null and syncLogId != ''">#{syncLogId},</if>
-            <if test="contractId != null and contractId != ''">#{contractId},</if>
-            <if test="contractType != null and contractType != ''">#{contractType},</if>
+            <if test="contractId != null">#{contractId},</if>
+            <if test="contractName != null">#{contractName},</if>
+            <if test="contractType != null">#{contractType},</if>
             <if test="syncTime != null">#{syncTime},</if>
             <if test="deptId != null">#{deptId},</if>
             <if test="deptName != null">#{deptName},</if>
-            <if test="syncStatus != null and syncStatus != ''">#{syncStatus},</if>
+            <if test="syncStatus != null">#{syncStatus},</if>
             <if test="statusDescription != null">#{statusDescription},</if>
          </trim>
     </insert>
@@ -62,12 +66,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateContractSyncLog" parameterType="ContractSyncLog">
         update contract_sync_log
         <trim prefix="SET" suffixOverrides=",">
-            <if test="contractId != null and contractId != ''">contract_id = #{contractId},</if>
-            <if test="contractType != null and contractType != ''">contract_type = #{contractType},</if>
+            <if test="contractId != null">contract_id = #{contractId},</if>
+            <if test="contractType != null">contract_type = #{contractType},</if>
             <if test="syncTime != null">sync_time = #{syncTime},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="deptName != null">dept_name = #{deptName},</if>
-            <if test="syncStatus != null and syncStatus != ''">sync_status = #{syncStatus},</if>
+            <if test="syncStatus != null">sync_status = #{syncStatus},</if>
             <if test="statusDescription != null">status_description = #{statusDescription},</if>
         </trim>
         where sync_log_id = #{syncLogId}

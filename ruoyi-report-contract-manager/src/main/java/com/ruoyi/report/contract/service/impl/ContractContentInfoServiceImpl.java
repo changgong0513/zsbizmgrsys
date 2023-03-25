@@ -249,20 +249,20 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 ContractSyncLog contractSyncLog = new ContractSyncLog();
                 contractSyncLog.setSyncTime(DateUtils.getNowDate()); // 合同同步时间
                 contractSyncLog.setSyncStatus("1"); // 合同同步状态
+                contractSyncLog.setDeptId(Long.parseLong(processCodeAndDeptId[1]));
+                SysDept sysDept = sysDeptService.selectDeptById(Long.parseLong(processCodeAndDeptId[1]));
+                if (sysDept != null) {
+                    contractSyncLog.setDeptName(sysDept.getDeptName());
+                }
 
                 String id = ids.get(i);
                 ContractContentInfo contract = getContractData(accessToken, id, contractSyncLog);
                 if (contract != null && StringUtils.isNotBlank(contract.getContractId())) {
                     if (StringUtils.equals(contractSyncLog.getSyncStatus(), "1")) {
+                        contractSyncLog.setSyncLogId(id); // 合同同步编号
+
                         // 设置合同所属部门编号
                         contract.setBelongDeptId(Long.parseLong(processCodeAndDeptId[1]));
-
-                        contractSyncLog.setSyncLogId(id); // 合同同步编号
-                        contractSyncLog.setDeptId(contract.getBelongDeptId());
-                        SysDept sysDept = sysDeptService.selectDeptById(contract.getBelongDeptId());
-                        if (sysDept != null) {
-                            contractSyncLog.setDeptName(sysDept.getDeptName());
-                        }
 
                         // 检查合同是否已经导入合同表
                         ContractContentInfo selectContract = null;
@@ -306,8 +306,14 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                     // 合同编号为空的场合
                     contractIdIsEmptyList.add(id);
                     contractSyncLog.setSyncLogId(id); // 同步日志编号
-                    contractSyncLog.setContractId("empty"); // 合同编号
-                    contractSyncLog.setStatusDescription("同步合同编号为空，请确认。"); // 同步状态描述
+                    contractSyncLog.setContractId(""); // 合同编号
+                    contractSyncLog.setContractName(contract.getContractName());
+                    if (StringUtils.isNotBlank(contract.getContractName())) {
+                        contractSyncLog.setStatusDescription("同步的合同编号为空"); // 同步状态描述
+                    } else {
+                        contractSyncLog.setStatusDescription(contract.toString());
+                    }
+
                     contractSyncLog.setSyncStatus("0"); // 合同同步状态
                 }
 
@@ -623,19 +629,19 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             List<GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues> list = resp.getBody().getResult().formComponentValues;
             for (int i = 0; i < list.size(); i++) {
                 GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResultFormComponentValues item = list.get(i);
-                // 货物名称
+                // 同步合同正确与否判断条件1：货物名称
                 if (StringUtils.equals(item.getName(), "货物名称")) {
                     if (StringUtils.isNotBlank(item.getValue())) {
                         contract.setGoodsId(String.valueOf(materialMap.get(item.getValue())));
                         contract.setGoodsName(item.getValue());
                     } else {
                         contractSyncLog.setSyncStatus("0");
-                        contractSyncLog.setStatusDescription("同步的货物名称内容不正确，请确认。");
-                        throw  new Exception("同步的货物名称内容不正确，请确认。");
+                        contractSyncLog.setStatusDescription("同步的合同货物名称为空");
+                        throw  new Exception("同步的合同货物名称为空");
                     }
 
                 }
-                // 合同类型
+                // 同步合同正确与否判断条件2：合同类型
                 if (StringUtils.equals(item.getName(), "合同类型")) {
                     if (StringUtils.contains(item.getValue(), "收购合同") ||
                             StringUtils.contains(item.getValue(), "采购合同")) {
@@ -648,22 +654,34 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                         //contract.setContractType("Q");
                         contractSyncLog.setContractType(item.getValue());
                         contractSyncLog.setSyncStatus("0");
-                        contractSyncLog.setStatusDescription("同步的合同类型不是收购合同或者销售合同，请确认。");
-                        throw  new Exception("同步的合同类型不是收购合同或者销售合同，请确认。");
+                        contractSyncLog.setStatusDescription("同步的合同类型不是收购合同或者销售合同");
+                        throw  new Exception("同步的合同类型不是收购合同或者销售合同");
                     }
                 }
-                // 合同名称
+                // 同步合同正确与否判断条件3：合同名称
                 if (StringUtils.equals(item.getName(), "合同名称")) {
-                    contract.setContractName(item.getValue());
-                }
-                // 合同编号
-                if (StringUtils.equals(item.getName(), "合同编号")) {
-                    if (!StringUtils.contains(item.getValue(), "/")) {
-                        contract.setContractId(item.getValue());
+                    if (StringUtils.isNotBlank(item.getValue())) {
+                        contract.setContractName(item.getValue());
                     } else {
                         contractSyncLog.setSyncStatus("0");
-                        contractSyncLog.setStatusDescription("同步的合同编号包含非法字符[/]，请确认。");
-                        throw new Exception("同步的合同编号包含非法字符[/]");
+                        contractSyncLog.setStatusDescription("同步的合同名称为空");
+                        throw  new Exception("同步的合同名称为空");
+                    }
+                }
+                // 同步合同正确与否判断条件4：合同编号
+                if (StringUtils.equals(item.getName(), "合同编号")) {
+                    if (StringUtils.isNotBlank(item.getValue())) {
+                        if (!StringUtils.contains(item.getValue(), "/")) {
+                            contract.setContractId(item.getValue());
+                        } else {
+                            contractSyncLog.setSyncStatus("0");
+                            contractSyncLog.setStatusDescription("同步的合同编号包含非法字符[/]");
+                            throw new Exception("同步的合同编号包含非法字符[/]");
+                        }
+                    } else {
+                        contractSyncLog.setSyncStatus("0");
+                        contractSyncLog.setStatusDescription("同步的合同编号为空");
+                        throw new Exception("同步的合同编号为空");
                     }
                 }
                 // 签约日期
@@ -748,7 +766,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
                 }
             }
 
-            return contract;
+//            return contract;
         } catch (TeaException err) {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 // err 中含有 code 和 message 属性，可帮助开发定位问题
@@ -767,7 +785,7 @@ public class ContractContentInfoServiceImpl implements IContractContentInfoServi
             }
         }
 
-        return null;
+        return contract;
     }
 
     private void fillPurchaseInfoFromContract(ContractContentInfo contractInfo,

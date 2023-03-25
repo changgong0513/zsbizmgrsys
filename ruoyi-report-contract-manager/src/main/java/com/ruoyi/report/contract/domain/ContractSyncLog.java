@@ -24,6 +24,10 @@ public class ContractSyncLog extends BaseEntity
     @Excel(name = "合同编号")
     private String contractId;
 
+    /** 合同名称 */
+    @Excel(name = "合同名称")
+    private String contractName;
+
     /** 合同类型 */
     @Excel(name = "合同类型")
     private String contractType;
@@ -49,77 +53,76 @@ public class ContractSyncLog extends BaseEntity
     @Excel(name = "状态描述 ")
     private String statusDescription;
 
-    public void setSyncLogId(String syncLogId) 
-    {
+    public String getSyncLogId() {
+        return syncLogId;
+    }
+
+    public void setSyncLogId(String syncLogId) {
         this.syncLogId = syncLogId;
     }
 
-    public String getSyncLogId() 
-    {
-        return syncLogId;
+    public String getContractId() {
+        return contractId;
     }
-    public void setContractId(String contractId) 
-    {
+
+    public void setContractId(String contractId) {
         this.contractId = contractId;
     }
 
-    public String getContractId() 
-    {
-        return contractId;
+    public String getContractName() {
+        return contractName;
     }
-    public void setContractType(String contractType) 
-    {
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
+    }
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
         this.contractType = contractType;
     }
 
-    public String getContractType() 
-    {
-        return contractType;
+    public Date getSyncTime() {
+        return syncTime;
     }
-    public void setSyncTime(Date syncTime) 
-    {
+
+    public void setSyncTime(Date syncTime) {
         this.syncTime = syncTime;
     }
 
-    public Date getSyncTime() 
-    {
-        return syncTime;
+    public Long getDeptId() {
+        return deptId;
     }
-    public void setDeptId(Long deptId) 
-    {
+
+    public void setDeptId(Long deptId) {
         this.deptId = deptId;
     }
 
-    public Long getDeptId() 
-    {
-        return deptId;
+    public String getDeptName() {
+        return deptName;
     }
-    public void setDeptName(String deptName) 
-    {
+
+    public void setDeptName(String deptName) {
         this.deptName = deptName;
     }
 
-    public String getDeptName() 
-    {
-        return deptName;
+    public String getSyncStatus() {
+        return syncStatus;
     }
-    public void setSyncStatus(String syncStatus) 
-    {
+
+    public void setSyncStatus(String syncStatus) {
         this.syncStatus = syncStatus;
     }
 
-    public String getSyncStatus() 
-    {
-        return syncStatus;
-    }
-    public void setStatusDescription(String statusDescription) 
-    {
-        this.statusDescription = statusDescription;
+    public String getStatusDescription() {
+        return statusDescription;
     }
 
-    public String getStatusDescription() 
-    {
-        return statusDescription;
+    public void setStatusDescription(String statusDescription) {
+        this.statusDescription = statusDescription;
     }
 
     @Override
@@ -127,6 +130,7 @@ public class ContractSyncLog extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("syncLogId", getSyncLogId())
             .append("contractId", getContractId())
+            .append("contractName", getContractName())
             .append("contractType", getContractType())
             .append("syncTime", getSyncTime())
             .append("deptId", getDeptId())
