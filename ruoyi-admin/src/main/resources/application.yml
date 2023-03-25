@@ -18,7 +18,7 @@ ruoyi:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 18765
   servlet:
     # 应用的访问路径
     context-path: /
@@ -70,9 +70,9 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 47.93.238.125
+    host: 39.98.93.159
     # 端口，默认为6379
-    port: 6379
+    port: 13796
     # 数据库索引
     database: 0
     # 密码
