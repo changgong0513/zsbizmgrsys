@@ -1,6 +1,27 @@
 <!-- 利润情况表 -->
 <template>
     <div class="app-container" style="padding: auto;">
+        <el-row :gutter="10" class="mb8" style="margin-bottom: 25px;">
+            <el-col :span="1.5">
+                <el-button
+                type="primary"
+                plain
+                icon="el-icon-plus"
+                size="mini"
+                @click="handleAdd"
+                >预览</el-button>
+            </el-col>
+            <el-col :span="1.5">
+                <el-button
+                type="success"
+                plain
+                icon="el-icon-edit"
+                size="mini"
+                :disabled="single"
+                @click="handleUpdate"
+                >打印</el-button>
+            </el-col>
+        </el-row>
         <table border="1px" style="border-collapse: collapse;">
             <thead>
                 <tr>
