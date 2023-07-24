@@ -186,6 +186,7 @@
         <module>ruoyi-report-masterdata</module>
         <module>ruoyi-report-purchasesale</module>
         <module>ruoyi-report-zjzy</module>
+        <module>ruoyi-report-transportdocuments</module>
     </modules>
     <packaging>pom</packaging>
 
