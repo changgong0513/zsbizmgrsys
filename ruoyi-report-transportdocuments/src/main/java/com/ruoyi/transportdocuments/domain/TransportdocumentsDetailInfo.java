@@ -8,12 +8,12 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 运输单基本信息对象 transportdocuments_base_info
+ * 运输单详细信息对象 transportdocuments_detail_info
  * 
  * @author changgong0513
- * @date 2023-07-23
+ * @date 2023-07-28
  */
-public class TransportdocumentsBaseInfo extends BaseEntity
+public class TransportdocumentsDetailInfo extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,6 @@ public class TransportdocumentsBaseInfo extends BaseEntity
     private String transportdocumentsId;
 
     /** 运输单类型 */
-    @Excel(name = "运输单类型")
     private String transportdocumentsType;
 
     /** 批次号 */
@@ -33,25 +32,21 @@ public class TransportdocumentsBaseInfo extends BaseEntity
     private String pch;
 
     /** 车号 */
-    @Excel(name = "车号")
     private String wagonNumber;
 
     /** 发货地编号 */
     private String sourcePlaceId;
 
     /** 发货地名称 */
-    @Excel(name = "发货地名称")
     private String sourcePlaceName;
 
     /** 卸货地编号 */
     private String targetPlaceId;
 
     /** 卸货地名称 */
-    @Excel(name = "卸货地名称")
     private String targetPlaceName;
 
     /** 装车数量 */
-    @Excel(name = "装车数量")
     private Long loadingQuantity;
 
     /** 经办人编号 */
@@ -84,6 +79,7 @@ public class TransportdocumentsBaseInfo extends BaseEntity
     private Long unitPrice;
 
     /** 关联订单编号 */
+    @Excel(name = "关联订单编号")
     private String relatedOrderId;
 
     /** 关联合同编号 */
@@ -91,6 +87,33 @@ public class TransportdocumentsBaseInfo extends BaseEntity
 
     /** 关联合同名称 */
     private String relatedContractName;
+
+    /** 卸货数量 */
+    private Long landedQuantity;
+
+    /** 核算数量 */
+    private Long accountingQuantity;
+
+    /** 结算单价 */
+    private Long settlementUnitPrice;
+
+    /** 运费单价 */
+    private Long freightUnitPrice;
+
+    /** 扣款金额 */
+    private Long deductionAmount;
+
+    /** 压车费 */
+    private Long followUpFare;
+
+    /** 卸货日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "卸货日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date landedDate;
+
+    /** 运输单状态 */
+    @Excel(name = "运输单状态")
+    private String transportdocumentsState;
 
     /** 版本号 */
     private Long bizVersion;
@@ -212,12 +235,12 @@ public class TransportdocumentsBaseInfo extends BaseEntity
     {
         return telephone;
     }
-    public void setMaterialId(Long materialId)
+    public void setMaterialId(Long materialId) 
     {
         this.materialId = materialId;
     }
 
-    public Long getMaterialId()
+    public Long getMaterialId() 
     {
         return materialId;
     }
@@ -284,6 +307,78 @@ public class TransportdocumentsBaseInfo extends BaseEntity
     {
         return relatedContractName;
     }
+    public void setLandedQuantity(Long landedQuantity) 
+    {
+        this.landedQuantity = landedQuantity;
+    }
+
+    public Long getLandedQuantity() 
+    {
+        return landedQuantity;
+    }
+    public void setAccountingQuantity(Long accountingQuantity) 
+    {
+        this.accountingQuantity = accountingQuantity;
+    }
+
+    public Long getAccountingQuantity() 
+    {
+        return accountingQuantity;
+    }
+    public void setSettlementUnitPrice(Long settlementUnitPrice) 
+    {
+        this.settlementUnitPrice = settlementUnitPrice;
+    }
+
+    public Long getSettlementUnitPrice() 
+    {
+        return settlementUnitPrice;
+    }
+    public void setFreightUnitPrice(Long freightUnitPrice) 
+    {
+        this.freightUnitPrice = freightUnitPrice;
+    }
+
+    public Long getFreightUnitPrice() 
+    {
+        return freightUnitPrice;
+    }
+    public void setDeductionAmount(Long deductionAmount) 
+    {
+        this.deductionAmount = deductionAmount;
+    }
+
+    public Long getDeductionAmount() 
+    {
+        return deductionAmount;
+    }
+    public void setFollowUpFare(Long followUpFare) 
+    {
+        this.followUpFare = followUpFare;
+    }
+
+    public Long getFollowUpFare() 
+    {
+        return followUpFare;
+    }
+    public void setLandedDate(Date landedDate) 
+    {
+        this.landedDate = landedDate;
+    }
+
+    public Date getLandedDate() 
+    {
+        return landedDate;
+    }
+    public void setTransportdocumentsState(String transportdocumentsState) 
+    {
+        this.transportdocumentsState = transportdocumentsState;
+    }
+
+    public String getTransportdocumentsState() 
+    {
+        return transportdocumentsState;
+    }
     public void setBizVersion(Long bizVersion) 
     {
         this.bizVersion = bizVersion;
@@ -318,6 +413,14 @@ public class TransportdocumentsBaseInfo extends BaseEntity
             .append("relatedOrderId", getRelatedOrderId())
             .append("relatedContractId", getRelatedContractId())
             .append("relatedContractName", getRelatedContractName())
+            .append("landedQuantity", getLandedQuantity())
+            .append("accountingQuantity", getAccountingQuantity())
+            .append("settlementUnitPrice", getSettlementUnitPrice())
+            .append("freightUnitPrice", getFreightUnitPrice())
+            .append("deductionAmount", getDeductionAmount())
+            .append("followUpFare", getFollowUpFare())
+            .append("landedDate", getLandedDate())
+            .append("transportdocumentsState", getTransportdocumentsState())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

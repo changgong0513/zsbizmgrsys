@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.transportdocuments.mapper.TransportdocumentsBaseInfoMapper">
+<mapper namespace="com.ruoyi.transportdocuments.mapper.TransportdocumentsDetailInfoMapper">
     
-    <resultMap type="TransportdocumentsBaseInfo" id="TransportdocumentsBaseInfoResult">
+    <resultMap type="TransportdocumentsDetailInfo" id="TransportdocumentsDetailInfoResult">
         <result property="id"    column="id"    />
         <result property="transportdocumentsId"    column="transportdocuments_id"    />
         <result property="transportdocumentsType"    column="transportdocuments_type"    />
@@ -26,6 +26,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="relatedOrderId"    column="related_order_id"    />
         <result property="relatedContractId"    column="related_contract_id"    />
         <result property="relatedContractName"    column="related_contract_name"    />
+        <result property="landedQuantity"    column="landed_quantity"    />
+        <result property="accountingQuantity"    column="accounting_quantity"    />
+        <result property="settlementUnitPrice"    column="settlement_unit_price"    />
+        <result property="freightUnitPrice"    column="freight_unit_price"    />
+        <result property="deductionAmount"    column="deduction_amount"    />
+        <result property="followUpFare"    column="follow_up_fare"    />
+        <result property="landedDate"    column="landed_date"    />
+        <result property="transportdocumentsState"    column="transportdocuments_state"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -33,34 +41,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="bizVersion"    column="biz_version"    />
     </resultMap>
 
-    <sql id="selectTransportdocumentsBaseInfoVo">
-        select id, transportdocuments_id, transportdocuments_type, pch, wagon_number, source_place_id, source_place_name, target_place_id, target_place_name, loading_quantity, handled_by_id, handled_by_name, telephone, material_id, material_name, business_date, documents_type, unit_price, related_order_id, related_contract_id, related_contract_name, create_by, create_time, update_by, update_time, biz_version from transportdocuments_base_info
+    <sql id="selectTransportdocumentsDetailInfoVo">
+        select id, transportdocuments_id, transportdocuments_type, pch, wagon_number, source_place_id, source_place_name, target_place_id, target_place_name, loading_quantity, handled_by_id, handled_by_name, telephone, material_id, material_name, business_date, documents_type, unit_price, related_order_id, related_contract_id, related_contract_name, landed_quantity, accounting_quantity, settlement_unit_price, freight_unit_price, deduction_amount, follow_up_fare, landed_date, transportdocuments_state, create_by, create_time, update_by, update_time, biz_version from transportdocuments_detail_info
     </sql>
 
-    <select id="selectTransportdocumentsBaseInfoList" parameterType="TransportdocumentsBaseInfo" resultMap="TransportdocumentsBaseInfoResult">
-        <include refid="selectTransportdocumentsBaseInfoVo"/>
+    <select id="selectTransportdocumentsDetailInfoList" parameterType="TransportdocumentsDetailInfo" resultMap="TransportdocumentsDetailInfoResult">
+        <include refid="selectTransportdocumentsDetailInfoVo"/>
         <where>  
-            <if test="transportdocumentsId != null  and transportdocumentsId != ''"> and transportdocuments_id like concat('%', #{transportdocumentsId}, '%')</if>
-            <if test="transportdocumentsType != null  and transportdocumentsType != ''"> and transportdocuments_type = #{transportdocumentsType}</if>
-            <if test="pch != null  and pch != ''"> and pch = #{pch}</if>
-            <if test="wagonNumber != null  and wagonNumber != ''"> and wagon_number like concat('%', #{wagonNumber}, '%')</if>
-            <if test="sourcePlaceName != null  and sourcePlaceName != ''"> and source_place_name like concat('%', #{sourcePlaceName}, '%')</if>
-            <if test="targetPlaceName != null  and targetPlaceName != ''"> and target_place_name like concat('%', #{targetPlaceName}, '%')</if>
-            <if test="handledByName != null  and handledByName != ''"> and handled_by_name like concat('%', #{handledByName}, '%')</if>
-            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="transportdocumentsId != null  and transportdocumentsId != ''"> and transportdocuments_id = #{transportdocumentsId}</if>
             <if test="businessDate != null "> and business_date = #{businessDate}</if>
             <if test="documentsType != null  and documentsType != ''"> and documents_type = #{documentsType}</if>
-            <if test="relatedOrderId != null  and relatedOrderId != ''"> and related_order_id = #{relatedOrderId}</if>
+            <if test="transportdocumentsState != null  and transportdocumentsState != ''"> and transportdocuments_state = #{transportdocumentsState}</if>
         </where>
     </select>
     
-    <select id="selectTransportdocumentsBaseInfoById" parameterType="Long" resultMap="TransportdocumentsBaseInfoResult">
-        <include refid="selectTransportdocumentsBaseInfoVo"/>
+    <select id="selectTransportdocumentsDetailInfoById" parameterType="Long" resultMap="TransportdocumentsDetailInfoResult">
+        <include refid="selectTransportdocumentsDetailInfoVo"/>
         where id = #{id}
     </select>
         
-    <insert id="insertTransportdocumentsBaseInfo" parameterType="TransportdocumentsBaseInfo" useGeneratedKeys="true" keyProperty="id">
-        insert into transportdocuments_base_info
+    <insert id="insertTransportdocumentsDetailInfo" parameterType="TransportdocumentsDetailInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into transportdocuments_detail_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="transportdocumentsId != null and transportdocumentsId != ''">transportdocuments_id,</if>
             <if test="transportdocumentsType != null and transportdocumentsType != ''">transportdocuments_type,</if>
@@ -74,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handledById != null">handled_by_id,</if>
             <if test="handledByName != null and handledByName != ''">handled_by_name,</if>
             <if test="telephone != null and telephone != ''">telephone,</if>
-            <if test="materialId != null and materialId != ''">material_id,</if>
+            <if test="materialId != null">material_id,</if>
             <if test="materialName != null and materialName != ''">material_name,</if>
             <if test="businessDate != null">business_date,</if>
             <if test="documentsType != null and documentsType != ''">documents_type,</if>
@@ -82,6 +83,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="relatedOrderId != null and relatedOrderId != ''">related_order_id,</if>
             <if test="relatedContractId != null">related_contract_id,</if>
             <if test="relatedContractName != null">related_contract_name,</if>
+            <if test="landedQuantity != null">landed_quantity,</if>
+            <if test="accountingQuantity != null">accounting_quantity,</if>
+            <if test="settlementUnitPrice != null">settlement_unit_price,</if>
+            <if test="freightUnitPrice != null">freight_unit_price,</if>
+            <if test="deductionAmount != null">deduction_amount,</if>
+            <if test="followUpFare != null">follow_up_fare,</if>
+            <if test="landedDate != null">landed_date,</if>
+            <if test="transportdocumentsState != null and transportdocumentsState != ''">transportdocuments_state,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null and updateBy != ''">update_by,</if>
@@ -101,7 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handledById != null">#{handledById},</if>
             <if test="handledByName != null and handledByName != ''">#{handledByName},</if>
             <if test="telephone != null and telephone != ''">#{telephone},</if>
-            <if test="materialId != null and materialId != ''">#{materialId},</if>
+            <if test="materialId != null">#{materialId},</if>
             <if test="materialName != null and materialName != ''">#{materialName},</if>
             <if test="businessDate != null">#{businessDate},</if>
             <if test="documentsType != null and documentsType != ''">#{documentsType},</if>
@@ -109,6 +118,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="relatedOrderId != null and relatedOrderId != ''">#{relatedOrderId},</if>
             <if test="relatedContractId != null">#{relatedContractId},</if>
             <if test="relatedContractName != null">#{relatedContractName},</if>
+            <if test="landedQuantity != null">#{landedQuantity},</if>
+            <if test="accountingQuantity != null">#{accountingQuantity},</if>
+            <if test="settlementUnitPrice != null">#{settlementUnitPrice},</if>
+            <if test="freightUnitPrice != null">#{freightUnitPrice},</if>
+            <if test="deductionAmount != null">#{deductionAmount},</if>
+            <if test="followUpFare != null">#{followUpFare},</if>
+            <if test="landedDate != null">#{landedDate},</if>
+            <if test="transportdocumentsState != null and transportdocumentsState != ''">#{transportdocumentsState},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
@@ -117,8 +134,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTransportdocumentsBaseInfo" parameterType="TransportdocumentsBaseInfo">
-        update transportdocuments_base_info
+    <update id="updateTransportdocumentsDetailInfo" parameterType="TransportdocumentsDetailInfo">
+        update transportdocuments_detail_info
         <trim prefix="SET" suffixOverrides=",">
             <if test="transportdocumentsId != null and transportdocumentsId != ''">transportdocuments_id = #{transportdocumentsId},</if>
             <if test="transportdocumentsType != null and transportdocumentsType != ''">transportdocuments_type = #{transportdocumentsType},</if>
@@ -132,7 +149,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handledById != null">handled_by_id = #{handledById},</if>
             <if test="handledByName != null and handledByName != ''">handled_by_name = #{handledByName},</if>
             <if test="telephone != null and telephone != ''">telephone = #{telephone},</if>
-            <if test="materialId != null and materialId != ''">material_id = #{materialId},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
             <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
             <if test="businessDate != null">business_date = #{businessDate},</if>
             <if test="documentsType != null and documentsType != ''">documents_type = #{documentsType},</if>
@@ -140,6 +157,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="relatedOrderId != null and relatedOrderId != ''">related_order_id = #{relatedOrderId},</if>
             <if test="relatedContractId != null">related_contract_id = #{relatedContractId},</if>
             <if test="relatedContractName != null">related_contract_name = #{relatedContractName},</if>
+            <if test="landedQuantity != null">landed_quantity = #{landedQuantity},</if>
+            <if test="accountingQuantity != null">accounting_quantity = #{accountingQuantity},</if>
+            <if test="settlementUnitPrice != null">settlement_unit_price = #{settlementUnitPrice},</if>
+            <if test="freightUnitPrice != null">freight_unit_price = #{freightUnitPrice},</if>
+            <if test="deductionAmount != null">deduction_amount = #{deductionAmount},</if>
+            <if test="followUpFare != null">follow_up_fare = #{followUpFare},</if>
+            <if test="landedDate != null">landed_date = #{landedDate},</if>
+            <if test="transportdocumentsState != null and transportdocumentsState != ''">transportdocuments_state = #{transportdocumentsState},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
@@ -149,12 +174,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteTransportdocumentsBaseInfoById" parameterType="Long">
-        delete from transportdocuments_base_info where id = #{id}
+    <delete id="deleteTransportdocumentsDetailInfoById" parameterType="Long">
+        delete from transportdocuments_detail_info where id = #{id}
     </delete>
 
-    <delete id="deleteTransportdocumentsBaseInfoByIds" parameterType="String">
-        delete from transportdocuments_base_info where id in 
+    <delete id="deleteTransportdocumentsDetailInfoByIds" parameterType="String">
+        delete from transportdocuments_detail_info where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
