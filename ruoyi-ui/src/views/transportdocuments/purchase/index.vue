@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="运输单号" prop="transportdocumentsId">
         <el-input
           v-model="queryParams.transportdocumentsId"
@@ -91,9 +91,7 @@
 
     <el-table v-loading="loading" :data="detailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
-      <el-table-column label="批次号" align="center" prop="pch" />
       <el-table-column label="经办人姓名" align="center" prop="handledByName" />
       <el-table-column label="物料名称" align="center" prop="materialName" />
       <el-table-column label="业务日期" align="center" prop="businessDate" width="180">
@@ -104,12 +102,6 @@
       <el-table-column label="单据类型" align="center" prop="documentsType">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.transportdocuments_documents_type" :value="scope.row.documentsType"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="关联订单编号" align="center" prop="relatedOrderId" />
-      <el-table-column label="卸货日期" align="center" prop="landedDate" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.landedDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="运输单状态" align="center" prop="transportdocumentsState">
@@ -146,119 +138,158 @@
     />
 
     <!-- 添加或修改运输单详细信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="运输单号" prop="transportdocumentsId">
-          <el-input v-model="form.transportdocumentsId" placeholder="请输入运输单号" />
-        </el-form-item>
-        <el-form-item label="运输单类型" prop="transportdocumentsType">
-          <el-input v-model="form.transportdocumentsType" placeholder="请输入运输单类型" />
-        </el-form-item>
-        <el-form-item label="批次号" prop="pch">
-          <el-input v-model="form.pch" placeholder="请输入批次号" />
-        </el-form-item>
-        <el-form-item label="车号" prop="wagonNumber">
-          <el-input v-model="form.wagonNumber" placeholder="请输入车号" />
-        </el-form-item>
-        <el-form-item label="发货地编号" prop="sourcePlaceId">
-          <el-input v-model="form.sourcePlaceId" placeholder="请输入发货地编号" />
-        </el-form-item>
-        <el-form-item label="发货地名称" prop="sourcePlaceName">
-          <el-input v-model="form.sourcePlaceName" placeholder="请输入发货地名称" />
-        </el-form-item>
-        <el-form-item label="卸货地编号" prop="targetPlaceId">
-          <el-input v-model="form.targetPlaceId" placeholder="请输入卸货地编号" />
-        </el-form-item>
-        <el-form-item label="卸货地名称" prop="targetPlaceName">
-          <el-input v-model="form.targetPlaceName" placeholder="请输入卸货地名称" />
-        </el-form-item>
-        <el-form-item label="装车数量" prop="loadingQuantity">
-          <el-input v-model="form.loadingQuantity" placeholder="请输入装车数量" />
-        </el-form-item>
-        <el-form-item label="经办人编号" prop="handledById">
-          <el-input v-model="form.handledById" placeholder="请输入经办人编号" />
-        </el-form-item>
-        <el-form-item label="经办人姓名" prop="handledByName">
-          <el-input v-model="form.handledByName" placeholder="请输入经办人姓名" />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="telephone">
-          <el-input v-model="form.telephone" placeholder="请输入联系电话" />
-        </el-form-item>
-        <el-form-item label="物料编号" prop="materialId">
-          <el-input v-model="form.materialId" placeholder="请输入物料编号" />
-        </el-form-item>
-        <el-form-item label="物料名称" prop="materialName">
-          <el-input v-model="form.materialName" placeholder="请输入物料名称" />
-        </el-form-item>
-        <el-form-item label="业务日期" prop="businessDate">
-          <el-date-picker clearable
-            v-model="form.businessDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择业务日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="单据类型" prop="documentsType">
-          <el-select v-model="form.documentsType" placeholder="请选择单据类型">
-            <el-option
-              v-for="dict in dict.type.transportdocuments_documents_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="单价" prop="unitPrice">
-          <el-input v-model="form.unitPrice" placeholder="请输入单价" />
-        </el-form-item>
-        <el-form-item label="关联订单编号" prop="relatedOrderId">
-          <el-input v-model="form.relatedOrderId" placeholder="请输入关联订单编号" />
-        </el-form-item>
-        <el-form-item label="关联合同编号" prop="relatedContractId">
-          <el-input v-model="form.relatedContractId" placeholder="请输入关联合同编号" />
-        </el-form-item>
-        <el-form-item label="关联合同名称" prop="relatedContractName">
-          <el-input v-model="form.relatedContractName" placeholder="请输入关联合同名称" />
-        </el-form-item>
-        <el-form-item label="卸货数量" prop="landedQuantity">
-          <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" />
-        </el-form-item>
-        <el-form-item label="核算数量" prop="accountingQuantity">
-          <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" />
-        </el-form-item>
-        <el-form-item label="结算单价" prop="settlementUnitPrice">
-          <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" />
-        </el-form-item>
-        <el-form-item label="运费单价" prop="freightUnitPrice">
-          <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" />
-        </el-form-item>
-        <el-form-item label="扣款金额" prop="deductionAmount">
-          <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" />
-        </el-form-item>
-        <el-form-item label="压车费" prop="followUpFare">
-          <el-input v-model="form.followUpFare" placeholder="请输入压车费" />
-        </el-form-item>
-        <el-form-item label="卸货日期" prop="landedDate">
-          <el-date-picker clearable
-            v-model="form.landedDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择卸货日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="运输单状态" prop="transportdocumentsState">
-          <el-select v-model="form.transportdocumentsState" placeholder="请选择运输单状态">
-            <el-option
-              v-for="dict in dict.type.transportdocuments_state"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="版本号" prop="bizVersion">
-          <el-input v-model="form.bizVersion" placeholder="请输入版本号" />
-        </el-form-item>
+    <el-dialog :title="title" :visible.sync="open" width="1100px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="运输单号" prop="transportdocumentsId">
+              <el-input v-model="form.transportdocumentsId" placeholder="请输入运输单号" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="批次号" prop="pch">
+              <el-input v-model="form.pch" placeholder="请输入批次号" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="车号" prop="wagonNumber">
+              <el-input v-model="form.wagonNumber" placeholder="请输入车号" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="发货地名称" prop="sourcePlaceName">
+              <el-input v-model="form.sourcePlaceName" placeholder="请输入发货地名称" style="width: 200px;" />
+            </el-form-item>
+            <el-input v-model="form.sourcePlaceId" v-show="false" />
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="卸货地名称" prop="targetPlaceName">
+              <el-input v-model="form.targetPlaceName" placeholder="请输入卸货地名称" style="width: 200px;" />
+            </el-form-item>
+            <el-input v-model="form.targetPlaceId" v-show="false" />
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="装车数量" prop="loadingQuantity">
+              <el-input v-model="form.loadingQuantity" placeholder="请输入装车数量" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="经办人姓名" prop="handledByName">
+              <el-input v-model="form.handledByName" placeholder="请输入经办人姓名" style="width: 200px;" />
+            </el-form-item>
+            <el-input v-model="form.handledById" v-show="false" />
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="联系电话" prop="telephone">
+              <el-input v-model="form.telephone" placeholder="请输入联系电话" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="物料名称" prop="materialName">
+              <el-input v-model="form.materialName" placeholder="请输入物料名称" style="width: 200px;" />
+            </el-form-item>
+            <el-input v-model="form.materialId"  v-show="false" />
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="业务日期" prop="businessDate">
+              <el-date-picker clearable
+                v-model="form.businessDate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择业务日期"
+                style="width: 200px;">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="单据类型" prop="documentsType">
+              <el-select v-model="form.documentsType" placeholder="请选择单据类型" style="width: 200px;" >
+                <el-option
+                  v-for="dict in dict.type.transportdocuments_documents_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="单价" prop="unitPrice">
+              <el-input v-model="form.unitPrice" placeholder="请输入单价" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="关联合同名称" prop="relatedContractName">
+              <el-input v-model="form.relatedContractName" placeholder="请输入关联合同名称" style="width: 200px;" />
+            </el-form-item>
+            <el-input v-model="form.relatedContractId" v-show="false" />
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="卸货数量" prop="landedQuantity">
+              <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="核算数量" prop="accountingQuantity">
+              <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="结算单价" prop="settlementUnitPrice">
+              <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="运费单价" prop="freightUnitPrice">
+              <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="扣款金额" prop="deductionAmount">
+              <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="压车费" prop="followUpFare">
+              <el-input v-model="form.followUpFare" placeholder="请输入压车费" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="卸货日期" prop="landedDate">
+              <el-date-picker clearable
+                v-model="form.landedDate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择卸货日期"
+                style="width: 200px;">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="运输单状态" prop="transportdocumentsState">
+              <el-select v-model="form.transportdocumentsState" placeholder="请选择运输单状态" style="width: 200px;" >
+                <el-option
+                  v-for="dict in dict.type.transportdocuments_state"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
