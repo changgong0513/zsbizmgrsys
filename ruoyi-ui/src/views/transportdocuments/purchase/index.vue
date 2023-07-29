@@ -179,14 +179,13 @@
                 style="width: 200px;">
               </el-cascader>
             </el-form-item>
-            <el-input v-model="form.sourcePlaceId" v-show="false" />
           </el-col>
           <el-col :span="8">
             <el-form-item label="卸货地名称" prop="targetPlaceId">
               <el-cascader
                 size="large"
                 :options="regionOptions"
-                v-model="form.sourcePlaceId"
+                v-model="form.targetPlaceId"
                 filterable
                 @change="handleTargetPlaceRegionChange"
                 style="width: 200px;">
@@ -212,8 +211,25 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="物料名称" prop="materialName">
-              <el-input v-model="form.materialName" placeholder="请输入物料名称" style="width: 200px;" />
+            <el-form-item label="物料名称" prop="materialId">
+              <el-select
+                v-model="form.materialId"
+                filterable
+                remote
+                clearable
+                reserve-keyword
+                placeholder="请输入物料名称关键字"
+                :remote-method="remoteMethodMaterialName"
+                :loading="remoteLoadingMaterialName"
+                @change="selChangeMaterial"
+                style="width: 200px">
+                <el-option
+                  v-for="item in optionsMaterialName"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-input v-model="form.materialId"  v-show="false" />
           </el-col>
@@ -325,6 +341,7 @@
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail } from "@/api/transportdocuments/detail";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
+import { listMaterialData } from "@/api/masterdata/material";
 
 export default {
   name: "Detail",
@@ -365,16 +382,13 @@ export default {
         transportdocumentsId: [
           { required: true, message: "运输单号不能为空", trigger: "blur" }
         ],
-        transportdocumentsType: [
-          { required: true, message: "运输单类型不能为空", trigger: "blur" }
-        ],
         pch: [
           { required: true, message: "批次号不能为空", trigger: "blur" }
         ],
         wagonNumber: [
           { required: true, message: "车号不能为空", trigger: "blur" }
         ],
-        sourcePlaceName: [
+        sourcePlaceId: [
           { required: true, message: "发货地名称不能为空", trigger: "blur" }
         ],
         loadingQuantity: [
@@ -425,6 +439,10 @@ export default {
       },
       // 省市区级联数据
       regionOptions: regionData,
+      // 物料名称选择用
+      optionsMaterialName: [],
+      listMaterialName: [],
+      remoteLoadingMaterialName: false,
     };
   },
   created() {
@@ -519,6 +537,20 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      // 发货地省市区级联选择器数组转字符串
+      let changgedSourcePlaceId = this.form.sourcePlaceId;
+      if (changgedSourcePlaceId) {
+        this.form.sourcePlaceId = changgedSourcePlaceId.join('-');
+      }
+
+       // 省市区级联选择器数组转字符串
+      let changgedTargetPlaceId = this.form.targetPlaceId;
+      if (changgedTargetPlaceId) {
+        this.form.targetPlaceId = changgedTargetPlaceId.join('-');
+      }
+
+      this.form.transportdocumentsType = 'P'; // 采购运单
+
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
@@ -589,6 +621,32 @@ export default {
           break;
       } 
       return area;
+    },
+    /** 根据输入物料名称关键字，取得物料名称列表 */
+    remoteMethodMaterialName(query) {
+      if (query !== '') {
+        this.remoteLoadingMaterialName = true;
+        this.queryParams.materialName = query;
+        listMaterialData(this.queryParams).then(response => {
+          this.remoteLoadingMaterialName = false;
+          this.listMaterialName = response.rows;
+          this.optionsMaterialName = response.rows.map(item => {
+            return { value: `${item.materialId}`, label: `${item.materialName}` };
+          }).filter(item => {
+            return item.label.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1;
+          });
+        });
+      } else {
+        this.optionsClientName = [];
+      }
+    },
+    /** 物料名称下拉列表框，选择值改变后回调方法 */
+    selChangeMaterial(selValue) {
+      let selMaterial = this.listMaterialName.find(item => {
+        return item.materialId == selValue;
+      });
+      this.form.materialName = selMaterial.materialName; // 物料名称
     },
   }
 };
