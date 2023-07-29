@@ -86,6 +86,16 @@
           v-hasPermi="['transportdocuments:detail:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['transportdocuments:detail:export']"
+        >导入</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -227,6 +237,18 @@
         </el-row>
         <el-row>
           <el-col :span="8">
+            <el-form-item label="运输单状态" prop="transportdocumentsState">
+              <el-select v-model="form.transportdocumentsState" placeholder="请选择运输单状态" style="width: 200px;" >
+                <el-option
+                  v-for="dict in dict.type.transportdocuments_state"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="关联合同名称" prop="relatedContractName">
               <el-input v-model="form.relatedContractName" placeholder="请输入关联合同名称" style="width: 200px;" />
             </el-form-item>
@@ -237,13 +259,13 @@
               <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" style="width: 200px;" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="核算数量" prop="accountingQuantity">
               <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" style="width: 200px;" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="结算单价" prop="settlementUnitPrice">
               <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" style="width: 200px;" />
@@ -254,13 +276,13 @@
               <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" style="width: 200px;" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="扣款金额" prop="deductionAmount">
               <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" style="width: 200px;" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="压车费" prop="followUpFare">
               <el-input v-model="form.followUpFare" placeholder="请输入压车费" style="width: 200px;" />
@@ -275,18 +297,6 @@
                 placeholder="请选择卸货日期"
                 style="width: 200px;">
               </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="运输单状态" prop="transportdocumentsState">
-              <el-select v-model="form.transportdocumentsState" placeholder="请选择运输单状态" style="width: 200px;" >
-                <el-option
-                  v-for="dict in dict.type.transportdocuments_state"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
