@@ -169,16 +169,29 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="发货地名称" prop="sourcePlaceName">
-              <el-input v-model="form.sourcePlaceName" placeholder="请输入发货地名称" style="width: 200px;" />
+            <el-form-item label="发货地名称" prop="sourcePlaceId">
+              <el-cascader
+                size="large"
+                :options="regionOptions"
+                v-model="form.sourcePlaceId"
+                filterable
+                @change="handleSourcePlaceRegionChange"
+                style="width: 200px;">
+              </el-cascader>
             </el-form-item>
             <el-input v-model="form.sourcePlaceId" v-show="false" />
           </el-col>
           <el-col :span="8">
-            <el-form-item label="卸货地名称" prop="targetPlaceName">
-              <el-input v-model="form.targetPlaceName" placeholder="请输入卸货地名称" style="width: 200px;" />
+            <el-form-item label="卸货地名称" prop="targetPlaceId">
+              <el-cascader
+                size="large"
+                :options="regionOptions"
+                v-model="form.sourcePlaceId"
+                filterable
+                @change="handleTargetPlaceRegionChange"
+                style="width: 200px;">
+              </el-cascader>
             </el-form-item>
-            <el-input v-model="form.targetPlaceId" v-show="false" />
           </el-col>
           <el-col :span="8">
             <el-form-item label="装车数量" prop="loadingQuantity">
@@ -311,6 +324,7 @@
 
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail } from "@/api/transportdocuments/detail";
+import { regionData, CodeToText, TextToCode } from "element-china-area-data"
 
 export default {
   name: "Detail",
@@ -408,7 +422,9 @@ export default {
         bizVersion: [
           { required: true, message: "版本号不能为空", trigger: "blur" }
         ]
-      }
+      },
+      // 省市区级联数据
+      regionOptions: regionData,
     };
   },
   created() {
@@ -536,7 +552,44 @@ export default {
       this.download('transportdocuments/detail/export', {
         ...this.queryParams
       }, `detail_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 发货地省市区级联选择器变更后 */
+    handleSourcePlaceRegionChange (value) {
+      this.form.sourcePlaceName = this.getCodeToText(null, value)
+    },
+    /** 卸货地省市区级联选择器变更后 */
+    handleTargetPlaceRegionChange (value) {
+      this.form.targetPlaceName = this.getCodeToText(null, value)
+    },
+    /** 将城市代码转为文字 */
+    getCodeToText (codeStr, codeArray) {
+      if (null === codeStr && null === codeArray) {
+          return null;
+      } 
+      else if (null === codeArray) {
+          codeArray = codeStr.split(",");
+      }
+      let area = "";
+      switch (codeArray.length) {
+        case 1:
+          area += CodeToText[codeArray[0]];
+          break;
+        case 2:
+          area += CodeToText[codeArray[0]] + "/" + CodeToText[codeArray[1]];
+          break;
+        case 3:
+          area +=
+              CodeToText[codeArray[0]] +
+              "/" +
+              CodeToText[codeArray[1]] +
+              "/" +
+              CodeToText[codeArray[2]];
+          break;
+        default:
+          break;
+      } 
+      return area;
+    },
   }
 };
 </script>
