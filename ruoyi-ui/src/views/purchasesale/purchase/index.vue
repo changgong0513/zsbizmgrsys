@@ -143,14 +143,10 @@
     <el-dialog :title="title" :visible.sync="open" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-          <!-- 合同编号 -->
+          <!-- 订单编号 -->
           <el-col :span="8">
-            <el-form-item label="合同编号" prop="contractId">
-              <el-input 
-                v-model="form.contractId" 
-                placeholder="请输入合同编号" 
-                style="width: 240px"
-                :disabled="true" />
+            <el-form-item label="订单编号" prop="orderId">
+              <el-input v-model="form.orderId" placeholder="请输入订单编号" style="width: 240px" />
             </el-form-item>
           </el-col>
           <!-- 采购类型 -->
@@ -158,12 +154,10 @@
             <el-form-item label="采购类型" prop="purchaseType">
               <el-select
                 v-model="form.purchaseType"
-                placeholder="采购类型"
-                style="width: 240px"
-                :disabled="true"
-              >
+                placeholder="请选择采购类型"
+                style="width: 240px" >
                 <el-option
-                  v-for="dict in dict.type.contractmgr_contract_type"
+                  v-for="dict in dict.type.purchasesale_purchase_type"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
@@ -450,7 +444,7 @@
                 :disabled="true"
               >
                 <el-option
-                  v-for="dict in dict.type.contractmgr_contract_type"
+                  v-for="dict in dict.type.purchasesale_purchase_type"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
@@ -939,7 +933,7 @@ import { deptSelect } from "@/api/system/user";
 
 export default {
   name: "Purchase",
-  dicts: ['contractmgr_contract_type', 'purchasesale_belong_dept', 'masterdata_warehouse_measurement_unit', 
+  dicts: ['purchasesale_purchase_type', 'purchasesale_belong_dept', 'masterdata_warehouse_measurement_unit', 
           'purchasesale_arrival_terms', 'purchasesale_settlement_method', 'contractmgr_contract_approval_status', 
           'purchase_mgr_order_status', 'purchasesale_transport_mode'],
   // 文件上传用
@@ -1023,9 +1017,6 @@ export default {
         ],
         purchaseType: [
           { required: true, message: "采购类型不能为空", trigger: "change" }
-        ],
-        contractId: [
-          { required: true, message: "合同编号不能为空", trigger: "blur" }
         ],
         handledBy: [
           { required: true, message: "经办人不能为空", trigger: "blur" }
@@ -1149,7 +1140,7 @@ export default {
     /** 查询采购收货销售发货管理列表 */
     getList() {
       this.loading = true;
-      this.queryParams.contractType = "P";
+      this.queryParams.contractType = "p";
       listPurchase(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         
         this.purchaseList = response.rows;
@@ -1196,7 +1187,8 @@ export default {
         arrivalTermsValue: null,
         settlementMethod: null,
         isInvoicing: null,
-        orderRemark: null
+        orderRemark: null,
+        orderType: null,
       };
       this.resetForm("form");
     },
@@ -1256,6 +1248,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      this.form.orderType = 'p';
       this.$refs["form"].validate(valid => {
         if (valid) {
           // this.form.supplierName = this.form.supplierRealName;

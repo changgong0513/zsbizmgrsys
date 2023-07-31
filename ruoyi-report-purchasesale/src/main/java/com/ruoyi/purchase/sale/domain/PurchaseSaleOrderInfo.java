@@ -118,6 +118,8 @@ public class PurchaseSaleOrderInfo extends BaseEntity
     @Excel(name = "所属部门")
     private String deptName;
 
+    private String orderType;
+
     public String getOrderId() {
         return orderId;
     }
@@ -356,6 +358,14 @@ public class PurchaseSaleOrderInfo extends BaseEntity
 
     public void setDeptName(String deptName) {
         this.deptName = deptName;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 
     @Override

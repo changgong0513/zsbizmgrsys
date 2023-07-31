@@ -54,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="settlementMethod"    column="settlement_method"    />
         <result property="isInvoicing"    column="is_invoicing"    />
         <result property="orderRemark"    column="order_remark"    />
+        <result property="orderType"    column="order_type"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -75,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             tt1.handled_by, tt1.belong_dept, tt1.business_date, tt1.material_name,
             tt1.purchase_quantity, tt1.supplier_name, tt1.unit_price, tt1.metering_unit,
             tt1.arrival_date, tt1.required_delivery_date, tt1.account_period, tt1.arrival_terms,
-            tt1.arrival_terms_value, tt1.settlement_method, tt1.is_invoicing, tt1.order_remark,
+            tt1.arrival_terms_value, tt1.settlement_method, tt1.is_invoicing, tt1.order_remark, tt1.order_type,
             tt1.dept_name,
             sum(ifnull( tt2.check_quantity, 0 )) as check_quantity,
 	        sum(ifnull( tt2.check_money, 0 )) as check_money
@@ -85,13 +86,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 t1.handled_by, t1.belong_dept, t1.business_date, t1.material_name,
                 t1.purchase_quantity, t1.supplier_name, t1.unit_price, t1.metering_unit,
                 t1.arrival_date, t1.required_delivery_date, t1.account_period, t1.arrival_terms,
-                t1.arrival_terms_value, t1.settlement_method, t1.is_invoicing, t1.order_remark,
+                t1.arrival_terms_value, t1.settlement_method, t1.is_invoicing, t1.order_remark, t1.order_type,
                 t4.dept_name
             from
-                purchase_sale_order_info t1, contract_content_info t2, sys_user t3, sys_dept t4
+                purchase_sale_order_info t1, sys_user t3, sys_dept t4
             where
-                t1.contract_id = t2.contract_id
-                and t2.contract_type = 'P'
+                t1.order_type = 'p'
                 and t1.handled_by = t3.user_name
 		        and t1.belong_dept = t4.dept_id
 		    order by
@@ -243,6 +243,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="settlementMethod != null and settlementMethod != ''">settlement_method,</if>
             <if test="isInvoicing != null">is_invoicing,</if>
             <if test="orderRemark != null">order_remark,</if>
+            <if test="orderType != null and orderType != ''">order_type,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null and updateBy != ''">update_by,</if>
@@ -270,6 +271,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="settlementMethod != null and settlementMethod != ''">#{settlementMethod},</if>
             <if test="isInvoicing != null">#{isInvoicing},</if>
             <if test="orderRemark != null">#{orderRemark},</if>
+            <if test="orderType != null and orderType != ''">#{orderType},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
@@ -299,6 +301,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="settlementMethod != null and settlementMethod != ''">settlement_method = #{settlementMethod},</if>
             <if test="isInvoicing != null">is_invoicing = #{isInvoicing},</if>
             <if test="orderRemark != null">order_remark = #{orderRemark},</if>
+            <if test="orderType != null and orderType != ''">order_type = #{orderType},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
