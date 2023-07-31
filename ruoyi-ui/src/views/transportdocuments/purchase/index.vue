@@ -531,6 +531,8 @@ export default {
       const id = row.id || this.ids
       getDetail(id).then(response => {
         this.form = response.data;
+        this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+        this.form.targetPlaceId = this.form.targetPlaceId.split('-');
         this.open = true;
         this.title = "修改运输单详细信息";
       });

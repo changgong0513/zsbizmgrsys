@@ -2,6 +2,7 @@ package com.ruoyi.transportdocuments.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.transportdocuments.mapper.TransportdocumentsDetailInfoMapper;
@@ -51,9 +52,11 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      * @return 结果
      */
     @Override
-    public int insertTransportdocumentsDetailInfo(TransportdocumentsDetailInfo transportdocumentsDetailInfo)
-    {
+    public int insertTransportdocumentsDetailInfo(TransportdocumentsDetailInfo transportdocumentsDetailInfo) {
+        transportdocumentsDetailInfo.setCreateBy(SecurityUtils.getUsername());
         transportdocumentsDetailInfo.setCreateTime(DateUtils.getNowDate());
+        transportdocumentsDetailInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsDetailInfo.setUpdateTime(DateUtils.getNowDate());
         return transportdocumentsDetailInfoMapper.insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
     }
 
