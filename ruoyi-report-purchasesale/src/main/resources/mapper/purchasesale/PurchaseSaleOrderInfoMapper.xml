@@ -321,4 +321,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{orderId}
         </foreach>
     </delete>
+
+    <select id="checkPurchaseOrder" parameterType="PurchaseSaleOrderInfo" resultType="java.lang.Integer">
+        select count(1) from purchase_sale_order_info where order_type = 'p' and order_id = #{orderId} and belong_dept = #{belongDept}
+    </select>
 </mapper>

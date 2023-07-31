@@ -94,4 +94,12 @@ public interface IPurchaseSaleOrderInfoService {
      * @param list
      */
     public void setPurchaseOrderStatusAndCompletionRate(List<PurchaseSaleOrderInfo> list);
+
+    /**
+     * 检查订单编号是否存在
+     *
+     * @param param 采购收货销售发货管理
+     * @return
+     */
+    public int checkPurchaseOrderId(PurchaseSaleOrderInfo param);
 }

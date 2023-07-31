@@ -280,6 +280,16 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
     }
 
     /**
+     * 检查订单编号是否存在
+     *
+     * @param param 采购收货销售发货管理
+     * @return
+     */
+    public int checkPurchaseOrderId(PurchaseSaleOrderInfo param){
+        return purchaseSaleOrderInfoMapper.checkPurchaseOrder(param);
+    }
+
+    /**
      * double除法
      *
      * @param a

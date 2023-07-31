@@ -153,6 +153,13 @@ public class PurchaseSaleOrderInfoController extends BaseController {
     @Log(title = "采购收货销售发货管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody PurchaseSaleOrderInfo purchaseSaleOrderInfo) {
+        // 检查订单编号是否存在
+        purchaseSaleOrderInfo.setBelongDept(String.valueOf(SecurityUtils.getDeptId()));
+        int checkResult = purchaseSaleOrderInfoService.checkPurchaseOrderId(purchaseSaleOrderInfo);
+        if (0 < checkResult) {
+            return AjaxResult.error("该采购订单编号已存在，请重新输入新的采购订单编号！");
+        }
+
         purchaseSaleOrderInfo.setBizVersion(1L);
         purchaseSaleOrderInfo.setCreateTime(DateUtils.getNowDate());
         purchaseSaleOrderInfo.setUpdateTime(DateUtils.getNowDate());

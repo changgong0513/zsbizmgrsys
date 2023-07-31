@@ -88,4 +88,12 @@ public interface PurchaseSaleOrderInfoMapper
      * @return 结果
      */
     public int deletePurchaseSaleOrderInfoByOrderIds(String[] orderIds);
+
+    /**
+     * 检查订单编号是否存在
+     *
+     * @param param 采购收货销售发货管理
+     * @return
+     */
+    public int checkPurchaseOrder(PurchaseSaleOrderInfo param);
 }
