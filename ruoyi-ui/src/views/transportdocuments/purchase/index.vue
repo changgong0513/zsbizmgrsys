@@ -260,14 +260,23 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="单价" prop="unitPrice">
-              <el-input v-model="form.unitPrice" placeholder="请输入单价" style="width: 200px;" />
+              <el-input 
+                v-model="form.unitPrice" 
+                placeholder="请输入单价" 
+                @input="inputUnitPrice"
+                style="width: 200px;" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
             <el-form-item label="运输单状态" prop="transportdocumentsState">
-              <el-select v-model="form.transportdocumentsState" placeholder="请选择运输单状态" style="width: 200px;" >
+              <el-select 
+                v-model="form.transportdocumentsState" 
+                placeholder="请选择运输单状态"
+                @change="selChangeTransportdocumentsState"
+                style="width: 200px;"
+                >
                 <el-option
                   v-for="dict in dict.type.transportdocuments_state"
                   :key="dict.value"
@@ -285,36 +294,36 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="卸货数量" prop="landedQuantity">
-              <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" style="width: 200px;" />
+              <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
             <el-form-item label="核算数量" prop="accountingQuantity">
-              <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" style="width: 200px;" />
+              <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="结算单价" prop="settlementUnitPrice">
-              <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" style="width: 200px;" />
+              <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="运费单价" prop="freightUnitPrice">
-              <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" style="width: 200px;" />
+              <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
             <el-form-item label="扣款金额" prop="deductionAmount">
-              <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" style="width: 200px;" />
+              <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="压车费" prop="followUpFare">
-              <el-input v-model="form.followUpFare" placeholder="请输入压车费" style="width: 200px;" />
+              <el-input v-model="form.followUpFare" placeholder="请输入压车费" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -324,8 +333,33 @@
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择卸货日期"
+                :disabled="isEditByTransportState"
                 style="width: 200px;">
               </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="涨量">
+              <el-input :disabled="true" style="width: 200px;" :value="calInflation" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="运费">
+              <el-input :disabled="true" style="width: 200px;" :value="calCarriage" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="实付运费金额">
+              <el-input :disabled="true" style="width: 200px;" :value="calRealCarriageAmount" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="货损金额">
+              <el-input :disabled="true" style="width: 200px;" :value="calCargoDamageAmount" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -488,10 +522,41 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData/p"
       },
+      isEditByTransportState: true,
     };
   },
   created() {
     this.getList();
+  },
+  computed: {
+    /** 涨量 */
+    calInflation: function () {
+      if (this.form.landedQuantity && this.form.loadingQuantity) {
+        return Number(this.form.landedQuantity) - Number(this.form.loadingQuantity)
+      }
+      return '';
+    },
+    /** 运费 */
+    calCarriage: function () {
+      if (this.form.unitPrice && this.form.landedQuantity) {
+        return Number(this.form.unitPrice) * Number(this.form.landedQuantity)
+      }
+      return '';
+    },
+    /** 实付运费金额 */
+    calRealCarriageAmount: function () {
+      if (this.calCarriage && this.form.deductionAmount && this.form.followUpFare) {
+        return this.calCarriage - Number(this.form.deductionAmount) + Number(this.form.followUpFare)
+      }
+      return '';
+    },
+    /** 货损金额 */
+    calCargoDamageAmount: function () {
+      if (this.form.loadingQuantity && this.form.landedQuantity && this.form.accountingQuantity && this.form.settlementUnitPrice) {
+        return (Number(this.form.loadingQuantity) / Number(this.form.landedQuantity) - Number(this.form.accountingQuantity)) * this.form.settlementUnitPrice;
+      }
+      return '';
+    },
   },
   methods: {
     /** 查询运输单详细信息列表 */
@@ -568,7 +633,8 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加运输单详细信息";
+      this.form.transportdocumentsState = '1';
+      this.title = "添加采购运输单详细信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -576,8 +642,15 @@ export default {
       const id = row.id || this.ids
       getDetail(id).then(response => {
         this.form = response.data;
-        this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
-        this.form.targetPlaceId = this.form.targetPlaceId.split('-');
+        this.form.settlementUnitPrice = this.form.unitPrice;
+        if (this.form.sourcePlaceId) {
+          this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+        }
+
+        if (this.form.targetPlaceId) {
+          this.form.targetPlaceId = this.form.targetPlaceId.split('-');
+        }
+
         this.open = true;
         this.title = "修改运输单详细信息";
       });
@@ -695,13 +768,25 @@ export default {
       });
       this.form.materialName = selMaterial.materialName; // 物料名称
     },
+    /** 运输单状态下拉列表框，选择值改变后回调方法 */
+    selChangeTransportdocumentsState(selValue) {
+      if (selValue != '1') {
+        this.isEditByTransportState = false;
+      } else {
+        this.isEditByTransportState = true;
+      }
+    },
+    /** 单价输入框，在Input值改变时触发回调方法 */
+    inputUnitPrice(value) {
+      this.form.settlementUnitPrice = value;
+    },
     /** 导入按钮操作 */
     handleImport() {
       this.upload.title = "采购运输单导入";
       this.upload.open = true;
     },
-     /** 下载模板操作 */
-     importTemplate() {
+    /** 下载模板操作 */
+    importTemplate() {
       this.download('/transportdocuments/detail/importTemplate', {}, `采购运输单导入模板_${new Date().getTime()}.xlsx`)
     },
     /** 文件上传中处理 */
