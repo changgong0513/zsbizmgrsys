@@ -28,7 +28,7 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     @Excel(name = "关联订单编号")
     private String relatedOrderId;
 
-    /** 运输单类型 */
+    /** 运输单类型：采购运单（p）或者销售运单（s） */
     private String transportdocumentsType;
 
     /** 批次号 */
@@ -80,11 +80,12 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     @Excel(name = "业务日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date businessDate;
 
-    /** 单据类型 */
+    /** 单据类型：转运和直销 */
     @Excel(name = "单据类型", dictType = "transportdocuments_documents_type")
     private String documentsType;
 
     /** 单价 */
+    @Excel(name = "单价")
     private Long unitPrice;
 
     /** 关联合同编号 */
@@ -116,7 +117,8 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date landedDate;
 
-    /** 运输单状态 */
+    /** 运输单状态：在途、中转和完成 */
+    @Excel(name = "运输单状态", dictType = "transportdocuments_state")
     private String transportdocumentsState;
 
     /** 版本号 */

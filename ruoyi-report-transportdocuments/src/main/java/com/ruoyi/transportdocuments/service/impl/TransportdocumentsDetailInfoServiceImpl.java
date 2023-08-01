@@ -2,11 +2,19 @@ package com.ruoyi.transportdocuments.service.impl;
 
 import java.util.List;
 
+import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
+import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
+import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
+import com.ruoyi.report.masterdata.mapper.MasterDataWarehouseBaseInfoMapper;
+import com.ruoyi.system.mapper.SysDictDataMapper;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +38,18 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
 
     @Autowired
     private TransportdocumentsDetailInfoMapper transportdocumentsDetailInfoMapper;
+
+    @Autowired
+    private MasterDataWarehouseBaseInfoMapper masterDataWarehouseBaseInfoMapper;
+
+    @Autowired
+    private MasterDataMaterialInfoMapper masterDataMaterialInfoMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private SysDictDataMapper sysDictDataMapper;
 
     @Autowired
     protected Validator validator;
@@ -116,10 +136,11 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      * @param transportdocumentsList 运输单数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName 操作用户
+     * @param transportdocumentsType 运输单类型
      * @return 结果
      */
     public String importTransportdocumentsData(List<TransportdocumentsDetailInfo> transportdocumentsList,
-                                               Boolean isUpdateSupport, String operName) {
+                                               Boolean isUpdateSupport, String operName, String transportdocumentsType) {
         if (StringUtils.isNull(transportdocumentsList) || transportdocumentsList.size() == 0) {
             throw new ServiceException("导入运输单数据不能为空！");
         }
@@ -129,27 +150,60 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 
-//        MasterDataClientInfo masterDataClientInfo = new MasterDataClientInfo();
+        List<SysDictData> dictList = null;
 
-        for (TransportdocumentsDetailInfo transportdocumentsDetailInfo : transportdocumentsList) {
+        for (TransportdocumentsDetailInfo data : transportdocumentsList) {
 
             try {
-                BeanValidators.validateWithException(validator, transportdocumentsDetailInfo);
-//                masterDataClientInfo.setCompanyName(hkData.getHkKhmc());
-//                List<MasterDataClientInfo> khList = masterDataClientInfoService.selectMasterDataClientInfoList(masterDataClientInfo);
-//                hkData.setHkKhbh(khList.get(0).getBaseId());
-//                hkData.setBizVersion(1L);
-//                hkData.setCreateTime(DateUtils.getNowDate());
-//                hkData.setUpdateTime(DateUtils.getNowDate());
-//                hkData.setCreateBy(operName);
-//                hkData.setUpdateBy(operName);
-//                insertZjzyHkInfo(hkData);
+                BeanValidators.validateWithException(validator, data);
+
+                MasterDataWarehouseBaseInfo warehouseParam = new MasterDataWarehouseBaseInfo();
+                warehouseParam.setWarehouseName(data.getSourcePlaceName());
+                List<MasterDataWarehouseBaseInfo> warehouseList = masterDataWarehouseBaseInfoMapper
+                        .selectMasterDataWarehouseBaseInfoList(warehouseParam);
+                if (warehouseList != null && warehouseList.size() > 0) {
+                    data.setSourcePlaceId(warehouseList.get(0).getWarehouseCode());
+                } else {
+                    throw new Exception("采购运输单中发货地输入错误！");
+                }
+
+                SysUser sysUser = sysUserMapper.selectUserByUserName(data.getHandledByName());
+                if (sysUser != null) {
+                    data.setHandledById(sysUser.getUserId());
+                } else {
+                    throw new Exception("采购运输单中经办人输入错误！");
+                }
+
+                MasterDataMaterialInfo materialParam = new MasterDataMaterialInfo();
+                materialParam.setMaterialName(data.getMaterialName());
+                List<MasterDataMaterialInfo> materialList = masterDataMaterialInfoMapper.selectMasterDataMaterialInfoList(materialParam);
+                if (materialList != null && materialList.size() > 0) {
+                    data.setMaterialId(Long.valueOf(materialList.get(0).getMaterialId()));
+                } else {
+                    throw new Exception("采购运输单中物料输入错误！");
+                }
+
+                if (StringUtils.isBlank(data.getDocumentsType())) {
+                    throw new Exception("采购运输单中单据类型输入错误！");
+                }
+
+                if (StringUtils.isBlank(data.getTransportdocumentsState())) {
+                    throw new Exception("采购运输单中运输单状态输入错误！");
+                }
+
+                data.setTransportdocumentsType(transportdocumentsType);
+                data.setCreateBy(operName);
+                data.setCreateTime(DateUtils.getNowDate());
+                data.setUpdateBy(operName);
+                data.setUpdateTime(DateUtils.getNowDate());
+                data.setBizVersion(1L);
+                insertTransportdocumentsDetailInfo(data);
                 successNum++;
-                successMsg.append("<br/>" + successNum + "、账号 " + transportdocumentsDetailInfo.getTransportdocumentsId() + " 导入成功");
+                successMsg.append("<br/>" + successNum + "、采购运输单 " + data.getTransportdocumentsId() + " 导入成功");
 
             } catch (Exception e) {
                 failureNum++;
-                String msg = "<br/>" + failureNum + "、合同 " + transportdocumentsDetailInfo.getTransportdocumentsId() + " 导入失败：";
+                String msg = "<br/>" + failureNum + "、采购运输单 " + data.getTransportdocumentsId() + " 导入失败：";
                 failureMsg.append(msg + e.getMessage());
                 log.error(msg, e);
             }

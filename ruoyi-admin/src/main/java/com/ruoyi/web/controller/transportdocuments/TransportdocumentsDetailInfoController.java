@@ -125,12 +125,13 @@ public class TransportdocumentsDetailInfoController extends BaseController
      * @throws Exception
      */
     @Log(title = "导入运输单数据", businessType = BusinessType.IMPORT)
-    @PostMapping("/importData")
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
+    @PostMapping("/importData/{transportdocumentsType}")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport, @PathVariable String transportdocumentsType) throws Exception {
         ExcelUtil<TransportdocumentsDetailInfo> util = new ExcelUtil<TransportdocumentsDetailInfo>(TransportdocumentsDetailInfo.class);
         List<TransportdocumentsDetailInfo> transportdocumentsList = util.importExcel(file.getInputStream());
         String operName = getUsername();
-        String message = transportdocumentsDetailInfoService.importTransportdocumentsData(transportdocumentsList, updateSupport, operName);
+        String message = transportdocumentsDetailInfoService.importTransportdocumentsData(transportdocumentsList, updateSupport,
+                operName, transportdocumentsType);
         return AjaxResult.success(message);
     }
 }

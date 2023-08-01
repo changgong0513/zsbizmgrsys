@@ -67,5 +67,8 @@ public interface ITransportdocumentsDetailInfoService
      * @param operName 操作用户
      * @return 结果
      */
-    public String importTransportdocumentsData(List<TransportdocumentsDetailInfo> transportdocumentsList, Boolean isUpdateSupport, String operName);
+    public String importTransportdocumentsData(List<TransportdocumentsDetailInfo> transportdocumentsList,
+                                               Boolean isUpdateSupport,
+                                               String operName,
+                                               String transportdocumentsType);
 }

@@ -486,7 +486,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData"
+        url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData/p"
       },
     };
   },
@@ -697,12 +697,12 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = "回款导入";
+      this.upload.title = "采购运输单导入";
       this.upload.open = true;
     },
      /** 下载模板操作 */
      importTemplate() {
-      this.download('/transportdocuments/detail/importTemplate', {}, `运输单导入模板_${new Date().getTime()}.xlsx`)
+      this.download('/transportdocuments/detail/importTemplate', {}, `采购运输单导入模板_${new Date().getTime()}.xlsx`)
     },
     /** 文件上传中处理 */
     handleFileUploadProgress(event, file, fileList) {
