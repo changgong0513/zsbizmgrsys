@@ -58,4 +58,14 @@ public interface ITransportdocumentsDetailInfoService
      * @return 结果
      */
     public int deleteTransportdocumentsDetailInfoById(Long id);
+
+    /**
+     * 导入运输单数据
+     *
+     * @param transportdocumentsList 运输单数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importTransportdocumentsData(List<TransportdocumentsDetailInfo> transportdocumentsList, Boolean isUpdateSupport, String operName);
 }

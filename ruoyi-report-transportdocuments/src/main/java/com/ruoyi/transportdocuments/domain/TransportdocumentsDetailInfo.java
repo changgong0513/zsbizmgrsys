@@ -24,6 +24,10 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     @Excel(name = "运输单号")
     private String transportdocumentsId;
 
+    /** 关联订单编号 */
+    @Excel(name = "关联订单编号")
+    private String relatedOrderId;
+
     /** 运输单类型 */
     private String transportdocumentsType;
 
@@ -32,38 +36,43 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     private String pch;
 
     /** 车号 */
+    @Excel(name = "车号")
     private String wagonNumber;
 
     /** 发货地编号 */
     private String sourcePlaceId;
 
     /** 发货地名称 */
+    @Excel(name = "发货地")
     private String sourcePlaceName;
 
     /** 卸货地编号 */
     private String targetPlaceId;
 
     /** 卸货地名称 */
+    @Excel(name = "卸货地")
     private String targetPlaceName;
 
     /** 装车数量 */
+    @Excel(name = "装车数量")
     private Long loadingQuantity;
 
     /** 经办人编号 */
     private Long handledById;
 
     /** 经办人姓名 */
-    @Excel(name = "经办人姓名")
+    @Excel(name = "经办人")
     private String handledByName;
 
     /** 联系电话 */
+    @Excel(name = "联系电话")
     private String telephone;
 
     /** 物料编号 */
     private Long materialId;
 
     /** 物料名称 */
-    @Excel(name = "物料名称")
+    @Excel(name = "物料")
     private String materialName;
 
     /** 业务日期 */
@@ -72,17 +81,14 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     private Date businessDate;
 
     /** 单据类型 */
-    @Excel(name = "单据类型")
+    @Excel(name = "单据类型", dictType = "transportdocuments_documents_type")
     private String documentsType;
 
     /** 单价 */
     private Long unitPrice;
 
-    /** 关联订单编号 */
-    @Excel(name = "关联订单编号")
-    private String relatedOrderId;
-
     /** 关联合同编号 */
+    @Excel(name = "关联合同编号")
     private String relatedContractId;
 
     /** 关联合同名称 */
@@ -108,11 +114,9 @@ public class TransportdocumentsDetailInfo extends BaseEntity
 
     /** 卸货日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "卸货日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date landedDate;
 
     /** 运输单状态 */
-    @Excel(name = "运输单状态")
     private String transportdocumentsState;
 
     /** 版本号 */

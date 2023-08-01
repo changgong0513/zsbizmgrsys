@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.transportdocuments;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.zjzy.domain.ZjzyHkInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import com.ruoyi.transportdocuments.domain.TransportdocumentsDetailInfo;
 import com.ruoyi.transportdocuments.service.ITransportdocumentsDetailInfoService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 运输单详细信息Controller
@@ -100,5 +103,34 @@ public class TransportdocumentsDetailInfoController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(transportdocumentsDetailInfoService.deleteTransportdocumentsDetailInfoByIds(ids));
+    }
+
+    /**
+     * 导入运输单模板下载。
+     *
+     * @param response
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) {
+        ExcelUtil<TransportdocumentsDetailInfo> util = new ExcelUtil<TransportdocumentsDetailInfo>(TransportdocumentsDetailInfo.class);
+        util.importTemplateExcel(response, "运输单数据");
+    }
+
+    /**
+     * 导入运输单数据.
+     *
+     * @param file
+     * @param updateSupport
+     * @return
+     * @throws Exception
+     */
+    @Log(title = "导入运输单数据", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
+        ExcelUtil<TransportdocumentsDetailInfo> util = new ExcelUtil<TransportdocumentsDetailInfo>(TransportdocumentsDetailInfo.class);
+        List<TransportdocumentsDetailInfo> transportdocumentsList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = transportdocumentsDetailInfoService.importTransportdocumentsData(transportdocumentsList, updateSupport, operName);
+        return AjaxResult.success(message);
     }
 }
