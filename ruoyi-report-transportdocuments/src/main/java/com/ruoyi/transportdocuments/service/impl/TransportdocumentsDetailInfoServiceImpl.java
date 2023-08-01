@@ -16,6 +16,8 @@ import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
 import com.ruoyi.report.masterdata.mapper.MasterDataWarehouseBaseInfoMapper;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
+import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
 import com.ruoyi.zjzy.domain.ZjzyFkrlInfo;
 import com.ruoyi.zjzy.mapper.ZjzyFkrlInfoMapper;
 import org.slf4j.Logger;
@@ -53,6 +55,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
 
     @Autowired
     private ZjzyFkrlInfoMapper zjzyFkrlInfoMapper;
+
+    @Autowired
+    private WarehouseInventoryInfoMapper warehouseInventoryInfoMapper;
 
     @Autowired
     protected Validator validator;
@@ -144,6 +149,35 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 zjzyFkrlInfo.setUpdateBy(SecurityUtils.getUsername());
                 zjzyFkrlInfo.setUpdateTime(DateUtils.getNowDate());
                 result = zjzyFkrlInfoMapper.insertZjzyFkrlInfo(zjzyFkrlInfo);
+            }
+
+            if (StringUtils.equals(transportdocumentsDetailInfo.getTransportdocumentsState(), "3")) {
+                if (StringUtils.equals(transportdocumentsDetailInfo.getTransportdocumentsType(), "p")) {
+                    // 采购运输单
+                    WarehouseInventoryInfo warehouseInventoryInfo = new WarehouseInventoryInfo();
+                    String targetPlaceId = transportdocumentsDetailInfo.getTargetPlaceId();
+                    WarehouseInventoryInfo warehouseInventoryparam = new WarehouseInventoryInfo();
+                    warehouseInventoryparam.setWarehouseCode(targetPlaceId);
+                    List<WarehouseInventoryInfo> list = warehouseInventoryInfoMapper.selectWarehouseInventoryInfoList(warehouseInventoryparam);
+                    if (null !=null && 0 < list.size()) {
+                        warehouseInventoryInfo = list.get(0);
+                        warehouseInventoryInfo.setInventorySum(warehouseInventoryInfo.getInventorySum() + transportdocumentsDetailInfo.getLandedQuantity());
+                        warehouseInventoryInfo.setUpdateBy(SecurityUtils.getUsername());
+                        warehouseInventoryInfo.setUpdateTime(DateUtils.getNowDate());
+                        warehouseInventoryInfo.setBizVersion(warehouseInventoryInfo.getBizVersion() + 1L);
+                        warehouseInventoryInfoMapper.updateWarehouseInventoryInfo(warehouseInventoryInfo);
+                    } else {
+                        warehouseInventoryInfo.setWarehouseCode(transportdocumentsDetailInfo.getTargetPlaceId());
+                        warehouseInventoryInfo.setWarehouseName(transportdocumentsDetailInfo.getTargetPlaceName());
+                        warehouseInventoryInfo.setInventorySum(transportdocumentsDetailInfo.getLandedQuantity());
+                        warehouseInventoryInfo.setCreateBy(SecurityUtils.getUsername());
+                        warehouseInventoryInfo.setCreateTime(DateUtils.getNowDate());
+                        warehouseInventoryInfo.setUpdateBy(SecurityUtils.getUsername());
+                        warehouseInventoryInfo.setUpdateTime(DateUtils.getNowDate());
+                        warehouseInventoryInfo.setBizVersion(1L);
+                        warehouseInventoryInfoMapper.insertWarehouseInventoryInfo(warehouseInventoryInfo);
+                    }
+                }
             }
         }
 
