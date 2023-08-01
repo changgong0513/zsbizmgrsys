@@ -3,6 +3,7 @@ package com.ruoyi.transportdocuments.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
@@ -14,12 +15,11 @@ import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
 import com.ruoyi.report.masterdata.mapper.MasterDataWarehouseBaseInfoMapper;
-import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
-import com.ruoyi.zjzy.domain.ZjzyFkrlInfo;
 import com.ruoyi.zjzy.mapper.ZjzyFkrlInfoMapper;
+import com.ruoyi.zjzy.service.IZjzyFkrlInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     private SysUserMapper sysUserMapper;
 
     @Autowired
-    private ZjzyFkrlInfoMapper zjzyFkrlInfoMapper;
+    private IZjzyFkrlInfoService zjzyFkrlInfoService;
 
     @Autowired
     private WarehouseInventoryInfoMapper warehouseInventoryInfoMapper;
@@ -113,44 +113,13 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         transportdocumentsDetailInfo.setUpdateTime(DateUtils.getNowDate());
         int result = transportdocumentsDetailInfoMapper.updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
         if (0 < result) {
-//            ZjzyFkrlInfo zjzyFkrlInfo = new ZjzyFkrlInfo();
-//            zjzyFkrlInfo.setFkrlBmbh(String.valueOf(SecurityUtils.getDeptId()));
-//            zjzyFkrlInfo.setFkrlPch(transportdocumentsDetailInfo.getPch());
-//            if (StringUtils.isNotBlank(transportdocumentsDetailInfo.getRelatedContractId())) {
-//                zjzyFkrlInfo.setFkrlHtbh(transportdocumentsDetailInfo.getRelatedContractId());
-//            } else {
-//                zjzyFkrlInfo.setFkrlHtbh(null);
-//            }
-//
-//            Long carriage = transportdocumentsDetailInfo.getUnitPrice() * transportdocumentsDetailInfo.getLandedQuantity();
-//
-//            List<ZjzyFkrlInfo> zjzyFkrlInfoList = null;
-//            ZjzyFkrlInfo param = new ZjzyFkrlInfo();
-//            param.setFkrlPch(transportdocumentsDetailInfo.getPch());
-//            if (StringUtils.isNotBlank(transportdocumentsDetailInfo.getRelatedContractId())) {
-//                param.setFkrlHtbh(transportdocumentsDetailInfo.getRelatedContractId());
-//                zjzyFkrlInfoList = zjzyFkrlInfoMapper.selectZjzyFkrlInfoList(param);
-//            } else {
-//                zjzyFkrlInfoList = zjzyFkrlInfoMapper.selectZjzyFkrlInfoList(param);
-//            }
-//
-//            if (null != zjzyFkrlInfoList && 0 < zjzyFkrlInfoList.size()) {
-//                BigDecimal fkrlJe = zjzyFkrlInfoList.get(0).getFkrlJe();
-//                zjzyFkrlInfo.setFkrlJe(fkrlJe.add(new BigDecimal(carriage)));
-//                zjzyFkrlInfo.setBizVersion("1");
-//                zjzyFkrlInfo.setUpdateBy(SecurityUtils.getUsername());
-//                zjzyFkrlInfo.setUpdateTime(DateUtils.getNowDate());
-//                result = zjzyFkrlInfoMapper.updateZjzyFkrlInfo(zjzyFkrlInfo);
-//            } else {
-//                zjzyFkrlInfo.setFkrlJe(new BigDecimal(carriage));
-//                zjzyFkrlInfo.setBizVersion("1");
-//                zjzyFkrlInfo.setCreateBy(SecurityUtils.getUsername());
-//                zjzyFkrlInfo.setCreateTime(DateUtils.getNowDate());
-//                zjzyFkrlInfo.setUpdateBy(SecurityUtils.getUsername());
-//                zjzyFkrlInfo.setUpdateTime(DateUtils.getNowDate());
-//                result = zjzyFkrlInfoMapper.insertZjzyFkrlInfo(zjzyFkrlInfo);
-//            }
-            result = handleZjzy(transportdocumentsDetailInfo);
+            // 处理资金占用
+            JSONObject data =new JSONObject();
+            data.put("pch", transportdocumentsDetailInfo.getPch());
+            data.put("relatedContractId", transportdocumentsDetailInfo.getRelatedContractId());
+            data.put("unitPrice", transportdocumentsDetailInfo.getUnitPrice());
+            data.put("landedQuantity", transportdocumentsDetailInfo.getLandedQuantity());
+            result = zjzyFkrlInfoService.handleZjzy(data);
 
             if (StringUtils.equals(transportdocumentsDetailInfo.getTransportdocumentsState(), "3")) {
                 WarehouseInventoryInfo warehouseInventoryInfo = new WarehouseInventoryInfo();
@@ -314,53 +283,6 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return successMsg.toString();
-    }
-
-    /**
-     * 处理资金占用
-     *
-     * @param transportdocumentsDetailInfo
-     * @return
-     */
-    private int handleZjzy(TransportdocumentsDetailInfo transportdocumentsDetailInfo) {
-        int effectRows = 1;
-        ZjzyFkrlInfo zjzyFkrlInfo = new ZjzyFkrlInfo();
-        zjzyFkrlInfo.setFkrlBmbh(String.valueOf(SecurityUtils.getDeptId()));
-        zjzyFkrlInfo.setFkrlPch(transportdocumentsDetailInfo.getPch());
-        if (StringUtils.isNotBlank(transportdocumentsDetailInfo.getRelatedContractId())) {
-            zjzyFkrlInfo.setFkrlHtbh(transportdocumentsDetailInfo.getRelatedContractId());
-        } else {
-            zjzyFkrlInfo.setFkrlHtbh(null);
-        }
-
-        Long carriage = transportdocumentsDetailInfo.getUnitPrice() * transportdocumentsDetailInfo.getLandedQuantity();
-
-        List<ZjzyFkrlInfo> zjzyFkrlInfoList = null;
-        ZjzyFkrlInfo param = new ZjzyFkrlInfo();
-        param.setFkrlPch(transportdocumentsDetailInfo.getPch());
-        if (StringUtils.isNotBlank(transportdocumentsDetailInfo.getRelatedContractId())) {
-            param.setFkrlHtbh(transportdocumentsDetailInfo.getRelatedContractId());
-        }
-
-        zjzyFkrlInfoList = zjzyFkrlInfoMapper.selectZjzyFkrlInfoList(param);
-        if (null != zjzyFkrlInfoList && 0 < zjzyFkrlInfoList.size()) {
-            BigDecimal fkrlJe = zjzyFkrlInfoList.get(0).getFkrlJe();
-            zjzyFkrlInfo.setFkrlJe(fkrlJe.add(new BigDecimal(carriage)));
-            zjzyFkrlInfo.setBizVersion(String.valueOf(Integer.parseInt(zjzyFkrlInfoList.get(0).getBizVersion()) + 1));
-            zjzyFkrlInfo.setUpdateBy(SecurityUtils.getUsername());
-            zjzyFkrlInfo.setUpdateTime(DateUtils.getNowDate());
-            effectRows = zjzyFkrlInfoMapper.updateZjzyFkrlInfo(zjzyFkrlInfo);
-        } else {
-            zjzyFkrlInfo.setFkrlJe(new BigDecimal(carriage));
-            zjzyFkrlInfo.setBizVersion("1");
-            zjzyFkrlInfo.setCreateBy(SecurityUtils.getUsername());
-            zjzyFkrlInfo.setCreateTime(DateUtils.getNowDate());
-            zjzyFkrlInfo.setUpdateBy(SecurityUtils.getUsername());
-            zjzyFkrlInfo.setUpdateTime(DateUtils.getNowDate());
-            effectRows = zjzyFkrlInfoMapper.insertZjzyFkrlInfo(zjzyFkrlInfo);
-        }
-
-        return effectRows;
     }
 }
 

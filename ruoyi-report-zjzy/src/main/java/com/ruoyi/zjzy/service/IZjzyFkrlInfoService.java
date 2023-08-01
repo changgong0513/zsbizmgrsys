@@ -1,6 +1,8 @@
 package com.ruoyi.zjzy.service;
 
 import java.util.List;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.zjzy.domain.ZjzyFkrlInfo;
 
 /**
@@ -66,4 +68,12 @@ public interface IZjzyFkrlInfoService
      * @return
      */
     public double getFkrlTotalByBmbh(final double bmbh);
+
+    /**
+     * 处理资金占用
+     *
+     * @param data
+     * @return
+     */
+    public int handleZjzy(JSONObject data);
 }
