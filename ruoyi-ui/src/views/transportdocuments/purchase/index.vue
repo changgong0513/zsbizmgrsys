@@ -287,10 +287,26 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="关联合同名称" prop="relatedContractName">
-              <el-input v-model="form.relatedContractName" placeholder="请输入关联合同名称" style="width: 200px;" />
+            <el-form-item label="关联合同" prop="relatedContractId">
+              <el-select
+                v-model="form.relatedContractId"
+                filterable
+                remote
+                clearable
+                reserve-keyword
+                multiple
+                placeholder="请输入合同编号关键字"
+                style="width: 200px"
+                :remote-method="remoteMethodByTransport"
+                :loading="remoteLoadingByTransport">
+                <el-option
+                  v-for="item in optionsByTransport"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-input v-model="form.relatedContractId" v-show="false" />
           </el-col>
           <el-col :span="8">
             <el-form-item label="卸货数量" prop="landedQuantity">
@@ -404,6 +420,7 @@
 
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail } from "@/api/transportdocuments/detail";
+import { listContract } from "@/api/contract/contract";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
 import { listMaterialData } from "@/api/masterdata/material";
 import { getToken } from "@/utils/auth";
@@ -523,6 +540,10 @@ export default {
         url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData/p"
       },
       isEditByTransportState: true,
+      // 合同编号选择用
+      optionsByTransport: [],
+      listByTransport: [],
+      remoteLoadingByTransport: false
     };
   },
   created() {
@@ -651,6 +672,10 @@ export default {
           this.form.targetPlaceId = this.form.targetPlaceId.split('-');
         }
 
+        if (this.form.relatedContractId) {
+          this.form.relatedContractId = this.form.relatedContractId.split('-');
+        }
+
         this.open = true;
         this.title = "修改运输单详细信息";
       });
@@ -658,15 +683,22 @@ export default {
     /** 提交按钮 */
     submitForm() {
       // 发货地省市区级联选择器数组转字符串
+      // console.log("@@@@@@" + JSON.stringify(this.form.relatedContractId));
       let changgedSourcePlaceId = this.form.sourcePlaceId;
       if (changgedSourcePlaceId) {
         this.form.sourcePlaceId = changgedSourcePlaceId.join('-');
       }
 
-       // 省市区级联选择器数组转字符串
+      // 省市区级联选择器数组转字符串
       let changgedTargetPlaceId = this.form.targetPlaceId;
       if (changgedTargetPlaceId) {
         this.form.targetPlaceId = changgedTargetPlaceId.join('-');
+      }
+
+      // 关联合同选择器数组转字符串
+      let relatedContractIdArray = this.form.relatedContractId;
+      if (relatedContractIdArray) {
+        this.form.relatedContractId = relatedContractIdArray.join('-');
       }
 
       this.form.transportdocumentsType = 'P'; // 采购运单
@@ -767,6 +799,24 @@ export default {
         return item.materialId == selValue;
       });
       this.form.materialName = selMaterial.materialName; // 物料名称
+    },
+    /** 根据输入合同编号关键字，取得合同编号列表 */
+    remoteMethodByTransport(query) {
+      if (query !== '') {
+        this.remoteLoadingByTransport = true;
+        listContract(this.queryParams).then(response => {
+          this.remoteLoadingByTransport = false;
+          this.listByTransport = response.rows;
+          this.optionsByTransport = response.rows.map(item => {
+            return { value: `${item.contractId}`, label: `${item.contractId}` };
+          }).filter(item => {
+            return item.label.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1;
+          });
+        });
+      } else {
+        this.optionsByTransport = [];
+      }
     },
     /** 运输单状态下拉列表框，选择值改变后回调方法 */
     selChangeTransportdocumentsState(selValue) {
