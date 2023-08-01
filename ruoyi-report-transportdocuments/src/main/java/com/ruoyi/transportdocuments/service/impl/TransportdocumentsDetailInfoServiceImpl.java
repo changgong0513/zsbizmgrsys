@@ -235,6 +235,10 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                     throw new Exception("采购运输单中运输单状态输入错误！");
                 }
 
+                if (StringUtils.isNotBlank(data.getRelatedContractId())) {
+                    data.setTransportdocumentsState("3");
+                }
+
                 data.setTransportdocumentsType(transportdocumentsType);
                 data.setCreateBy(operName);
                 data.setCreateTime(DateUtils.getNowDate());
