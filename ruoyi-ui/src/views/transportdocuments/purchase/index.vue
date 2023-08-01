@@ -170,6 +170,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="发货地名称" prop="sourcePlaceId">
+              <!-- 运输单发货地址是仓库，就是销售单，创建运输单时需要仓库减去对应数量 -->
               <el-cascader
                 size="large"
                 :options="regionOptions"
@@ -182,14 +183,25 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="卸货地名称" prop="targetPlaceId">
-              <el-cascader
-                size="large"
-                :options="regionOptions"
+              <!-- 运输单最终目的地是仓库，就是采购单，当运输单完成时，需要仓库加上对应数量 -->
+              <el-select
                 v-model="form.targetPlaceId"
                 filterable
-                @change="handleTargetPlaceRegionChange"
-                style="width: 200px;">
-              </el-cascader>
+                remote
+                clearable
+                reserve-keyword
+                placeholder="请输入仓库名称关键字"
+                :remote-method="remoteWarehouseName"
+                :loading="remoteLoadingWarehouseName"
+                @change="selChangeWarehouse"
+                style="width: 200px">
+                <el-option
+                  v-for="item in optionsWarehouseName"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -421,6 +433,7 @@
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail } from "@/api/transportdocuments/detail";
 import { listContract } from "@/api/contract/contract";
+import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
 import { listMaterialData } from "@/api/masterdata/material";
 import { getToken } from "@/utils/auth";
@@ -543,7 +556,11 @@ export default {
       // 合同编号选择用
       optionsByTransport: [],
       listByTransport: [],
-      remoteLoadingByTransport: false
+      remoteLoadingByTransport: false,
+      // 仓库名称选择用
+      optionsWarehouseName: [],
+      ListWarehouseName: [],
+      remoteLoadingWarehouseName: false,
     };
   },
   created() {
@@ -741,10 +758,6 @@ export default {
     handleSourcePlaceRegionChange (value) {
       this.form.sourcePlaceName = this.getCodeToText(null, value)
     },
-    /** 卸货地省市区级联选择器变更后 */
-    handleTargetPlaceRegionChange (value) {
-      this.form.targetPlaceName = this.getCodeToText(null, value)
-    },
     /** 将城市代码转为文字 */
     getCodeToText (codeStr, codeArray) {
       if (null === codeStr && null === codeArray) {
@@ -817,6 +830,32 @@ export default {
       } else {
         this.optionsByTransport = [];
       }
+    },
+    /** 根据输入仓库名称关键字，取得仓库名称列表 */
+    remoteWarehouseName(query) {
+      if (query !== '') {
+        this.remoteLoadingWarehouseName = true;
+        this.queryParams.warehouseName = query;
+        listWarehouse(this.queryParams).then(response => {
+          this.remoteLoadingWarehouseName = false;
+          this.ListWarehouseName = response.rows;
+          this.optionsWarehouseName = response.rows.map(item => {
+            return { value: `${item.warehouseCode}`, label: `${item.warehouseName}` };
+          }).filter(item => {
+            return item.label.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1;
+          });
+        });
+      } else {
+        this.optionsWarehouseName = [];
+      }
+    },
+    /** 仓库名称下拉列表框，选择值改变后回调方法 */
+    selChangeWarehouse(selValue) {
+      let selWarehouse = this.ListWarehouseName.find(item => {
+        return item.warehouseCode == selValue;
+      });
+      this.form.targetPlaceName = selWarehouse.warehouseName; // 仓库名称
     },
     /** 运输单状态下拉列表框，选择值改变后回调方法 */
     selChangeTransportdocumentsState(selValue) {
