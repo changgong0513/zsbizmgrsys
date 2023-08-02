@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="businessDate != null "> and business_date = #{businessDate}</if>
             <if test="documentsType != null  and documentsType != ''"> and documents_type = #{documentsType}</if>
             <if test="transportdocumentsState != null  and transportdocumentsState != ''"> and transportdocuments_state = #{transportdocumentsState}</if>
+            <if test="transportdocumentsType != null  and transportdocumentsType != ''"> and transportdocuments_type = #{transportdocumentsType}</if>
         </where>
     </select>
     

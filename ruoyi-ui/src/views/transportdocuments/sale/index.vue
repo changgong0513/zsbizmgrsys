@@ -171,19 +171,6 @@
           <el-col :span="8">
             <el-form-item label="发货地名称" prop="sourcePlaceId">
               <!-- 运输单发货地址是仓库，就是销售单，创建运输单时需要仓库减去对应数量 -->
-              <el-cascader
-                size="large"
-                :options="regionOptions"
-                v-model="form.sourcePlaceId"
-                filterable
-                @change="handleSourcePlaceRegionChange"
-                style="width: 200px;">
-              </el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="卸货地名称" prop="targetPlaceId">
-              <!-- 运输单最终目的地是仓库，就是采购单，当运输单完成时，需要仓库加上对应数量 -->
               <el-select
                 v-model="form.targetPlaceId"
                 filterable
@@ -202,6 +189,19 @@
                   :value="item.value">
                 </el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="卸货地名称" prop="targetPlaceId">
+              <!-- 运输单最终目的地是仓库，就是采购单，当运输单完成时，需要仓库加上对应数量 -->
+              <el-cascader
+                size="large"
+                :options="regionOptions"
+                v-model="form.sourcePlaceId"
+                filterable
+                @change="handleSourcePlaceRegionChange"
+                style="width: 200px;">
+              </el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -550,7 +550,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData/p"
+        url: process.env.VUE_APP_BASE_API + "/transportdocuments/detail/importData/s"
       },
       isEditByTransportState: true,
       // 合同编号选择用
@@ -600,7 +600,7 @@ export default {
     /** 查询运输单详细信息列表 */
     getList() {
       this.loading = true;
-      this.queryParams.transportdocumentsType = 'p';
+      this.queryParams.transportdocumentsType = 's';
       listDetail(this.queryParams).then(response => {
         this.detailList = response.rows;
         this.total = response.total;
@@ -673,7 +673,7 @@ export default {
       this.reset();
       this.open = true;
       this.form.transportdocumentsState = '1';
-      this.title = "添加采购运输单详细信息";
+      this.title = "添加销售运输单详细信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -682,8 +682,9 @@ export default {
       getDetail(id).then(response => {
         this.form = response.data;
         this.form.settlementUnitPrice = this.form.unitPrice;
-        if (this.form.sourcePlaceId) {
-          this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+
+        if (this.form.targetPlaceId) {
+          this.form.targetPlaceId = this.form.targetPlaceId.split('-');
         }
 
         if (this.form.relatedContractId) {
@@ -691,16 +692,15 @@ export default {
         }
 
         this.open = true;
-        this.title = "修改运输单详细信息";
+        this.title = "修改销售运输单详细信息";
       });
     },
     /** 提交按钮 */
     submitForm() {
-      // 发货地省市区级联选择器数组转字符串
-      // console.log("@@@@@@" + JSON.stringify(this.form.relatedContractId));
-      let changgedSourcePlaceId = this.form.sourcePlaceId;
-      if (changgedSourcePlaceId) {
-        this.form.sourcePlaceId = changgedSourcePlaceId.join('-');
+      // 卸货地名称省市区级联选择器数组转字符串
+      let changgedTargetPlaceId = this.form.targetPlaceId;
+      if (changgedTargetPlaceId) {
+        this.form.targetPlaceId = changgedTargetPlaceId.join('-');
       }
 
       // 关联合同选择器数组转字符串
@@ -709,7 +709,7 @@ export default {
         this.form.relatedContractId = relatedContractIdArray.join('-');
       }
 
-      this.form.transportdocumentsType = 'P'; // 采购运单
+      this.form.transportdocumentsType = 's'; // 采购运单
 
       this.$refs["form"].validate(valid => {
         if (valid) {
