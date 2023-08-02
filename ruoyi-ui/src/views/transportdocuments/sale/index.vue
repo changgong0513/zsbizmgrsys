@@ -689,10 +689,24 @@ export default {
         if (this.form.targetPlaceId) {
           this.form.targetPlaceId = this.form.targetPlaceId.split('-');
         }
+        
+        if (this.form.targetPlaceName) {
+          this.form.targetPlaceId = TextToCode[this.form.targetPlaceName.split('/')[0]][this.form.targetPlaceName.split('/')[1]][this.form.targetPlaceName.split('/')[2]].code;
+        }
 
         if (this.form.relatedContractId) {
           this.form.relatedContractId = this.form.relatedContractId.split('-');
         }
+
+        this.optionsMaterialName.push({
+          label: this.form.materialName,
+          value: this.form.materialId
+        });
+
+        this.optionsWarehouseName.push({
+          label: this.form.sourcePlaceName,
+          value: this.form.sourcePlaceId
+        });
 
         this.open = true;
         this.title = "修改销售运输单详细信息";
@@ -775,6 +789,35 @@ export default {
               CodeToText[codeArray[1]] +
               "/" +
               CodeToText[codeArray[2]];
+          break;
+        default:
+          break;
+      } 
+      return area;
+    },
+    /** 将城市代码转为文字 */
+    getTextToCode (codeStr, codeArray) {
+      if (null === codeStr && null === codeArray) {
+          return null;
+      } 
+      else if (null === codeArray) {
+          codeArray = codeStr.split(",");
+      }
+      let area = "";
+      switch (codeArray.length) {
+        case 1:
+          area += TextToCode[codeArray[0]];
+          break;
+        case 2:
+          area += TextToCode[codeArray[0]] + "/" + TextToCode[codeArray[1]];
+          break;
+        case 3:
+          area +=
+              TextToCode[codeArray[0]] +
+              "/" +
+              TextToCode[codeArray[1]] +
+              "/" +
+              TextToCode[codeArray[2]];
           break;
         default:
           break;

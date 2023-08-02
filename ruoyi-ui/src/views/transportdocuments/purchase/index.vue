@@ -688,10 +688,24 @@ export default {
         if (this.form.sourcePlaceId) {
           this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
         }
+        
+        if (this.form.sourcePlaceName) {
+          this.form.sourcePlaceId = TextToCode[this.form.sourcePlaceName.split('/')[0]][this.form.sourcePlaceName.split('/')[1]][this.form.sourcePlaceName.split('/')[2]].code;
+        }
 
         if (this.form.relatedContractId) {
           this.form.relatedContractId = this.form.relatedContractId.split('-');
         }
+
+        this.optionsMaterialName.push({
+          label: this.form.materialName,
+          value: this.form.materialId
+        });
+
+        this.optionsWarehouseName.push({
+          label: this.form.targetPlaceName,
+          value: this.form.targetPlaceId
+        });
 
         this.open = true;
         this.title = "修改运输单详细信息";

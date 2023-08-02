@@ -15,6 +15,7 @@ import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
 import com.ruoyi.report.masterdata.mapper.MasterDataWarehouseBaseInfoMapper;
+import com.ruoyi.report.masterdata.service.IMasterDataWarehouseBaseInfoService;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
@@ -45,7 +46,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     private TransportdocumentsDetailInfoMapper transportdocumentsDetailInfoMapper;
 
     @Autowired
-    private MasterDataWarehouseBaseInfoMapper masterDataWarehouseBaseInfoMapper;
+    private IMasterDataWarehouseBaseInfoService masterDataWarehouseBaseInfoService;
 
     @Autowired
     private MasterDataMaterialInfoMapper masterDataMaterialInfoMapper;
@@ -211,28 +212,39 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 
-        List<SysDictData> dictList = null;
+        String transportdocumentsName = "采购运输单";
+        if(StringUtils.equals(transportdocumentsType, "s")) {
+            transportdocumentsName = "销售运输单";
+        }
 
         for (TransportdocumentsDetailInfo data : transportdocumentsList) {
 
             try {
                 BeanValidators.validateWithException(validator, data);
 
-                MasterDataWarehouseBaseInfo warehouseParam = new MasterDataWarehouseBaseInfo();
-                warehouseParam.setWarehouseName(data.getSourcePlaceName());
-                List<MasterDataWarehouseBaseInfo> warehouseList = masterDataWarehouseBaseInfoMapper
-                        .selectMasterDataWarehouseBaseInfoList(warehouseParam);
-                if (warehouseList != null && warehouseList.size() > 0) {
-                    data.setSourcePlaceId(warehouseList.get(0).getWarehouseCode());
-                } else {
-                    throw new Exception("采购运输单中发货地输入错误！");
+                if (StringUtils.equals(transportdocumentsType, "p") && StringUtils.isNotBlank(data.getTargetPlaceName())) {
+                    String warehouseCode = findWarehouseCode(data.getTargetPlaceName());
+                    if (StringUtils.isNotBlank(warehouseCode)) {
+                        data.setSourcePlaceId(warehouseCode);
+                    } else {
+                        throw new Exception(transportdocumentsName + "中发货地输入错误！");
+                    }
+                }
+
+                if (StringUtils.equals(transportdocumentsType, "s") && StringUtils.isNotBlank(data.getSourcePlaceName())) {
+                    String warehouseCode = findWarehouseCode(data.getTargetPlaceName());
+                    if (StringUtils.isNotBlank(warehouseCode)) {
+                        data.setSourcePlaceId(warehouseCode);
+                    } else {
+                        throw new Exception(transportdocumentsName + "中发货地输入错误！");
+                    }
                 }
 
                 SysUser sysUser = sysUserMapper.selectUserByUserName(data.getHandledByName());
                 if (sysUser != null) {
                     data.setHandledById(sysUser.getUserId());
                 } else {
-                    throw new Exception("采购运输单中经办人输入错误！");
+                    throw new Exception(transportdocumentsName + "中经办人输入错误！");
                 }
 
                 MasterDataMaterialInfo materialParam = new MasterDataMaterialInfo();
@@ -241,15 +253,15 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 if (materialList != null && materialList.size() > 0) {
                     data.setMaterialId(Long.valueOf(materialList.get(0).getMaterialId()));
                 } else {
-                    throw new Exception("采购运输单中物料输入错误！");
+                    throw new Exception(transportdocumentsName + "中物料输入错误！");
                 }
 
                 if (StringUtils.isBlank(data.getDocumentsType())) {
-                    throw new Exception("采购运输单中单据类型输入错误！");
+                    throw new Exception(transportdocumentsName + "中单据类型输入错误！");
                 }
 
                 if (StringUtils.isBlank(data.getTransportdocumentsState())) {
-                    throw new Exception("采购运输单中运输单状态输入错误！");
+                    throw new Exception(transportdocumentsName + "中运输单状态输入错误！");
                 }
 
                 if (StringUtils.isNotBlank(data.getRelatedContractId())) {
@@ -264,11 +276,11 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 data.setBizVersion(1L);
                 insertTransportdocumentsDetailInfo(data);
                 successNum++;
-                successMsg.append("<br/>" + successNum + "、采购运输单 " + data.getTransportdocumentsId() + " 导入成功");
+                successMsg.append("<br/>" + successNum + "、"+ transportdocumentsName + " " + data.getTransportdocumentsId() + " 导入成功");
 
             } catch (Exception e) {
                 failureNum++;
-                String msg = "<br/>" + failureNum + "、采购运输单 " + data.getTransportdocumentsId() + " 导入失败：";
+                String msg = "<br/>" + failureNum + "、"+ transportdocumentsName +" " + data.getTransportdocumentsId() + " 导入失败：";
                 failureMsg.append(msg + e.getMessage());
                 log.error(msg, e);
             }
@@ -283,6 +295,24 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return successMsg.toString();
+    }
+
+    /**
+     * 查找仓库编码
+     *
+     * @param warehouseName
+     * @return
+     */
+    private String findWarehouseCode(final String warehouseName) {
+        MasterDataWarehouseBaseInfo warehouseParam = new MasterDataWarehouseBaseInfo();
+        warehouseParam.setWarehouseName(warehouseName);
+        List<MasterDataWarehouseBaseInfo> warehouseList = masterDataWarehouseBaseInfoService
+                .selectMasterDataWarehouseBaseInfoList(warehouseParam);
+        if (warehouseList != null && warehouseList.size() > 0) {
+            return warehouseList.get(0).getWarehouseCode();
+        }
+
+        return null;
     }
 }
 
