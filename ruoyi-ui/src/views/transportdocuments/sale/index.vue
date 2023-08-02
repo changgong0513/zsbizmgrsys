@@ -687,9 +687,11 @@ export default {
         this.form.settlementUnitPrice = this.form.unitPrice;
 
         if (this.form.targetPlaceId) {
-          this.form.targetPlaceId = this.form.targetPlaceId.split('-');
+          if (this.form.targetPlaceId.indexOf('-') != -1) {
+            this.form.targetPlaceId = this.form.targetPlaceId.split('-');
+          }
         }
-        
+
         if (this.form.targetPlaceName) {
           this.form.targetPlaceId = TextToCode[this.form.targetPlaceName.split('/')[0]][this.form.targetPlaceName.split('/')[1]][this.form.targetPlaceName.split('/')[2]].code;
         }
@@ -698,11 +700,13 @@ export default {
           this.form.relatedContractId = this.form.relatedContractId.split('-');
         }
 
+        this.optionsMaterialName = [];
         this.optionsMaterialName.push({
           label: this.form.materialName,
           value: this.form.materialId
         });
 
+        this.optionsWarehouseName = [];
         this.optionsWarehouseName.push({
           label: this.form.sourcePlaceName,
           value: this.form.sourcePlaceId
@@ -717,7 +721,9 @@ export default {
       // 卸货地名称省市区级联选择器数组转字符串
       let changgedTargetPlaceId = this.form.targetPlaceId;
       if (changgedTargetPlaceId) {
-        this.form.targetPlaceId = changgedTargetPlaceId.join('-');
+        if (changgedTargetPlaceId instanceof Array) {
+          this.form.targetPlaceId = changgedTargetPlaceId.join('-');
+        }
       }
 
       // 关联合同选择器数组转字符串

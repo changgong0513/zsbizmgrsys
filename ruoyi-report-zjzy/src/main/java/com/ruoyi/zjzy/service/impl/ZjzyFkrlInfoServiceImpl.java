@@ -117,6 +117,10 @@ public class ZjzyFkrlInfoServiceImpl implements IZjzyFkrlInfoService
      */
     @Override
     public int handleZjzy(JSONObject data) {
+        if (data.getLong("unitPrice") == null || data.getLong("landedQuantity") == null) {
+            return 0;
+        }
+
         int effectRows = 1;
         ZjzyFkrlInfo zjzyFkrlInfo = new ZjzyFkrlInfo();
         zjzyFkrlInfo.setFkrlBmbh(String.valueOf(SecurityUtils.getDeptId()));

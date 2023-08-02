@@ -686,22 +686,27 @@ export default {
         this.form = response.data;
         this.form.settlementUnitPrice = this.form.unitPrice;
         if (this.form.sourcePlaceId) {
-          this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+          if (this.form.sourcePlaceId.indexOf('-') != -1) {
+            this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+          }
         }
         
         if (this.form.sourcePlaceName) {
-          this.form.sourcePlaceId = TextToCode[this.form.sourcePlaceName.split('/')[0]][this.form.sourcePlaceName.split('/')[1]][this.form.sourcePlaceName.split('/')[2]].code;
+          let sourcePlaceArray = this.form.sourcePlaceName.split('/');
+          this.form.sourcePlaceId = TextToCode[sourcePlaceArray[0]][sourcePlaceArray[1]][sourcePlaceArray[2]].code 
         }
 
         if (this.form.relatedContractId) {
           this.form.relatedContractId = this.form.relatedContractId.split('-');
         }
 
+        this.optionsMaterialName = [];
         this.optionsMaterialName.push({
           label: this.form.materialName,
           value: this.form.materialId
         });
 
+        this.optionsWarehouseName = [];
         this.optionsWarehouseName.push({
           label: this.form.targetPlaceName,
           value: this.form.targetPlaceId
@@ -717,7 +722,9 @@ export default {
       // console.log("@@@@@@" + JSON.stringify(this.form.relatedContractId));
       let changgedSourcePlaceId = this.form.sourcePlaceId;
       if (changgedSourcePlaceId) {
-        this.form.sourcePlaceId = changgedSourcePlaceId.join('-');
+        if (changgedSourcePlaceId instanceof Array) {
+          this.form.sourcePlaceId = changgedSourcePlaceId.join('-');
+        }
       }
 
       // 关联合同选择器数组转字符串

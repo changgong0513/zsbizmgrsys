@@ -120,7 +120,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             data.put("relatedContractId", transportdocumentsDetailInfo.getRelatedContractId());
             data.put("unitPrice", transportdocumentsDetailInfo.getUnitPrice());
             data.put("landedQuantity", transportdocumentsDetailInfo.getLandedQuantity());
-            result = zjzyFkrlInfoService.handleZjzy(data);
+            zjzyFkrlInfoService.handleZjzy(data);
 
             if (StringUtils.equals(transportdocumentsDetailInfo.getTransportdocumentsState(), "3")) {
                 WarehouseInventoryInfo warehouseInventoryInfo = new WarehouseInventoryInfo();
