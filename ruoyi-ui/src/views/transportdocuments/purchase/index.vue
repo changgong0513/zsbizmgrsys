@@ -516,21 +516,24 @@ export default {
         transportdocumentsState: [
           { required: true, message: "运输单状态不能为空", trigger: "change" }
         ],
-        createBy: [
-          { required: true, message: "创建者不能为空", trigger: "blur" }
+        landedQuantity: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的卸货数量", trigger: "blur" }
         ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+        accountingQuantity: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的核算数量", trigger: "blur" }
         ],
-        updateBy: [
-          { required: true, message: "更新者不能为空", trigger: "blur" }
+        settlementUnitPrice: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的结算单价", trigger: "blur" }
         ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+        freightUnitPrice: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的运费单价", trigger: "blur" }
         ],
-        bizVersion: [
-          { required: true, message: "版本号不能为空", trigger: "blur" }
-        ]
+        deductionAmount: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的扣款金额", trigger: "blur" }
+        ],
+        followUpFare: [
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的压车费", trigger: "blur" }
+        ],
       },
       // 省市区级联数据
       regionOptions: regionData,
