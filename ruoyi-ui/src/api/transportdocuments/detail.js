@@ -42,3 +42,11 @@ export function delDetail(id) {
     method: 'delete'
   })
 }
+
+// 生成中转运输单详细信息
+export function mergeDetail(id) {
+  return request({
+    url: '/transportdocuments/detail/merge/detail/' + id,
+    method: 'post'
+  })
+}

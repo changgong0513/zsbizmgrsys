@@ -134,4 +134,16 @@ public class TransportdocumentsDetailInfoController extends BaseController
                 operName, transportdocumentsType);
         return AjaxResult.success(message);
     }
+
+    /**
+     * 生成中转运输单数据。
+     *
+     * @param ids 需要生成中转运输单详细信息主键集合
+     * @return
+     */
+    @Log(title = "生成中转运输单数据", businessType = BusinessType.INSERT)
+    @PostMapping("/merge/detail/{ids}")
+    public AjaxResult mergeDetail(@PathVariable Long[] ids) {
+        return toAjax(transportdocumentsDetailInfoService.mergeTransportdocumentsDetailInfo(ids));
+    }
 }

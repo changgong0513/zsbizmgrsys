@@ -96,6 +96,26 @@
           v-hasPermi="['transportdocuments:detail:export']"
         >导入</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          :disabled="multiple"
+          @click="handleMergeTransport"
+        >生成中转运单</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          :disabled="multiple"
+          @click="handleSplitTransport"
+        >拆分中转运单</el-button>
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -431,7 +451,7 @@
 </template>
 
 <script>
-import { listDetail, getDetail, delDetail, addDetail, updateDetail } from "@/api/transportdocuments/detail";
+import { listDetail, getDetail, delDetail, addDetail, updateDetail, mergeDetail } from "@/api/transportdocuments/detail";
 import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
@@ -909,6 +929,36 @@ export default {
     /** 提交上传文件 */
     submitFileForm() {
       this.$refs.upload.submit();
+    },
+    /** 生成中转运单按钮操作 */
+    handleMergeTransport() {
+      
+      for (let i = 0; i < this.ids.length; i++) {
+        let isFind = false;
+        for (let j = 0; j < this.detailList.length; j++) {
+          if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '2') {
+            isFind = true;
+            break;
+          }
+        }
+        if (isFind) {
+          this.$modal.msgError('要合并的有不包含中转状态运输单，请确认！');
+          return false;
+        }
+      }
+
+      this.$modal.confirm('是否确认生成中转运输单？').then(() => {
+        // 如果需要在then中使用this引用变量，必须使用箭头函数。
+        // this.$modal.confirm('是否确认删除运输单详细信息编号为"' + ids + '"的数据项？').then(function(this.变量) {})，这种写法无法使用使用this引用变量
+        return mergeDetail(this.ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("生成中转运输单成功");
+      }).catch(() => {});
+    },
+    /** 拆分中转运单按钮操作 */
+    handleSplitTransport() {
+      
     },
   }
 };

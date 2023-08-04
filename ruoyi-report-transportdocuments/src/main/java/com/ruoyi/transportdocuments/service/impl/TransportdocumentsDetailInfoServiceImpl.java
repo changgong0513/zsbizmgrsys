@@ -1,25 +1,23 @@
 package com.ruoyi.transportdocuments.service.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
-import com.ruoyi.report.masterdata.mapper.MasterDataWarehouseBaseInfoMapper;
 import com.ruoyi.report.masterdata.service.IMasterDataWarehouseBaseInfoService;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
-import com.ruoyi.zjzy.mapper.ZjzyFkrlInfoMapper;
 import com.ruoyi.zjzy.service.IZjzyFkrlInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +71,17 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     public TransportdocumentsDetailInfo selectTransportdocumentsDetailInfoById(Long id)
     {
         return transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoById(id);
+    }
+
+    /**
+     * 查询运输单详细信息列表
+     *
+     * @param ids 运输单详细信息主键数组
+     * @return 运输单详细信息集合
+     */
+    @Override
+    public List<TransportdocumentsDetailInfo> selectTransportdocumentsDetailInfoByIds(Long[] ids) {
+        return transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);
     }
 
     /**
@@ -295,6 +304,42 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return successMsg.toString();
+    }
+
+    /**
+     * 生成中转运输单数据
+     *
+     * @param ids 需要生成中转运输单详细信息主键集合
+     * @return 结果
+     */
+    @Override
+    public int mergeTransportdocumentsDetailInfo(Long[] ids) {
+
+        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
+        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);
+        transportdocumentsList.stream().forEach(element -> {
+            if (element.getLoadingQuantity() != null) {
+                Long loadingQuantity = element.getLoadingQuantity();
+                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
+            }
+        });
+
+        TransportdocumentsDetailInfo oldTransportdocumentsDetailInfo = transportdocumentsList.get(0);
+        TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
+        transportdocumentsDetailInfo.setTransportdocumentsId("ZS" + IdUtils.fastSimpleUUID().toUpperCase());
+        transportdocumentsDetailInfo.setWagonNumber("WN" + IdUtils.fastSimpleUUID().toUpperCase());
+        transportdocumentsDetailInfo.setSourcePlaceId(oldTransportdocumentsDetailInfo.getSourcePlaceId());
+        transportdocumentsDetailInfo.setSourcePlaceName(oldTransportdocumentsDetailInfo.getSourcePlaceName());
+        transportdocumentsDetailInfo.setTargetPlaceId(oldTransportdocumentsDetailInfo.getTargetPlaceId());
+        transportdocumentsDetailInfo.setTargetPlaceName(oldTransportdocumentsDetailInfo.getTargetPlaceName());
+        transportdocumentsDetailInfo.setLoadingQuantity(sumLoadingQuantity.get());
+//        transportdocumentsDetailInfo.setHandledById();
+//        transportdocumentsDetailInfo.setHandledByName();
+//        transportdocumentsDetailInfo.setTelephone();
+
+
+
+        return 1;
     }
 
     /**

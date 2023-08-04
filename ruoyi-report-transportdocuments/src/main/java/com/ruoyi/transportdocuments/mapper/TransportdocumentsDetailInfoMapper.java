@@ -21,6 +21,14 @@ public interface TransportdocumentsDetailInfoMapper
 
     /**
      * 查询运输单详细信息列表
+     *
+     * @param ids 运输单详细信息主键数组
+     * @return 运输单详细信息集合
+     */
+    public List<TransportdocumentsDetailInfo> selectTransportdocumentsDetailInfoByIds(Long[] ids);
+
+    /**
+     * 查询运输单详细信息列表
      * 
      * @param transportdocumentsDetailInfo 运输单详细信息
      * @return 运输单详细信息集合

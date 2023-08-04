@@ -21,6 +21,14 @@ public interface ITransportdocumentsDetailInfoService
 
     /**
      * 查询运输单详细信息列表
+     *
+     * @param ids 运输单详细信息主键数组
+     * @return 运输单详细信息集合
+     */
+    public List<TransportdocumentsDetailInfo> selectTransportdocumentsDetailInfoByIds(Long[] ids);
+
+    /**
+     * 查询运输单详细信息列表
      * 
      * @param transportdocumentsDetailInfo 运输单详细信息
      * @return 运输单详细信息集合
@@ -71,4 +79,12 @@ public interface ITransportdocumentsDetailInfoService
                                                Boolean isUpdateSupport,
                                                String operName,
                                                String transportdocumentsType);
+
+    /**
+     * 生成中转运输单数据
+     *
+     * @param ids 需要生成中转运输单详细信息主键集合
+     * @return 结果
+     */
+    public int mergeTransportdocumentsDetailInfo(Long[] ids);
 }
