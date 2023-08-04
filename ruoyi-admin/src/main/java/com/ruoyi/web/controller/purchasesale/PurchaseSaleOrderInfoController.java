@@ -62,13 +62,11 @@ public class PurchaseSaleOrderInfoController extends BaseController {
     /**
      * 查询采购收货销售发货管理列表
      */
-    @PreAuthorize("@ss.hasPermi('purchasesale:purchasesale:list')")
+//    @PreAuthorize("@ss.hasPermi('purchasesale:purchasesale:list')")
     @GetMapping("/list")
     public TableDataInfo list(PurchaseSaleOrderInfo purchaseSaleOrderInfo) {
 
         startPage();
-
-        purchaseSaleOrderInfo.setBelongDept(String.valueOf(this.getDeptId()));
 
         List<PurchaseSaleOrderInfo> list = null;
         if (StringUtils.equals(purchaseSaleOrderInfo.getContractType(), CONST_CONTRACT_TYPE_PURCHASE)) {
