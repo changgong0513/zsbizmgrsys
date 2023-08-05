@@ -14,6 +14,7 @@ import com.ruoyi.fpgl.domain.FpglMainInfo;
 import com.ruoyi.fpgl.mapper.FpglMainInfoMapper;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataClientInfoMapper;
+import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,17 +38,57 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
     private FpglMainInfoMapper fpglMainInfoMapper;
 
     @Autowired
-    private MasterDataClientInfoMapper masterDataClientInfoMapper;
+    private IMasterDataClientInfoService masterDataClientInfoService;
 
     /**
      * 查询采购收货销售发货管理
-     * 
-     * @param contractId 采购收货销售发货管理主键
+     *
+     * @param ContractId 合同编号
+     * @return 采购收货销售发货管理
+     */
+    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByContractId(String ContractId) {
+        PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoMapper
+                .selectPurchaseSaleOrderInfoByOrderId(ContractId);
+
+        if (StringUtils.equals(purchaseSaleOrderInfo.getPurchaseType(), "1")) {
+            // 企业采购，其他采购类型供应商为空
+            // 取得所有客户主数据
+            List<MasterDataClientInfo> clientList = masterDataClientInfoService
+                    .selectMasterDataClientInfoList(new MasterDataClientInfo());
+            // 客户主数据列表转成Map（key：baseId, value：companyName）
+            Map<String, String> clientMap = clientList
+                    .stream()
+                    .collect(Collectors.toMap(MasterDataClientInfo::getBaseId, MasterDataClientInfo::getCompanyName));
+            purchaseSaleOrderInfo.setSupplierRealName(clientMap.get(purchaseSaleOrderInfo.getSupplierName()));
+        }
+
+        return purchaseSaleOrderInfo;
+    }
+
+    /**
+     * 查询采购收货销售发货管理
+     *
+     * @param orderId 订单编号
      * @return 采购收货销售发货管理
      */
     @Override
-    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByContractId(String contractId) {
-        return purchaseSaleOrderInfoMapper.selectPurchaseSaleOrderInfoByContractId(contractId);
+    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByOrderId(String orderId) {
+        PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoMapper
+                .selectPurchaseSaleOrderInfoByOrderId(orderId);
+
+        if (StringUtils.equals(purchaseSaleOrderInfo.getPurchaseType(), "1")) {
+            // 企业采购，其他采购类型供应商为空
+            // 取得所有客户主数据
+            List<MasterDataClientInfo> clientList = masterDataClientInfoService
+                    .selectMasterDataClientInfoList(new MasterDataClientInfo());
+            // 客户主数据列表转成Map（key：baseId, value：companyName）
+            Map<String, String> clientMap = clientList
+                    .stream()
+                    .collect(Collectors.toMap(MasterDataClientInfo::getBaseId, MasterDataClientInfo::getCompanyName));
+            purchaseSaleOrderInfo.setSupplierRealName(clientMap.get(purchaseSaleOrderInfo.getSupplierName()));
+        }
+
+        return purchaseSaleOrderInfo;
     }
 
     /**
@@ -94,7 +135,7 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
         // 根据客户编号，取得客户名称
         findPurchaseOrderList.stream().forEach(elment -> {
             String supplierName = elment.getSupplierName();
-            MasterDataClientInfo supplierData = masterDataClientInfoMapper
+            MasterDataClientInfo supplierData = masterDataClientInfoService
                     .selectMasterDataClientInfoByBaseId(supplierName);
             if (supplierData != null) {
                 String supplierRealName = supplierData.getCompanyName();
@@ -122,7 +163,7 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
         // 根据客户编号，取得客户名称
         list.stream().forEach(elment -> {
             String supplierName = elment.getSupplierName();
-            MasterDataClientInfo supplierData = masterDataClientInfoMapper
+            MasterDataClientInfo supplierData = masterDataClientInfoService
                     .selectMasterDataClientInfoByBaseId(supplierName);
             String supplierRealName = supplierData.getCompanyName();
             elment.setSupplierRealName(supplierRealName);
@@ -272,7 +313,7 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
 
             // 根据客户编号，取得客户名称
             String supplierName = element.getSupplierName();
-            MasterDataClientInfo supplierData = masterDataClientInfoMapper
+            MasterDataClientInfo supplierData = masterDataClientInfoService
                     .selectMasterDataClientInfoByBaseId(supplierName);
             if (supplierData != null) {
                 String supplierRealName = supplierData.getCompanyName();

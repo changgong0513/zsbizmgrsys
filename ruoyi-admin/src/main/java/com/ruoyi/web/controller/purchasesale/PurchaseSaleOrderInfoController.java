@@ -107,21 +107,9 @@ public class PurchaseSaleOrderInfoController extends BaseController {
      * 获取采购收货销售发货管理详细信息
      */
     //@PreAuthorize("@ss.hasPermi('purchasesale:purchasesale:query')")
-    @GetMapping(value = "/{contractId}")
-    public AjaxResult getInfo(@PathVariable("contractId") String contractId) {
-
-        PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoService.selectPurchaseSaleOrderInfoByContractId(contractId);
-
-        // 取得所有客户主数据
-        List<MasterDataClientInfo> clientList = masterDataClientInfoService.selectMasterDataClientInfoList(new MasterDataClientInfo());
-        // 客户主数据列表转成Map（key：baseId, value：companyName）
-        Map<String, String> clientMap = clientList
-                .stream()
-                .collect(Collectors.toMap(MasterDataClientInfo::getBaseId, MasterDataClientInfo::getCompanyName));
-
-        purchaseSaleOrderInfo.setSupplierRealName(clientMap.get(purchaseSaleOrderInfo.getSupplierName()));
-
-        return AjaxResult.success(purchaseSaleOrderInfo);
+    @GetMapping(value = "/{orderId}")
+    public AjaxResult getInfo(@PathVariable("orderId") String orderId) {
+        return AjaxResult.success(purchaseSaleOrderInfoService.selectPurchaseSaleOrderInfoByOrderId(orderId));
     }
 
     /**

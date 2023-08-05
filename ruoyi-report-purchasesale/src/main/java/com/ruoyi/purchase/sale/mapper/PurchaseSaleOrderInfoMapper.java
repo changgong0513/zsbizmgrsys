@@ -13,11 +13,19 @@ public interface PurchaseSaleOrderInfoMapper
 {
     /**
      * 查询采购收货销售发货管理
-     * 
-     * @param contractId 采购收货销售发货管理主键
+     *
+     * @param ContractId 合同编号
      * @return 采购收货销售发货管理
      */
-    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByContractId(String contractId);
+    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByContractId(String ContractId);
+
+    /**
+     * 查询采购收货销售发货管理
+     * 
+     * @param orderId 订单编号
+     * @return 采购收货销售发货管理
+     */
+    public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByOrderId(String orderId);
 
     /**
      * 查询采购收货销售发货管理列表

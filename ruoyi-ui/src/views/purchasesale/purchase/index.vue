@@ -95,7 +95,25 @@
       </el-table-column>
       <el-table-column label="物料名称" align="center" prop="materialName" width="200" :show-overflow-tooltip="true" />
       <el-table-column label="核算金额" align="center" prop="checkMoney" width="150" />
-      <el-table-column label="完成率" align="center" prop="completionRate" class-name="small-padding fixed-width" />
+      <el-table-column label="完成率" align="center" prop="completionRate" width="100" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['purchasesale:purchasesale:edit']"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['purchasesale:purchasesale:remove']"
+          >删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     
     <pagination
@@ -1127,7 +1145,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.contractId)
+      this.ids = selection.map(item => item.orderId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -1143,8 +1161,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const contractId = row.contractId || this.ids
-      getPurchase(contractId).then(response => {
+      const orderId = row.orderId || this.ids
+      getPurchase(orderId).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改采购订单数据";
