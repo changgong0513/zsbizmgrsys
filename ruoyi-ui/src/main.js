@@ -78,6 +78,14 @@ Vue.use(Element, {
 
 Vue.config.productionTip = false
 
+
+// 全局自定义指令
+Vue.directive('focus', {
+  inserted(el, binding) {
+    el.querySelector('input').focus()
+  }
+})
+
 new Vue({
   el: '#app',
   router,

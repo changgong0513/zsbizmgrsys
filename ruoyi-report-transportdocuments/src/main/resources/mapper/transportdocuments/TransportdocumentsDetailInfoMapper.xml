@@ -155,7 +155,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="businessDate != null">business_date = #{businessDate},</if>
             <if test="documentsType != null and documentsType != ''">documents_type = #{documentsType},</if>
             <if test="unitPrice != null">unit_price = #{unitPrice},</if>
-            <if test="relatedOrderId != null and relatedOrderId != ''">related_order_id = #{relatedOrderId},</if>
+            <if test="relatedOrderId != null">related_order_id = #{relatedOrderId},</if>
             <if test="relatedContractId != null">related_contract_id = #{relatedContractId},</if>
             <if test="relatedContractName != null">related_contract_name = #{relatedContractName},</if>
             <if test="landedQuantity != null">landed_quantity = #{landedQuantity},</if>
