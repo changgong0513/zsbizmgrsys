@@ -6,7 +6,7 @@
       <el-form-item label="所属部门" prop="belongDept">
         <el-select v-model="queryParams.belongDept" placeholder="请选择所属部门" style="width: 240px;">
           <el-option
-            v-for="item in deptOptions1"
+            v-for="item in deptOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -159,7 +159,7 @@
             <el-form-item label="所属部门" prop="belongDept">
               <el-select v-model="form.belongDept" placeholder="请选择所属部门" style="width: 240px;">
                 <el-option
-                  v-for="item in deptOptions1"
+                  v-for="item in deptOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -391,13 +391,11 @@
     <el-dialog title="采购管理数据详细" :visible.sync="openDetail" width="1150px" append-to-body :close-on-click-modal="false">
       <el-form ref="formDetail" :model="formDetail" label-width="100px">
         <el-row>
-          <!-- 订单编号 -->
           <el-col :span="8">
             <el-form-item label="订单编号">
               <el-input v-model="formDetail.orderId" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
-          <!-- 采购类型 -->
           <el-col :span="8">
             <el-form-item label="采购类型">
               <el-select
@@ -415,26 +413,18 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- 合同编号 -->
-          <el-col :span="8">
-            <el-form-item label="合同编号" prop="contractId">
-              <el-input v-model="formDetail.contractId" style="width: 240px" :disabled="true" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <!-- 经办人 -->
           <el-col :span="8">
             <el-form-item label="经办人" prop="handledBy">
               <el-input v-model="formDetail.handledBy" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
-          <!-- 所属部门 -->
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="所属部门">
               <el-select v-model="formDetail.belongDept" placeholder="请选择所属部门" style="width: 240px;" :disabled="true">
                 <el-option
-                  v-for="item in deptOptions1"
+                  v-for="item in deptOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -442,7 +432,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- 业务日期 -->
           <el-col :span="8">
             <el-form-item label="业务日期" prop="businessDate">
               <el-date-picker clearable
@@ -455,7 +444,6 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <!-- 物料名称 -->
           <el-col :span="8">
             <el-form-item label="物料名称" prop="materialName">
               <el-input 
@@ -469,13 +457,36 @@
           </el-col>
         </el-row>
         <el-row>
-          <!-- 采购数量 -->
           <el-col :span="8">
             <el-form-item label="采购数量" prop="purchaseQuantity">
               <el-input v-model="formDetail.purchaseQuantity" placeholder="请输入采购数量" style="width: 240px" :disabled="true" />
             </el-form-item>
           </el-col>
-          <!-- 供应商名称 -->
+          <el-col :span="8">
+            <el-form-item label="计量单位" prop="meteringUnit">
+              <el-select
+                v-model="formDetail.meteringUnit"
+                placeholder="计量单位"
+                clearable
+                style="width: 240px"
+                :disabled="true"
+              >
+                <el-option
+                  v-for="dict in dict.type.masterdata_warehouse_measurement_unit"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="单价" prop="unitPrice">
+              <el-input v-model="formDetail.unitPrice" placeholder="请输入单价" style="width: 240px" :disabled="true" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="供应商名称" prop="supplierRealName">
               <el-input 
@@ -487,17 +498,6 @@
                 show-word-limit />
             </el-form-item>
           </el-col>
-          <!-- 单价 -->
-          <el-col :span="8">
-            <el-form-item label="单价" prop="unitPrice">
-              <el-input v-model="formDetail.unitPrice" placeholder="请输入单价" style="width: 240px" :disabled="true" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <!-- 计量单位 -->
-          
-          <!-- 预计到货期 -->
           <el-col :span="8">
             <el-form-item label="预计到货期" prop="arrivalDate">
               <el-date-picker clearable
@@ -510,7 +510,6 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <!-- 要求交货期 -->
           <el-col :span="8">
             <el-form-item label="要求交货期" prop="requiredDeliveryDate">
               <el-date-picker clearable
@@ -574,7 +573,7 @@
         </el-row>
         <el-row>
           <!-- 是否开票 -->
-          <el-col :span="16">
+          <el-col :span="24">
             <el-form-item label="是否开票" prop="isInvoicing">
               <el-switch
                 :active-value="1"
@@ -998,7 +997,7 @@ export default {
       selRow: {},
       receiptList: [],
       // 部门树选项
-      deptOptions1: [],
+      deptOptions: [],
       defaultProps: {
         children: "children",
         label: "label"
@@ -1340,7 +1339,7 @@ export default {
     /** 查询部门下拉树结构 */
     getDeptTree() {
       deptSelect().then(response => {
-        this.deptOptions1 = response.data.map(item => {
+        this.deptOptions = response.data.map(item => {
             return { value: `${item.deptId}`, label: `${item.deptName}` };
           }).filter(item => {
             return item.value != 100 && item.value != 103;
