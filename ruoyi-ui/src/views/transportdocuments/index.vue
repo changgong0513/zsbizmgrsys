@@ -139,7 +139,7 @@
           <dict-tag :options="dict.type.transportdocuments_state" :value="scope.row.transportdocumentsState"/>
         </template>
       </el-table-column>
-      <el-table-column label="关联订单" align="center" prop="relatedOrderId">
+      <el-table-column label="关联订单（双击可编辑）" align="center" prop="relatedOrderId">
         <template slot-scope="scope">
           <el-input 
             v-focus v-if="scope.row[scope.column.property + 'Show']" 
