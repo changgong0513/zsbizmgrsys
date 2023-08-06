@@ -1,6 +1,8 @@
 package com.ruoyi.transportdocuments.service;
 
 import java.util.List;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsDetailInfo;
 
 /**
@@ -81,10 +83,11 @@ public interface ITransportdocumentsDetailInfoService
                                                String transportdocumentsType);
 
     /**
-     * 生成中转运输单数据
+     * 生成中转运输单数据。
      *
      * @param ids 需要生成中转运输单详细信息主键集合
-     * @return 结果
+     * @param data 生成中转运输单时，选择的运输方式、运载量和计量单位
+     * @return
      */
-    public int mergeTransportdocumentsDetailInfo(Long[] ids);
+    public int generateTransport(Long[] ids, JSONObject data);
 }

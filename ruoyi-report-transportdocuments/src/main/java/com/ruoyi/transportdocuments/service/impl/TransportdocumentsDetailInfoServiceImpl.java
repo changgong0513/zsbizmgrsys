@@ -307,13 +307,13 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     }
 
     /**
-     * 生成中转运输单数据
+     * 生成中转运输单数据。
      *
      * @param ids 需要生成中转运输单详细信息主键集合
-     * @return 结果
+     * @param data 生成中转运输单时，选择的运输方式、运载量和计量单位
+     * @return
      */
-    @Override
-    public int mergeTransportdocumentsDetailInfo(Long[] ids) {
+    public int generateTransport(Long[] ids, JSONObject data) {
 
 //        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
 //        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);

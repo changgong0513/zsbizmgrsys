@@ -137,14 +137,22 @@ public class TransportdocumentsDetailInfoController extends BaseController
     }
 
     /**
-     * 生成中转运输单数据。
+     *
      *
      * @param ids 需要生成中转运输单详细信息主键集合
      * @return
      */
+
+    /**
+     * 生成中转运输单数据。
+     *
+     * @param ids 需要生成中转运输单详细信息主键集合
+     * @param data 生成中转运输单时，选择的运输方式、运载量和计量单位
+     * @return
+     */
     @Log(title = "生成中转运输单数据", businessType = BusinessType.INSERT)
     @PostMapping("/generate/transport/{ids}")
-    public AjaxResult mergeDetail(@PathVariable Long[] ids, @RequestBody JSONObject data) {
-        return toAjax(transportdocumentsDetailInfoService.mergeTransportdocumentsDetailInfo(ids));
+    public AjaxResult generateTransport(@PathVariable Long[] ids, @RequestBody JSONObject data) {
+        return toAjax(transportdocumentsDetailInfoService.generateTransport(ids, data));
     }
 }
