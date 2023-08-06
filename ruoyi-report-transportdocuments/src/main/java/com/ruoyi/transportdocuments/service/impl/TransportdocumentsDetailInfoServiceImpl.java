@@ -315,24 +315,24 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     @Override
     public int mergeTransportdocumentsDetailInfo(Long[] ids) {
 
-        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
-        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);
-        transportdocumentsList.stream().forEach(element -> {
-            if (element.getLoadingQuantity() != null) {
-                Long loadingQuantity = element.getLoadingQuantity();
-                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
-            }
-        });
-
-        TransportdocumentsDetailInfo oldTransportdocumentsDetailInfo = transportdocumentsList.get(0);
-        TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
-        transportdocumentsDetailInfo.setTransportdocumentsId("ZS" + IdUtils.fastSimpleUUID().toUpperCase());
-        transportdocumentsDetailInfo.setWagonNumber("WN" + IdUtils.fastSimpleUUID().toUpperCase());
-        transportdocumentsDetailInfo.setSourcePlaceId(oldTransportdocumentsDetailInfo.getSourcePlaceId());
-        transportdocumentsDetailInfo.setSourcePlaceName(oldTransportdocumentsDetailInfo.getSourcePlaceName());
-        transportdocumentsDetailInfo.setTargetPlaceId(oldTransportdocumentsDetailInfo.getTargetPlaceId());
-        transportdocumentsDetailInfo.setTargetPlaceName(oldTransportdocumentsDetailInfo.getTargetPlaceName());
-        transportdocumentsDetailInfo.setLoadingQuantity(sumLoadingQuantity.get());
+//        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
+//        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);
+//        transportdocumentsList.stream().forEach(element -> {
+//            if (element.getLoadingQuantity() != null) {
+//                Long loadingQuantity = element.getLoadingQuantity();
+//                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
+//            }
+//        });
+//
+//        TransportdocumentsDetailInfo oldTransportdocumentsDetailInfo = transportdocumentsList.get(0);
+//        TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
+//        transportdocumentsDetailInfo.setTransportdocumentsId("ZS" + IdUtils.fastSimpleUUID().toUpperCase());
+//        transportdocumentsDetailInfo.setWagonNumber("WN" + IdUtils.fastSimpleUUID().toUpperCase());
+//        transportdocumentsDetailInfo.setSourcePlaceId(oldTransportdocumentsDetailInfo.getSourcePlaceId());
+//        transportdocumentsDetailInfo.setSourcePlaceName(oldTransportdocumentsDetailInfo.getSourcePlaceName());
+//        transportdocumentsDetailInfo.setTargetPlaceId(oldTransportdocumentsDetailInfo.getTargetPlaceId());
+//        transportdocumentsDetailInfo.setTargetPlaceName(oldTransportdocumentsDetailInfo.getTargetPlaceName());
+//        transportdocumentsDetailInfo.setLoadingQuantity(sumLoadingQuantity.get());
 //        transportdocumentsDetailInfo.setHandledById();
 //        transportdocumentsDetailInfo.setHandledByName();
 //        transportdocumentsDetailInfo.setTelephone();

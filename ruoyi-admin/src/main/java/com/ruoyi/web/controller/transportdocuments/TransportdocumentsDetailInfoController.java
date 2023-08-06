@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.transportdocuments;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.zjzy.domain.ZjzyHkInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,8 +143,8 @@ public class TransportdocumentsDetailInfoController extends BaseController
      * @return
      */
     @Log(title = "生成中转运输单数据", businessType = BusinessType.INSERT)
-    @PostMapping("/merge/detail/{ids}")
-    public AjaxResult mergeDetail(@PathVariable Long[] ids) {
+    @PostMapping("/generate/transport/{ids}")
+    public AjaxResult mergeDetail(@PathVariable Long[] ids, @RequestBody JSONObject data) {
         return toAjax(transportdocumentsDetailInfoService.mergeTransportdocumentsDetailInfo(ids));
     }
 }

@@ -100,10 +100,10 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
+          icon="el-icon-connection"
           size="mini"
           :disabled="multiple"
-          @click="handleMergeTransport"
+          @click="handleTransfer"
         >生成中转运单</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -166,6 +166,13 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['transportdocuments:detail:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-location-information"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['transportdocuments:detail:trace']"
+          >追踪</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -464,11 +471,45 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 生成中转运单对话框 -->
+    <el-dialog :title="titleTransfer" :visible.sync="openTransfer" width="400px" append-to-body>
+      <el-form ref="formTransfer" :model="formTransfer" :rules="rulesTransfer" label-width="130px">
+        <el-form-item label="运输方式" prop="transportMode">
+          <el-select
+            v-model="formTransfer.transportMode"
+            placeholder="请选择运输方式"
+            clearable
+            style="width: 200px"
+          >
+            <el-option
+              v-for="dict in dict.type.purchasesale_transport_mode"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="装载量" prop="transportLoadingCapacity">
+          <el-input v-model="formTransfer.transportLoadingCapacity" placeholder="请输入装载量" style="width: 200px;" />
+        </el-form-item>
+        <el-form-item label="计量单位" prop="transportUnitOfMeasurement">
+          <el-radio-group v-model="formTransfer.transportUnitOfMeasurement">
+            <el-radio-button :label="1">吨</el-radio-button>
+            <el-radio-button :label="2">斤</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormTransfer">确 定</el-button>
+        <el-button @click="cancelTransfer">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listDetail, getDetail, delDetail, addDetail, updateDetail, mergeDetail } from "@/api/transportdocuments/detail";
+import { listDetail, getDetail, delDetail, addDetail, updateDetail, generateTransport } from "@/api/transportdocuments/detail";
 import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
@@ -477,7 +518,7 @@ import { getToken } from "@/utils/auth";
 
 export default {
   name: "Detail",
-  dicts: ['transportdocuments_state', 'transportdocuments_documents_type'],
+  dicts: ['transportdocuments_state', 'transportdocuments_documents_type', 'purchasesale_transport_mode'],
   data() {
     return {
       // 遮罩层
@@ -496,8 +537,12 @@ export default {
       detailList: [],
       // 弹出层标题
       title: "",
+      // 中转运单弹出层标题
+      titleTransfer: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示中转运单弹出层
+      openTransfer: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -509,6 +554,8 @@ export default {
       },
       // 表单参数
       form: {},
+      // 中转运单表单参数
+      formTransfer: {},
       // 表单校验
       rules: {
         transportdocumentsId: [
@@ -567,6 +614,19 @@ export default {
         ],
         followUpFare: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的压车费", trigger: "blur" }
+        ],
+      },
+      // 中转运单表单校验
+      rulesTransfer: {
+        transportMode: [
+          { required: true, message: "请选择运输方式", trigger: "change" }
+        ],
+        transportLoadingCapacity: [
+          { required: true, message: "请输入装载量", trigger: "blur" },
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的装载量", trigger: "blur" }
+        ],
+        transportUnitOfMeasurement: [
+          { required: true, message: "请选择计量单位", trigger: "change" }
         ],
       },
       // 省市区级联数据
@@ -688,7 +748,15 @@ export default {
         updateTime: null,
         bizVersion: null
       };
+
+      this.formTransfer = {
+        transportMode: null,
+        transportLoadingCapacity: null,
+        transportUnitOfMeasurement: null,
+      }
+
       this.resetForm("form");
+      this.resetForm("formTransfer");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -945,31 +1013,33 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    /** 生成中转运单按钮操作 */
-    handleMergeTransport() {
-      
-      for (let i = 0; i < this.ids.length; i++) {
-        let isFind = false;
-        for (let j = 0; j < this.detailList.length; j++) {
-          if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '2') {
-            isFind = true;
-            break;
-          }
-        }
-        if (isFind) {
-          this.$modal.msgError('要合并的有不包含中转状态运输单，请确认！');
-          return false;
-        }
-      }
+    /** 处理中转运单 */
+    handleTransfer() {
+      // for (let i = 0; i < this.ids.length; i++) {
+      //   let isFind = false;
+      //   for (let j = 0; j < this.detailList.length; j++) {
+      //     if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '2') {
+      //       isFind = true;
+      //       break;
+      //     }
+      //   }
+      //   if (isFind) {
+      //     this.$modal.msgError('要合并的有不包含中转状态运输单，请确认！');
+      //     return false;
+      //   }
+      // }
 
-      this.$modal.confirm('是否确认生成中转运输单？').then(() => {
-        // 如果需要在then中使用this引用变量，必须使用箭头函数。
-        // this.$modal.confirm('是否确认删除运输单详细信息编号为"' + ids + '"的数据项？').then(function(this.变量) {})，这种写法无法使用使用this引用变量
-        return mergeDetail(this.ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("生成中转运输单成功");
-      }).catch(() => {});
+      // this.$modal.confirm('是否确认生成中转运输单？').then(() => {
+      //   // 如果需要在then中使用this引用变量，必须使用箭头函数。
+      //   // this.$modal.confirm('是否确认删除运输单详细信息编号为"' + ids + '"的数据项？').then(function(this.变量) {})，这种写法无法使用使用this引用变量
+      //   return mergeDetail(this.ids);
+      // }).then(() => {
+      //   this.getList();
+      //   this.$modal.msgSuccess("生成中转运输单成功");
+      // }).catch(() => {});
+      this.openTransfer = true;
+      this.titleTransfer = "生成中转运单";
+      this.formTransfer.transportUnitOfMeasurement = '1';
     },
     /** 拆分中转运单按钮操作 */
     handleSplitTransport() {
@@ -994,6 +1064,23 @@ export default {
     updateTable(row) {
       this.key = Math.random();
       updateDetail(row);
+    },
+    /** 生成中转运单提交按钮 */
+    submitFormTransfer() {
+      this.$refs["formTransfer"].validate(valid => {
+        if (valid) {
+          generateTransport(this.ids, this.formTransfer).then(response => {
+            this.$modal.msgSuccess("生成中转运单成功");
+            this.open = false;
+            this.getList();
+          });
+        }
+      });
+    },
+    /** 生成中转运单取消按钮 */
+    cancelTransfer() {
+      this.openTransfer = false;
+      this.reset();
     },
   }
 };
