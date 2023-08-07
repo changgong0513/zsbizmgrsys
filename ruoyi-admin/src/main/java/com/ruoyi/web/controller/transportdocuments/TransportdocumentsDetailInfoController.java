@@ -152,7 +152,12 @@ public class TransportdocumentsDetailInfoController extends BaseController
      */
     @Log(title = "生成中转运输单数据", businessType = BusinessType.INSERT)
     @PostMapping("/generate/transport/{ids}")
-    public AjaxResult generateTransport(@PathVariable Long[] ids, @RequestBody JSONObject data) {
-        return toAjax(transportdocumentsDetailInfoService.generateTransport(ids, data));
+    public AjaxResult generate(@PathVariable Long[] ids, @RequestBody JSONObject data) {
+        int result = transportdocumentsDetailInfoService.generateTransport(ids, data);
+        if (10001 == result) {
+            return AjaxResult.error(10001, "选择准备生成中转的运输单，不属于同一个订单！");
+        }
+
+        return toAjax(result);
     }
 }

@@ -597,6 +597,9 @@ export default {
         transportdocumentsState: [
           { required: true, message: "运输单状态不能为空", trigger: "change" }
         ],
+        relatedOrderId: [
+          { required: true, message: "关联订单不能为空", trigger: "blur" }
+        ],
         landedQuantity: [
           { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的卸货数量", trigger: "blur" }
         ],
@@ -698,7 +701,6 @@ export default {
     /** 查询运输单详细信息列表 */
     getList() {
       this.loading = true;
-      this.queryParams.transportdocumentsType = 'p';
       listDetail(this.queryParams).then(response => {
         this.detailList = response.rows;
         this.total = response.total;

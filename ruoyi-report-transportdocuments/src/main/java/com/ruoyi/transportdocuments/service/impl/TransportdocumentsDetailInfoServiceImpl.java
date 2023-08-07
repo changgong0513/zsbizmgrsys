@@ -1,23 +1,31 @@
 package com.ruoyi.transportdocuments.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
-import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
+import com.ruoyi.purchase.sale.service.IPurchaseSaleOrderInfoService;
+import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
 import com.ruoyi.report.masterdata.service.IMasterDataWarehouseBaseInfoService;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
 import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
+import com.ruoyi.transportdocuments.service.ITransportdocumentsTraceInfoService;
 import com.ruoyi.zjzy.service.IZjzyFkrlInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +65,12 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
 
     @Autowired
     private WarehouseInventoryInfoMapper warehouseInventoryInfoMapper;
+
+    @Autowired
+    IPurchaseSaleOrderInfoService purchaseSaleOrderInfoService;
+
+    @Autowired
+    ITransportdocumentsTraceInfoService transportdocumentsTraceInfoService;
 
     @Autowired
     protected Validator validator;
@@ -314,30 +328,73 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      * @return
      */
     public int generateTransport(Long[] ids, JSONObject data) {
+        // 取得运输单关联的订单列表
+        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper
+                .selectTransportdocumentsDetailInfoByIds(ids);
 
-//        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
-//        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoByIds(ids);
-//        transportdocumentsList.stream().forEach(element -> {
-//            if (element.getLoadingQuantity() != null) {
-//                Long loadingQuantity = element.getLoadingQuantity();
-//                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
-//            }
-//        });
-//
-//        TransportdocumentsDetailInfo oldTransportdocumentsDetailInfo = transportdocumentsList.get(0);
-//        TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
-//        transportdocumentsDetailInfo.setTransportdocumentsId("ZS" + IdUtils.fastSimpleUUID().toUpperCase());
-//        transportdocumentsDetailInfo.setWagonNumber("WN" + IdUtils.fastSimpleUUID().toUpperCase());
-//        transportdocumentsDetailInfo.setSourcePlaceId(oldTransportdocumentsDetailInfo.getSourcePlaceId());
-//        transportdocumentsDetailInfo.setSourcePlaceName(oldTransportdocumentsDetailInfo.getSourcePlaceName());
-//        transportdocumentsDetailInfo.setTargetPlaceId(oldTransportdocumentsDetailInfo.getTargetPlaceId());
-//        transportdocumentsDetailInfo.setTargetPlaceName(oldTransportdocumentsDetailInfo.getTargetPlaceName());
-//        transportdocumentsDetailInfo.setLoadingQuantity(sumLoadingQuantity.get());
-//        transportdocumentsDetailInfo.setHandledById();
-//        transportdocumentsDetailInfo.setHandledByName();
-//        transportdocumentsDetailInfo.setTelephone();
+        // 检查选择生成中转的运输单是否属于同一个订单
+        List <String> relatedOrderList = new ArrayList<>();
+        transportdocumentsList.stream().forEach(element -> {
+            relatedOrderList.add(element.getRelatedOrderId());
+        });
+        if (1 != relatedOrderList.size()) {
+            // 选择生成中转的运输单不属于同一个订单
+            return 10001;
+        }
 
+        Map<Long, String> transportdocumentsMap = transportdocumentsList.stream()
+                .collect(Collectors.toMap(TransportdocumentsDetailInfo::getId, TransportdocumentsDetailInfo::getTransportdocumentsId));
 
+        // 计算选择的运输单运输量
+        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
+        transportdocumentsList.stream().forEach(element -> {
+            Long loadingQuantity = element.getLoadingQuantity();
+            Long landedQuantity = element.getLandedQuantity();
+            if (element.getLoadingQuantity() != null && element.getLandedQuantity() != null) {
+                sumLoadingQuantity.set(sumLoadingQuantity.get() + (loadingQuantity - landedQuantity));
+            } else {
+                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
+            }
+        });
+
+        // 运输量统一转化为以斤为单位，便于计算
+        PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoService
+                .selectPurchaseSaleOrderInfoByOrderId(relatedOrderList.get(0));
+        String meteringUnit = purchaseSaleOrderInfo.getMeteringUnit();
+        if (StringUtils.equals(meteringUnit, "1")) {
+            sumLoadingQuantity.set(sumLoadingQuantity.get() * 2000);
+        }
+
+        Long transportLoadingCapacity = data.getLong("transportLoadingCapacity");
+        if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
+            transportLoadingCapacity = transportLoadingCapacity * 2000;
+        }
+
+        int transportNumber = 0;
+        Long loadingQuantity = 0L;
+        int traceTransportNumber = 0;
+        if (0 < sumLoadingQuantity.get().compareTo(transportLoadingCapacity)) {
+            // 拆分运输单
+            transportNumber = (int) Math.ceil((double) sumLoadingQuantity.get() / (double) transportLoadingCapacity);
+            loadingQuantity = null;
+            traceTransportNumber = transportNumber;
+        } else {
+            // 选择一个或者多个运输单都将生成一个新的中转运输单（1:1/n:1）
+            loadingQuantity = sumLoadingQuantity.get();
+            if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
+                // 计量单位为吨的场合
+                loadingQuantity = sumLoadingQuantity.get() / 2000;
+            }
+
+            TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
+            makeTransport(previousData, loadingQuantity);
+            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId());
+        }
+
+        for (TransportdocumentsDetailInfo transportdocumentsDetailInfo: transportdocumentsList) {
+            transportdocumentsDetailInfo.setTransportdocumentsState("4");
+            updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
+        }
 
         return 1;
     }
@@ -358,6 +415,58 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return null;
+    }
+
+    /**
+     *
+     *
+     * @param previousData
+     * @param loadingQuantity
+     * @return
+     */
+    private int makeTransport(TransportdocumentsDetailInfo previousData, Long loadingQuantity) {
+        TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
+        transportdocumentsDetailInfo.setTransportdocumentsId(null);
+        transportdocumentsDetailInfo.setWagonNumber(null);
+        transportdocumentsDetailInfo.setLoadingQuantity(loadingQuantity);
+        transportdocumentsDetailInfo.setTransportdocumentsState("2");
+        transportdocumentsDetailInfo.setPch(previousData.getPch());
+        transportdocumentsDetailInfo.setSourcePlaceId(null);
+        transportdocumentsDetailInfo.setSourcePlaceName(null);
+        transportdocumentsDetailInfo.setTargetPlaceId(null);
+        transportdocumentsDetailInfo.setTargetPlaceName(null);
+        transportdocumentsDetailInfo.setHandledByName(previousData.getHandledByName());
+        transportdocumentsDetailInfo.setTelephone(previousData.getTelephone());
+        transportdocumentsDetailInfo.setMaterialId(previousData.getMaterialId());
+        transportdocumentsDetailInfo.setMaterialName(previousData.getMaterialName());
+        transportdocumentsDetailInfo.setBusinessDate(previousData.getBusinessDate());
+        transportdocumentsDetailInfo.setDocumentsType(previousData.getDocumentsType());
+        transportdocumentsDetailInfo.setUnitPrice(previousData.getUnitPrice());
+        transportdocumentsDetailInfo.setRelatedOrderId(previousData.getRelatedOrderId());
+        transportdocumentsDetailInfo.setRelatedContractId(previousData.getRelatedContractId());
+        transportdocumentsDetailInfo.setRelatedContractName(previousData.getRelatedContractName());
+        transportdocumentsDetailInfo.setRemark(previousData.getRemark());
+        transportdocumentsDetailInfo.setCreateBy(SecurityUtils.getUsername());
+        transportdocumentsDetailInfo.setCreateTime(DateUtils.getNowDate());
+        transportdocumentsDetailInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsDetailInfo.setUpdateTime(DateUtils.getNowDate());
+        transportdocumentsDetailInfo.setBizVersion(1L);
+        return insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
+    }
+
+    private void makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId) {
+        for (int i = 0; i < ids.length; i++) {
+            TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
+            String transportdocumentsId = transportdocumentsMap.get(ids[i]);
+            traceInfo.setRelatedOrderId(relatedOrderId);
+            traceInfo.setPreTransportdocumentsId(transportdocumentsId);
+            traceInfo.setCreateBy(SecurityUtils.getUsername());
+            traceInfo.setCreateTime(DateUtils.getNowDate());
+            traceInfo.setUpdateBy(SecurityUtils.getUsername());
+            traceInfo.setUpdateTime(DateUtils.getNowDate());
+            traceInfo.setBizVersion(1L);
+            transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+        }
     }
 }
 
