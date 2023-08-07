@@ -121,7 +121,17 @@
 
     <el-table v-loading="loading" :data="detailList" @selection-change="handleSelectionChange" :key="key" @cell-dblclick="doubleClick">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
+      <el-table-column label="运输单号（双击可编辑）" align="center" prop="transportdocumentsId">
+        <template slot-scope="scope">
+          <el-input 
+            v-focus v-if="scope.row[scope.column.property + 'Show']" 
+            clearable 
+            v-model="scope.row.transportdocumentsId"
+            @keyup.enter.native="onBlur(scope.row, scope.column)" 
+            @blur="onBlur(scope.row, scope.column)" />
+          <span v-else>{{ scope.row.transportdocumentsId }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="经办人姓名" align="center" prop="handledByName" />
       <el-table-column label="物料名称" align="center" prop="materialName" />
       <el-table-column label="业务日期" align="center" prop="businessDate" >
@@ -1052,7 +1062,7 @@ export default {
       // 避免点击过快导致多个输入框处于焦点状态
       row[column.property + 'Show'] = false;
       // 避免点击其他单元格导致表格刷新 
-      if (!['relatedOrderId'].includes(column.property)) return;
+      if (!['relatedOrderId'].includes(column.property) && !['transportdocumentsId'].includes(column.property)) return;
       row[column.property + 'Show'] = true;
       this.updateTable(row);
     },
