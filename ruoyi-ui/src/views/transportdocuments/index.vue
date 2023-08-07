@@ -106,16 +106,6 @@
           @click="handleTransfer"
         >生成中转运单</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          :disabled="multiple"
-          @click="handleSplitTransport"
-        >拆分中转运单</el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -1102,10 +1092,6 @@ export default {
       this.titleTransfer = "生成中转运单";
       this.formTransfer.transportUnitOfMeasurement = '1';
     },
-    /** 拆分中转运单按钮操作 */
-    handleSplitTransport() {
-      
-    },
     // 双击单元格触发事件
     doubleClick(row, column) {
       // 避免点击过快导致多个输入框处于焦点状态
@@ -1140,6 +1126,7 @@ export default {
           });
         }
       });
+      this.reset();
     },
     /** 生成中转运单取消按钮 */
     cancelTransfer() {
