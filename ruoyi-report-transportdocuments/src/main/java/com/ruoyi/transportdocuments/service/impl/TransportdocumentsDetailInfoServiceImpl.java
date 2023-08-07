@@ -194,6 +194,10 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setTransportdocumentsId(transportdocumentsDetailInfo.getTransportdocumentsId());
             traceInfo.setTempTransportdocumentsId(transportdocumentsDetailInfo.getTempTransportdocumentsId());
             transportdocumentsTraceInfoService.updateByTempTransportdocumentsId(traceInfo);
+
+            transportdocumentsTraceInfoService.updatePreTransportdocumentsIdByTemp(traceInfo);
+            transportdocumentsTraceInfoService.updateTransportdocumentsIdByTemp(traceInfo);
+            transportdocumentsTraceInfoService.updatePostTransportdocumentsIdByTemp(traceInfo);
         }
 
         return result;
@@ -208,6 +212,21 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     @Override
     public int deleteTransportdocumentsDetailInfoByIds(Long[] ids)
     {
+        // 取得运输单关联的订单列表
+        List<TransportdocumentsDetailInfo> transportdocumentsList = transportdocumentsDetailInfoMapper
+                .selectTransportdocumentsDetailInfoByIds(ids);
+
+        List<String> transportdocumentsIdList = new ArrayList<>();
+        transportdocumentsList.stream().forEach(element -> {
+            transportdocumentsIdList.add(element.getTransportdocumentsId());
+        });
+
+
+        String[] params = transportdocumentsIdList.toArray(new String[transportdocumentsIdList.size()]);
+        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByPre(params);
+        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByCurrent(params);
+        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByPost(params);
+
         return transportdocumentsDetailInfoMapper.deleteTransportdocumentsDetailInfoByIds(ids);
     }
 
@@ -478,6 +497,15 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setUpdateTime(DateUtils.getNowDate());
             traceInfo.setBizVersion(1L);
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+
+            TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+            param.setPreTransportdocumentsId(transportdocumentsId);
+            param.setTransportdocumentsId(tempTransportdocumentsId);
+            TransportdocumentsTraceInfo selectTraceData = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfo(param);
+            if (null != selectTraceData) {
+                param.setPostTransportdocumentsId(tempTransportdocumentsId);
+                transportdocumentsTraceInfoService.updatePostTransportdocumentsId(param);
+            }
         }
     }
 }

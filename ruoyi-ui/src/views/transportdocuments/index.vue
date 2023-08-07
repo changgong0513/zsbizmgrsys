@@ -517,7 +517,7 @@
     </el-dialog>
 
     <!-- 查看订单追踪对话框 -->
-    <el-dialog :title="titleTrace" :visible.sync="openTrace" width="600px" append-to-body>
+    <el-dialog :title="titleTrace" :visible.sync="openTrace" width="650px" append-to-body>
       <el-table v-loading="loadingTrace" :data="traceList">
         <el-table-column label="前置运单编号" align="center" prop="preTransportdocumentsId" />
         <el-table-column label="当前运单编号" align="center" prop="transportdocumentsId" /> 
@@ -1135,7 +1135,7 @@ export default {
         if (valid) {
           generateTransport(this.ids, this.formTransfer).then(response => {
             this.$modal.msgSuccess("生成中转运单成功");
-            this.open = false;
+            this.openTransfer = false;
             this.getList();
           });
         }

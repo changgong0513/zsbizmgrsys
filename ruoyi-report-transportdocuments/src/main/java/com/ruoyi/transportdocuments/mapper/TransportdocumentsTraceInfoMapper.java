@@ -12,20 +12,28 @@ import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
 public interface TransportdocumentsTraceInfoMapper 
 {
     /**
-     * 查询运输单追溯信息
-     * 
-     * @param id 运输单追溯信息主键
-     * @return 运输单追溯信息
-     */
-    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfoById(Long id);
-
-    /**
      * 查询运输单追溯信息列表
      * 
      * @param transportdocumentsTraceInfo 运输单追溯信息
      * @return 运输单追溯信息集合
      */
     public List<TransportdocumentsTraceInfo> selectTransportdocumentsTraceInfoList(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+
+    /**
+     * 查询运输单追溯信息
+     *
+     * @param id 运输单追溯信息主键
+     * @return 运输单追溯信息
+     */
+    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfoById(Long id);
+
+    /**
+     * 查询运输单追溯信息
+     *
+     * @param param 运输单追溯信息
+     * @return 运输单追溯信息
+     */
+    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfo(TransportdocumentsTraceInfo param);
 
     /**
      * 新增运输单追溯信息
@@ -52,12 +60,28 @@ public interface TransportdocumentsTraceInfoMapper
     public int updateByTempTransportdocumentsId(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
 
     /**
+     * 修改后置运输单追溯信息
+     *
+     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * @return 结果
+     */
+    public int updatePostTransportdocumentsId(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+
+    public int updatePreTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+    public int updateTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+    public int updatePostTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+
+    /**
      * 删除运输单追溯信息
      * 
      * @param id 运输单追溯信息主键
      * @return 结果
      */
     public int deleteTransportdocumentsTraceInfoById(Long id);
+
+    public int deleteTransportdocumentsTraceInfoByPre(String[] preTransportdocumentsIds);
+    public int deleteTransportdocumentsTraceInfoByCurrent(String[] transportdocumentsIds);
+    public int deleteTransportdocumentsTraceInfoByPost(String[] postTransportdocumentsIds);
 
     /**
      * 批量删除运输单追溯信息

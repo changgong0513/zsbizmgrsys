@@ -22,6 +22,18 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
     private TransportdocumentsTraceInfoMapper transportdocumentsTraceInfoMapper;
 
     /**
+     * 查询运输单追溯信息列表
+     *
+     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * @return 运输单追溯信息
+     */
+    @Override
+    public List<TransportdocumentsTraceInfo> selectTransportdocumentsTraceInfoList(TransportdocumentsTraceInfo transportdocumentsTraceInfo)
+    {
+        return transportdocumentsTraceInfoMapper.selectTransportdocumentsTraceInfoList(transportdocumentsTraceInfo);
+    }
+
+    /**
      * 查询运输单追溯信息
      * 
      * @param id 运输单追溯信息主键
@@ -34,15 +46,13 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
     }
 
     /**
-     * 查询运输单追溯信息列表
-     * 
-     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * 查询运输单追溯信息
+     *
+     * @param param 运输单追溯信息
      * @return 运输单追溯信息
      */
-    @Override
-    public List<TransportdocumentsTraceInfo> selectTransportdocumentsTraceInfoList(TransportdocumentsTraceInfo transportdocumentsTraceInfo)
-    {
-        return transportdocumentsTraceInfoMapper.selectTransportdocumentsTraceInfoList(transportdocumentsTraceInfo);
+    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfo(TransportdocumentsTraceInfo param) {
+        return transportdocumentsTraceInfoMapper.selectTransportdocumentsTraceInfo(param);
     }
 
     /**
@@ -84,6 +94,36 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
     }
 
     /**
+     * 修改后置运输单追溯信息
+     *
+     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * @return 结果
+     */
+    public int updatePostTransportdocumentsId(TransportdocumentsTraceInfo transportdocumentsTraceInfo) {
+        transportdocumentsTraceInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
+        return transportdocumentsTraceInfoMapper.updatePostTransportdocumentsId(transportdocumentsTraceInfo);
+    }
+
+    public int updatePreTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo) {
+        transportdocumentsTraceInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
+        return transportdocumentsTraceInfoMapper.updatePreTransportdocumentsIdByTemp(transportdocumentsTraceInfo);
+    }
+
+    public int updateTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo) {
+        transportdocumentsTraceInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
+        return transportdocumentsTraceInfoMapper.updateTransportdocumentsIdByTemp(transportdocumentsTraceInfo);
+    }
+
+    public int updatePostTransportdocumentsIdByTemp(TransportdocumentsTraceInfo transportdocumentsTraceInfo) {
+        transportdocumentsTraceInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
+        return transportdocumentsTraceInfoMapper.updatePostTransportdocumentsIdByTemp(transportdocumentsTraceInfo);
+    }
+
+    /**
      * 批量删除运输单追溯信息
      * 
      * @param ids 需要删除的运输单追溯信息主键
@@ -105,5 +145,17 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
     public int deleteTransportdocumentsTraceInfoById(Long id)
     {
         return transportdocumentsTraceInfoMapper.deleteTransportdocumentsTraceInfoById(id);
+    }
+
+    public int deleteTransportdocumentsTraceInfoByPre(String[] preTransportdocumentsIds) {
+        return transportdocumentsTraceInfoMapper.deleteTransportdocumentsTraceInfoByPre(preTransportdocumentsIds);
+    }
+
+    public int deleteTransportdocumentsTraceInfoByCurrent(String[] transportdocumentsIds) {
+        return transportdocumentsTraceInfoMapper.deleteTransportdocumentsTraceInfoByCurrent(transportdocumentsIds);
+    }
+
+    public int deleteTransportdocumentsTraceInfoByPost(String[] postTransportdocumentsIds) {
+        return transportdocumentsTraceInfoMapper.deleteTransportdocumentsTraceInfoByPost(postTransportdocumentsIds);
     }
 }
