@@ -25,7 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTransportdocumentsTraceInfoList" parameterType="TransportdocumentsTraceInfo" resultMap="TransportdocumentsTraceInfoResult">
         <include refid="selectTransportdocumentsTraceInfoVo"/>
-        <where>  
+        <where>
+            <if test="transportdocumentsId != null  and transportdocumentsId != ''"> and transportdocuments_id = #{transportdocumentsId}</if>
         </where>
     </select>
     

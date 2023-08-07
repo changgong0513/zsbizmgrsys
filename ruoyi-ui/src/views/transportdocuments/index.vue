@@ -180,7 +180,7 @@
             size="mini"
             type="text"
             icon="el-icon-location-information"
-            @click="handleUpdate(scope.row)"
+            @click="handleTrace(scope.row)"
             v-hasPermi="['transportdocuments:detail:trace']"
           >追踪</el-button>
         </template>
@@ -515,11 +515,32 @@
         <el-button @click="cancelTransfer">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 查看订单追踪对话框 -->
+    <el-dialog :title="titleTrace" :visible.sync="openTrace" width="600px" append-to-body>
+      <el-table v-loading="loadingTrace" :data="traceList">
+        <el-table-column label="前置运单编号" align="center" prop="preTransportdocumentsId" />
+        <el-table-column label="当前运单编号" align="center" prop="transportdocumentsId" /> 
+        <el-table-column label="后置运单编号" align="center" prop="postTransportdocumentsId" class-name="small-padding fixed-width" /> 
+      </el-table>
+    
+      <pagination
+        v-show="totalTrace > 0"
+        :total="totalTrace"
+        :page.sync="queryTraceParams.pageNum"
+        :limit.sync="queryTraceParams.pageSize"
+        @pagination="getTraceList"
+      />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeTrace">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail, generateTransport } from "@/api/transportdocuments/detail";
+import { listTrace } from "@/api/transportdocuments/trace";
 import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
@@ -533,6 +554,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 运单追踪遮罩层
+      loadingTrace: true,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -543,16 +566,22 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      // 运单追踪总条数
+      totalTrace: 0,
       // 运输单详细信息表格数据
       detailList: [],
       // 弹出层标题
       title: "",
       // 中转运单弹出层标题
       titleTransfer: "",
+      // 查看运单追踪弹出层标题
+      titleTrace: "",
       // 是否显示弹出层
       open: false,
       // 是否显示中转运单弹出层
       openTransfer: false,
+      // 是否显示运单追踪弹出层
+      openTrace: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -561,6 +590,12 @@ export default {
         businessDate: null,
         documentsType: null,
         transportdocumentsState: null,
+      },
+      // 查询运单追踪参数
+      queryTraceParams: {
+        pageNum: 1,
+        pageSize: 10,
+        transportdocumentsId: null,
       },
       // 表单参数
       form: {},
@@ -673,6 +708,8 @@ export default {
       remoteLoadingWarehouseName: false,
       key: Math.random(),
       hidTempTransportdocumentsId: null,
+      // 运单追踪表格数据
+      traceList: [],
     };
   },
   created() {
@@ -716,6 +753,15 @@ export default {
         this.detailList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    /** 查询追踪运单数据列表 */
+    getTraceList() {
+      this.loadingTrace = true;
+      listDetail(this.queryTraceParams).then(response => {
+        this.traceList = response.rows;
+        this.totalTrace = response.total;
+        this.loadingTrace = false;
       });
     },
     // 取消按钮
@@ -767,6 +813,8 @@ export default {
         transportLoadingCapacity: null,
         transportUnitOfMeasurement: null,
       }
+
+      this.traceList = [];
 
       this.resetForm("form");
       this.resetForm("formTransfer");
@@ -1096,6 +1144,25 @@ export default {
     /** 生成中转运单取消按钮 */
     cancelTransfer() {
       this.openTransfer = false;
+      this.reset();
+    },
+    /** 追踪按钮操作 */
+    handleTrace(row) {
+      this.reset();
+      this.queryTraceParams.transportdocumentsId = row.transportdocumentsId;
+      this.loadingTrace = true;
+      listTrace(this.queryTraceParams).then(response => {
+        this.traceList = response.rows;
+        this.totalTrace = response.total;
+        this.loadingTrace = false;
+
+        this.openTrace = true;
+        this.titleTrace = "查看追踪运单数据列表";
+      });
+    },
+    /** 追踪运单关闭按钮 */
+    closeTrace() {
+      this.openTrace = false;
       this.reset();
     },
   }
