@@ -44,6 +44,14 @@ public interface TransportdocumentsTraceInfoMapper
     public int updateTransportdocumentsTraceInfo(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
 
     /**
+     * 修改运输单追溯信息
+     *
+     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * @return 结果
+     */
+    public int updateByTempTransportdocumentsId(TransportdocumentsTraceInfo transportdocumentsTraceInfo);
+
+    /**
      * 删除运输单追溯信息
      * 
      * @param id 运输单追溯信息主键

@@ -82,6 +82,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateByTempTransportdocumentsId" parameterType="TransportdocumentsTraceInfo">
+        update transportdocuments_trace_info
+        <trim prefix="SET" suffixOverrides=",">
+            transportdocuments_id = #{transportdocumentsId},
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where transportdocuments_id = #{tempTransportdocumentsId}
+    </update>
+
     <delete id="deleteTransportdocumentsTraceInfoById" parameterType="Long">
         delete from transportdocuments_trace_info where id = #{id}
     </delete>

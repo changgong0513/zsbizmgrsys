@@ -14,6 +14,8 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.common.utils.uuid.Seq;
 import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseSaleOrderInfoService;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
@@ -27,6 +29,7 @@ import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
 import com.ruoyi.transportdocuments.service.ITransportdocumentsTraceInfoService;
 import com.ruoyi.zjzy.service.IZjzyFkrlInfoService;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,6 +189,11 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                     }
                 }
             }
+
+            TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
+            traceInfo.setTransportdocumentsId(transportdocumentsDetailInfo.getTransportdocumentsId());
+            traceInfo.setTempTransportdocumentsId(transportdocumentsDetailInfo.getTempTransportdocumentsId());
+            transportdocumentsTraceInfoService.updateByTempTransportdocumentsId(traceInfo);
         }
 
         return result;
@@ -387,8 +395,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             }
 
             TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
-            makeTransport(previousData, loadingQuantity);
-            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId());
+            String tempTransportdocumentsId = "YSD" + Seq.getId().toUpperCase();
+            makeTransport(previousData, loadingQuantity, tempTransportdocumentsId);
+            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
         }
 
         for (TransportdocumentsDetailInfo transportdocumentsDetailInfo: transportdocumentsList) {
@@ -424,9 +433,10 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      * @param loadingQuantity
      * @return
      */
-    private int makeTransport(TransportdocumentsDetailInfo previousData, Long loadingQuantity) {
+    private int makeTransport(TransportdocumentsDetailInfo previousData, final Long loadingQuantity,
+                              final String tempTransportdocumentsId) {
         TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
-        transportdocumentsDetailInfo.setTransportdocumentsId(null);
+        transportdocumentsDetailInfo.setTransportdocumentsId(tempTransportdocumentsId);
         transportdocumentsDetailInfo.setWagonNumber(null);
         transportdocumentsDetailInfo.setLoadingQuantity(loadingQuantity);
         transportdocumentsDetailInfo.setTransportdocumentsState("2");
@@ -454,12 +464,14 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         return insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
     }
 
-    private void makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId) {
+    private void makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId,
+                               final String tempTransportdocumentsId) {
         for (int i = 0; i < ids.length; i++) {
             TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
             String transportdocumentsId = transportdocumentsMap.get(ids[i]);
             traceInfo.setRelatedOrderId(relatedOrderId);
             traceInfo.setPreTransportdocumentsId(transportdocumentsId);
+            traceInfo.setTransportdocumentsId(tempTransportdocumentsId);
             traceInfo.setCreateBy(SecurityUtils.getUsername());
             traceInfo.setCreateTime(DateUtils.getNowDate());
             traceInfo.setUpdateBy(SecurityUtils.getUsername());

@@ -672,6 +672,7 @@ export default {
       ListWarehouseName: [],
       remoteLoadingWarehouseName: false,
       key: Math.random(),
+      hidTempTransportdocumentsId: null,
     };
   },
   created() {
@@ -1064,6 +1065,8 @@ export default {
       // 避免点击其他单元格导致表格刷新 
       if (!['relatedOrderId'].includes(column.property) && !['transportdocumentsId'].includes(column.property)) return;
       row[column.property + 'Show'] = true;
+      this.hidTempTransportdocumentsId = row.transportdocumentsId;
+      console.log("@@@@@@hidTempTransportdocumentsId" + this.hidTempTransportdocumentsId);
       this.updateTable(row);
     },
     //输入框失焦事件
@@ -1075,6 +1078,7 @@ export default {
     //更新表格
     updateTable(row) {
       this.key = Math.random();
+      row.tempTransportdocumentsId = this.hidTempTransportdocumentsId;
       updateDetail(row);
     },
     /** 生成中转运单提交按钮 */

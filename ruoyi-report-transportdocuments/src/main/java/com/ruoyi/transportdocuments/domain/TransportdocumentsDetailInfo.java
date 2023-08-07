@@ -124,6 +124,9 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     /** 版本号 */
     private Long bizVersion;
 
+    /** 临时运输单编号 */
+    private String tempTransportdocumentsId;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -393,6 +396,14 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     public Long getBizVersion() 
     {
         return bizVersion;
+    }
+
+    public String getTempTransportdocumentsId() {
+        return tempTransportdocumentsId;
+    }
+
+    public void setTempTransportdocumentsId(String tempTransportdocumentsId) {
+        this.tempTransportdocumentsId = tempTransportdocumentsId;
     }
 
     @Override

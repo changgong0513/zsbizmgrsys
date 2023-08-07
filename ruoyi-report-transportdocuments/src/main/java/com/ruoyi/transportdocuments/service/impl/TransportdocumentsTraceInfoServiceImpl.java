@@ -2,6 +2,7 @@ package com.ruoyi.transportdocuments.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.transportdocuments.mapper.TransportdocumentsTraceInfoMapper;
@@ -68,6 +69,18 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
     {
         transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
         return transportdocumentsTraceInfoMapper.updateTransportdocumentsTraceInfo(transportdocumentsTraceInfo);
+    }
+
+    /**
+     * 修改运输单追溯信息
+     *
+     * @param transportdocumentsTraceInfo 运输单追溯信息
+     * @return 结果
+     */
+    public int updateByTempTransportdocumentsId(TransportdocumentsTraceInfo transportdocumentsTraceInfo) {
+        transportdocumentsTraceInfo.setUpdateBy(SecurityUtils.getUsername());
+        transportdocumentsTraceInfo.setUpdateTime(DateUtils.getNowDate());
+        return transportdocumentsTraceInfoMapper.updateByTempTransportdocumentsId(transportdocumentsTraceInfo);
     }
 
     /**
