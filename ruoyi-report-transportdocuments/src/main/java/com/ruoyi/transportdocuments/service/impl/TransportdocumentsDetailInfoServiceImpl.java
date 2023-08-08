@@ -362,7 +362,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         // 检查选择生成中转的运输单是否属于同一个订单
         List <String> relatedOrderList = new ArrayList<>();
         transportdocumentsList.stream().forEach(element -> {
-            relatedOrderList.add(element.getRelatedOrderId());
+            if (!relatedOrderList.contains(element.getRelatedOrderId())) {
+                relatedOrderList.add(element.getRelatedOrderId());
+            }
         });
         if (1 != relatedOrderList.size()) {
             // 选择生成中转的运输单不属于同一个订单
