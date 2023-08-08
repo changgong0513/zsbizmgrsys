@@ -722,7 +722,7 @@
                 <dict-tag :options="dict.type.transportdocuments_state" :value="scope.row.transportdocumentsState"/>
               </template>
             </el-table-column>
-            <el-table-column label="关联订单" align="center" prop="relatedOrderId" />
+            <el-table-column label="关联订单" align="center" prop="relatedOrderId" class-name="small-padding fixed-width"/>
             <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
               <template slot-scope="scope">
                 <template slot-scope="scope">
