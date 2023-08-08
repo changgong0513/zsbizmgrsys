@@ -328,7 +328,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row style="margin-bottom: 50px;;">
           <el-col :span="2">
             <el-form-item label=""></el-form-item>
           </el-col>
@@ -379,6 +379,50 @@
             </div>
             <!-- 文件上传 end -->
           </el-col>
+        </el-row>
+        <el-divider />
+        <h3>运输单明细</h3>
+        <el-row>
+          <el-table v-loading="loading" :data="transportList">
+            <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
+            <el-table-column label="经办人姓名" align="center" prop="handledByName" />
+            <el-table-column label="物料名称" align="center" prop="materialName" />
+            <el-table-column label="业务日期" align="center" prop="businessDate" >
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.businessDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="单据类型" align="center" prop="documentsType" >
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.transportdocuments_documents_type" :value="scope.row.documentsType"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="运输单状态" align="center" prop="transportdocumentsState" >
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.transportdocuments_state" :value="scope.row.transportdocumentsState"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="关联订单" align="center" prop="relatedOrderId" class-name="small-padding fixed-width" />
+            <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="text"
+                  icon="el-icon-view"
+                  v-hasPermi="['purchasesale:purchasesale:view']"
+                  @click="viewReceipt(scope.row)"
+                >查看</el-button>
+              </template>
+            </el-table-column> -->
+          </el-table>
+          
+          <pagination
+            v-show="totalTransport > 0"
+            :total="totalTransport"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getTransportList"
+          />
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -621,9 +665,9 @@
           </el-col>
         </el-row>
         <el-divider />
-        <h3>收货明细</h3>
+        <h3>运输单明细</h3>
         <el-row>
-          <el-table v-loading="loading" :data="this.receiptList">
+          <!-- <el-table v-loading="loading" :data="this.receiptList">
             <el-table-column label="收货单编号" align="center" prop="receiptId" width="150" />
             <el-table-column label="收货日期" align="center" prop="receiptDate" width="100">
               <template slot-scope="scope">
@@ -658,6 +702,48 @@
             :page.sync="queryParams.pageNum"
             :limit.sync="queryParams.pageSize"
             @pagination="getReceiptList"
+          /> -->
+          <el-table v-loading="loading" :data="transportList">
+            <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
+            <el-table-column label="经办人姓名" align="center" prop="handledByName" />
+            <el-table-column label="物料名称" align="center" prop="materialName" />
+            <el-table-column label="业务日期" align="center" prop="businessDate" >
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.businessDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="单据类型" align="center" prop="documentsType" >
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.transportdocuments_documents_type" :value="scope.row.documentsType"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="运输单状态" align="center" prop="transportdocumentsState" >
+              <template slot-scope="scope">
+                <dict-tag :options="dict.type.transportdocuments_state" :value="scope.row.transportdocumentsState"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="关联订单" align="center" prop="relatedOrderId" class-name="small-padding fixed-width" />
+            <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="text"
+                  icon="el-icon-view"
+                  v-hasPermi="['purchasesale:purchasesale:edit']"
+                  @click="viewReceipt(scope.row)"
+                >查看</el-button>
+              </template>
+              </template>
+            </el-table-column> -->
+          </el-table>
+          
+          <pagination
+            v-show="totalTransport > 0"
+            :total="totalTransport"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getTransportList"
           />
         </el-row>
       </el-form>
@@ -871,6 +957,7 @@
 <script>
 
 import { listPurchase, getPurchase, delPurchase, addPurchase, updatePurchase, deleteUploadFile, getOrderAdditional } from "@/api/purchasesale/purchasesale";
+import { listDetail } from "@/api/transportdocuments/detail";
 import { listReceipt } from "@/api/purchasesale/receipt";
 import { listClient } from "@/api/masterdata/client";
 import { getToken } from "@/utils/auth";
@@ -880,7 +967,7 @@ export default {
   name: "Purchase",
   dicts: ['purchasesale_purchase_type', 'purchasesale_belong_dept', 'masterdata_warehouse_measurement_unit', 
           'purchasesale_arrival_terms', 'purchasesale_settlement_method', 'contractmgr_contract_approval_status', 
-          'purchase_mgr_order_status', 'purchasesale_transport_mode'],
+          'purchase_mgr_order_status', 'purchasesale_transport_mode', 'transportdocuments_documents_type', 'transportdocuments_state'],
   // 文件上传用
   props: {
     // 值
@@ -930,7 +1017,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 1,
-      totalReceipt: 1,
+      totalTransport: 1,
       // 采购收货销售发货管理表格数据
       purchaseList: [],
       // 弹出层标题
@@ -952,6 +1039,12 @@ export default {
         checkMoneyMin: null,
         checkMoneyMax: null,
         htsl: null
+      },
+      // 运输单查询参数
+      queryTransportParams: {
+        pageNum: 1,
+        pageSize: 10,
+        relatedOrderId: null,
       },
       // 表单参数
       form: {},
@@ -995,7 +1088,7 @@ export default {
       openReceiptDetail: false,
       fileList: [],
       selRow: {},
-      receiptList: [],
+      transportList: [],
       // 部门树选项
       deptOptions: [],
       defaultProps: {
@@ -1075,10 +1168,11 @@ export default {
         this.loading = false;
       });
     },
-    getReceiptList() {
-      listReceipt(this.selRow).then(response => {
-        this.receiptList = response.rows;
-        this.totalReceipt = response.total;
+    getTransportList() {
+      this.queryTransportParams.relatedOrderId = this.selRow.orderId;
+      listDetail(this.queryTransportParams).then(response => {
+        this.transportList = response.rows;
+        this.totalTransport = response.total;
       });
     },
     // 取消按钮
@@ -1173,6 +1267,9 @@ export default {
               url: element.uplloadFilePath });
           });
         });
+
+        this.selRow = row;
+        this.getTransportList();
       });
     },
     /** 提交按钮 */
@@ -1229,7 +1326,7 @@ export default {
         });
       });
 
-      this.getReceiptList(this.selRow);
+      this.getTransportList(this.selRow);
       this.openDetail = true;
     },
     // 文件上传用
