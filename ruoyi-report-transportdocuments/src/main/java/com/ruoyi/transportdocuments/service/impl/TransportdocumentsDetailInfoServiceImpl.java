@@ -190,16 +190,41 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             }
 
             TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
-            traceInfo.setTransportdocumentsId(transportdocumentsDetailInfo.getTransportdocumentsId());
-            traceInfo.setTempTransportdocumentsId(transportdocumentsDetailInfo.getTempTransportdocumentsId());
-            transportdocumentsTraceInfoService.updateByTempTransportdocumentsId(traceInfo);
+            traceInfo.setTransportdocumentsId(transportdocumentsDetailInfo.getTransportdocumentsId()); // 修改后的运单编号
+            traceInfo.setTempTransportdocumentsId(transportdocumentsDetailInfo.getTempTransportdocumentsId()); // 修改前的运单编号
+            transportdocumentsTraceInfoService.updateByTempTransportdocumentsId(traceInfo); // 更新为修改后的运单编号
 
-            transportdocumentsTraceInfoService.updatePreTransportdocumentsIdByTemp(traceInfo);
-            transportdocumentsTraceInfoService.updateTransportdocumentsIdByTemp(traceInfo);
-            transportdocumentsTraceInfoService.updatePostTransportdocumentsIdByTemp(traceInfo);
+//            transportdocumentsTraceInfoService.updatePreTransportdocumentsIdByTemp(traceInfo);
+//            transportdocumentsTraceInfoService.updateTransportdocumentsIdByTemp(traceInfo);
+//            transportdocumentsTraceInfoService.updatePostTransportdocumentsIdByTemp(traceInfo);
+            updateTraceInfoPreOrPostTransportdocuments(transportdocumentsDetailInfo.getTempTransportdocumentsId(),
+                    transportdocumentsDetailInfo.getTransportdocumentsId());
+
         }
 
         return result;
+    }
+
+    private void updateTraceInfoPreOrPostTransportdocuments(final String tempTransportdocumentsId,
+                                                            final String editedTransportdocumentsId) {
+        TransportdocumentsTraceInfo data = transportdocumentsTraceInfoService
+                .selectTransportdocumentsTraceInfoByPost(tempTransportdocumentsId);
+        if (null == data) {
+            return;
+        }
+
+        String newPostTransportdocumentsId = StringUtils.EMPTY;
+        String postTransportdocumentsId = data.getPostTransportdocumentsId();
+        if (StringUtils.indexOf(postTransportdocumentsId, "-") == -1) {
+            newPostTransportdocumentsId = editedTransportdocumentsId;
+        } else {
+            newPostTransportdocumentsId = StringUtils.replace(postTransportdocumentsId, tempTransportdocumentsId, editedTransportdocumentsId);
+        }
+
+        TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+        param.setTransportdocumentsId(newPostTransportdocumentsId);
+        param.setTempTransportdocumentsId(postTransportdocumentsId);
+        transportdocumentsTraceInfoService.updatePostTransportdocumentsIdByTemp(param);
     }
 
     /**

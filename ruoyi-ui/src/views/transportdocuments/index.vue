@@ -117,7 +117,7 @@
             v-focus v-if="scope.row[scope.column.property + 'Show']" 
             clearable 
             v-model="scope.row.transportdocumentsId"
-            @keyup.enter.native="onBlur(scope.row, scope.column)" 
+            @keyup.enter.native="$event.target.blur"
             @blur="onBlur(scope.row, scope.column)" />
           <span v-else>{{ scope.row.transportdocumentsId }}</span>
         </template>
@@ -1100,17 +1100,18 @@ export default {
       if (!['relatedOrderId'].includes(column.property) && !['transportdocumentsId'].includes(column.property)) return;
       row[column.property + 'Show'] = true;
       this.hidTempTransportdocumentsId = row.transportdocumentsId;
-      console.log("@@@@@@hidTempTransportdocumentsId" + this.hidTempTransportdocumentsId);
-      this.updateTable(row);
+      // 刷新表格，显示input输入框
+      this.key = Math.random(); 
     },
     //输入框失焦事件
     onBlur(row, column) {
       row[column.property + 'Show'] = false;
-      this.updateTable(row);
       // 请求后台更改数据
+      this.updateTable(row);
     },
     //更新表格
     updateTable(row) {
+      // 刷新表格，隐藏input输入框
       this.key = Math.random();
       row.tempTransportdocumentsId = this.hidTempTransportdocumentsId;
       updateDetail(row);
