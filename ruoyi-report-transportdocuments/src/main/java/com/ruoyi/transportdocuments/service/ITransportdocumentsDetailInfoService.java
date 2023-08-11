@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsDetailInfo;
+import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
 
 /**
  * 运输单详细信息Service接口

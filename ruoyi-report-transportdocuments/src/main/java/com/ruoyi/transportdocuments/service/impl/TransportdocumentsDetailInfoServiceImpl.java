@@ -1,8 +1,7 @@
 package com.ruoyi.transportdocuments.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -221,12 +220,39 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             transportdocumentsIdList.add(element.getTransportdocumentsId());
         });
 
-
         String[] params = transportdocumentsIdList.toArray(new String[transportdocumentsIdList.size()]);
-        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByPre(params);
-        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByCurrent(params);
-        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByPost(params);
 
+        // 根据当前选中的运单号，删除前置追踪数据
+        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByPre(params);
+
+        // 根据当前选中的运单号，删除后置运单追踪数据
+        for (int i = 0; i < params.length; i++) {
+            // 取得以当前要删除的运单编号为后置运单编号的运单追踪数据
+            String deletedTransportdocumentsTraceId = params[i];
+            TransportdocumentsTraceInfo data = transportdocumentsTraceInfoService
+                    .selectTransportdocumentsTraceInfoByPost(deletedTransportdocumentsTraceId);
+            if (null == data) continue;
+            String postTransportdocumentsId = data.getPostTransportdocumentsId();
+            String newPostTransportdocumentsId = null;
+            if (StringUtils.indexOf(postTransportdocumentsId, "-") == -1) {
+                newPostTransportdocumentsId = StringUtils.EMPTY;
+            } else {
+                String[] array = StringUtils.split(postTransportdocumentsId, "-");
+                List<String> tempList = Arrays.asList(array);
+                List<String> updateList = tempList.stream().filter(v -> !v.equals(deletedTransportdocumentsTraceId)).collect(Collectors.toList());
+                newPostTransportdocumentsId = StringUtils.join(updateList, "-");
+            }
+
+            TransportdocumentsTraceInfo updateParams = new TransportdocumentsTraceInfo();
+            updateParams.setTransportdocumentsId(newPostTransportdocumentsId);
+            updateParams.setTempTransportdocumentsId(postTransportdocumentsId);
+            transportdocumentsTraceInfoService.updatePostTransportdocumentsIdByTemp(updateParams);
+        }
+
+        // 根据当前选中的运单号，删除运单追踪数据
+        transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByCurrent(params);
+
+        // 根据当前选中的运单号，删除运单数据
         return transportdocumentsDetailInfoMapper.deleteTransportdocumentsDetailInfoByIds(ids);
     }
 
@@ -399,7 +425,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             transportLoadingCapacity = transportLoadingCapacity * 2000;
         }
 
-        int transportNumber = 0;
+        int transportNumber = 1;
         Long loadingQuantity = 0L;
         int traceTransportNumber = 0;
         if (0 < sumLoadingQuantity.get().compareTo(transportLoadingCapacity)) {
@@ -415,11 +441,30 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 loadingQuantity = sumLoadingQuantity.get() / 2000;
             }
 
+//            TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
+//            String tempTransportdocumentsId = "YSD" + Seq.getId().toUpperCase();
+//            makeTransport(previousData, loadingQuantity, tempTransportdocumentsId);
+//            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
+        }
+
+        List<TransportdocumentsTraceInfo> traceList = null;
+        List<String> tempTransportdocumentsIdList = new ArrayList<>();
+        for (int i = 0; i < transportNumber; i++) {
             TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
             String tempTransportdocumentsId = "YSD" + Seq.getId().toUpperCase();
             makeTransport(previousData, loadingQuantity, tempTransportdocumentsId);
-            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
+            traceList = makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
+
+            traceList.stream().forEach(element -> {
+                tempTransportdocumentsIdList.add(element.getPostTransportdocumentsId());
+            });
         }
+
+        String join = StringUtils.join(tempTransportdocumentsIdList, "-");
+        TransportdocumentsTraceInfo param  = new TransportdocumentsTraceInfo();
+        param.setPostTransportdocumentsId(join);
+        param.setPreTransportdocumentsId(traceList.get(0).getPreTransportdocumentsId());
+        transportdocumentsTraceInfoService.updatePostTransportdocumentsId(param);
 
         for (TransportdocumentsDetailInfo transportdocumentsDetailInfo: transportdocumentsList) {
             transportdocumentsDetailInfo.setTransportdocumentsState("4");
@@ -485,14 +530,42 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         return insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
     }
 
-    private void makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId,
+//    private void makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId,
+//                               final String tempTransportdocumentsId) {
+//        for (int i = 0; i < ids.length; i++) {
+//            TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
+//            String transportdocumentsId = transportdocumentsMap.get(ids[i]);
+//            traceInfo.setRelatedOrderId(relatedOrderId);
+//            traceInfo.setPreTransportdocumentsId(transportdocumentsId);
+//            traceInfo.setTransportdocumentsId(tempTransportdocumentsId);
+//            traceInfo.setCreateBy(SecurityUtils.getUsername());
+//            traceInfo.setCreateTime(DateUtils.getNowDate());
+//            traceInfo.setUpdateBy(SecurityUtils.getUsername());
+//            traceInfo.setUpdateTime(DateUtils.getNowDate());
+//            traceInfo.setBizVersion(1L);
+//            transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+//
+//            TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+//            param.setPreTransportdocumentsId(transportdocumentsId);
+//            param.setTransportdocumentsId(tempTransportdocumentsId);
+//            TransportdocumentsTraceInfo selectTraceData = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfo(param);
+//            if (null != selectTraceData) {
+//                param.setPostTransportdocumentsId(tempTransportdocumentsId);
+//                transportdocumentsTraceInfoService.updatePostTransportdocumentsId(param);
+//            }
+//        }
+//    }
+
+    private List<TransportdocumentsTraceInfo> makeTrackData(Long[] ids, Map<Long, String> transportdocumentsMap, final String relatedOrderId,
                                final String tempTransportdocumentsId) {
+        List<TransportdocumentsTraceInfo> traceList = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
             String transportdocumentsId = transportdocumentsMap.get(ids[i]);
             traceInfo.setRelatedOrderId(relatedOrderId);
             traceInfo.setPreTransportdocumentsId(transportdocumentsId);
             traceInfo.setTransportdocumentsId(tempTransportdocumentsId);
+            traceInfo.setPostTransportdocumentsId(StringUtils.EMPTY);
             traceInfo.setCreateBy(SecurityUtils.getUsername());
             traceInfo.setCreateTime(DateUtils.getNowDate());
             traceInfo.setUpdateBy(SecurityUtils.getUsername());
@@ -500,15 +573,32 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setBizVersion(1L);
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
 
-            TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
-            param.setPreTransportdocumentsId(transportdocumentsId);
-            param.setTransportdocumentsId(tempTransportdocumentsId);
-            TransportdocumentsTraceInfo selectTraceData = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfo(param);
-            if (null != selectTraceData) {
-                param.setPostTransportdocumentsId(tempTransportdocumentsId);
-                transportdocumentsTraceInfoService.updatePostTransportdocumentsId(param);
+            TransportdocumentsTraceInfo updatePostTransportInfo = new TransportdocumentsTraceInfo();
+            updatePostTransportInfo.setPreTransportdocumentsId(transportdocumentsId);
+            updatePostTransportInfo.setPostTransportdocumentsId(tempTransportdocumentsId);
+            traceList.add(updatePostTransportInfo);
+        }
+
+        return traceList;
+    }
+
+    /**
+     * 使用迭代器可，正确无误的删除
+     *
+     * @param list
+     * @param element
+     * @return
+     */
+    public List iteratorRemove(List list, Object element) {
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Object cur = iterator.next();
+            if (cur.equals(element)) {
+                // 注意！！！这里时Iterator.remove()!!!而不是list.remove()!!!
+                iterator.remove();
             }
         }
+        return list;
     }
 }
 

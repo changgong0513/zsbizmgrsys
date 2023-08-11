@@ -55,6 +55,10 @@ public class TransportdocumentsTraceInfoServiceImpl implements ITransportdocumen
         return transportdocumentsTraceInfoMapper.selectTransportdocumentsTraceInfo(param);
     }
 
+    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfoByPost(final String transportdocumentsIds) {
+        return transportdocumentsTraceInfoMapper.selectTransportdocumentsTraceInfoByPost(transportdocumentsIds);
+    }
+
     /**
      * 新增运输单追溯信息
      * 

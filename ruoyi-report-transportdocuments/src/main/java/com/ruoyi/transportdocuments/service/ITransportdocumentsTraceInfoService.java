@@ -35,6 +35,8 @@ public interface ITransportdocumentsTraceInfoService
      */
     public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfo(TransportdocumentsTraceInfo param);
 
+    public TransportdocumentsTraceInfo selectTransportdocumentsTraceInfoByPost(final String transportdocumentsIds);
+
     /**
      * 新增运输单追溯信息
      * 

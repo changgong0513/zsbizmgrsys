@@ -43,7 +43,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and post_transportdocuments_id = ''
         </where>
     </select>
-        
+
+    <select id="selectTransportdocumentsTraceInfoByPost" parameterType="java.lang.String" resultMap="TransportdocumentsTraceInfoResult">
+        <include refid="selectTransportdocumentsTraceInfoVo"/>
+        <where>
+            post_transportdocuments_id like concat('%', #{transportdocumentsId}, '%')
+        </where>
+    </select>
+
     <insert id="insertTransportdocumentsTraceInfo" parameterType="TransportdocumentsTraceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into transportdocuments_trace_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -105,10 +112,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="updatePostTransportdocumentsId" parameterType="TransportdocumentsTraceInfo">
-        update transportdocuments_trace_info
-        <trim prefix="SET" suffixOverrides=",">
-            post_transportdocuments_id = #{postTransportdocumentsId},
-        </trim>
+        update
+            transportdocuments_trace_info
+        set
+            post_transportdocuments_id = #{postTransportdocumentsId}
         where
             transportdocuments_id = #{preTransportdocumentsId}
             and post_transportdocuments_id = ''
@@ -147,8 +154,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteTransportdocumentsTraceInfoByPre" parameterType="java.lang.String">
         delete from transportdocuments_trace_info where pre_transportdocuments_id in
-        <foreach item="preTransportdocumentsId" collection="array" open="(" separator="," close=")">
-            #{preTransportdocumentsId}
+        <foreach item="transportdocumentsId" collection="array" open="(" separator="," close=")">
+            #{transportdocumentsId}
         </foreach>
     </delete>
 
@@ -160,10 +167,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteTransportdocumentsTraceInfoByPost" parameterType="java.lang.String">
-        delete from transportdocuments_trace_info where post_transportdocuments_id in
-        <foreach item="postTransportdocumentsId" collection="array" open="(" separator="," close=")">
-            #{postTransportdocumentsId}
+        delete from transportdocuments_trace_info where post_transportdocuments_id like
+        <foreach item="transportdocumentsId" collection="array" open="(" separator="," close=")">
+            concat('%', #{transportdocumentsId}, '%')
         </foreach>
+
     </delete>
 
     <delete id="deleteTransportdocumentsTraceInfoByIds" parameterType="String">
