@@ -427,15 +427,19 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
 
         // 计算选择的运输单运输量
         AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
-        transportdocumentsList.stream().forEach(element -> {
-            Long loadingQuantity = element.getLoadingQuantity();
-            Long landedQuantity = element.getLandedQuantity();
-            if (element.getLoadingQuantity() != null && element.getLandedQuantity() != null) {
-                sumLoadingQuantity.set(sumLoadingQuantity.get() + (loadingQuantity - landedQuantity));
-            } else {
-                sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
-            }
-        });
+        try {
+            transportdocumentsList.stream().forEach(element -> {
+                Long loadingQuantity = element.getLoadingQuantity();
+                Long landedQuantity = element.getLandedQuantity();
+                if (element.getLoadingQuantity() != null && element.getLandedQuantity() != null) {
+                    sumLoadingQuantity.set(sumLoadingQuantity.get() + (loadingQuantity - landedQuantity));
+                } else {
+                    sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
+                }
+            });
+        } catch (Exception e) {
+            return 10002;
+        }
 
         // 运输量统一转化为以斤为单位，便于计算
         PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoService

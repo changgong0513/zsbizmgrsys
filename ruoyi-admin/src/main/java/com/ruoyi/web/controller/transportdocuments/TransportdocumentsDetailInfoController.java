@@ -158,6 +158,10 @@ public class TransportdocumentsDetailInfoController extends BaseController
             return AjaxResult.error(10001, "选择准备生成中转的运输单，不属于同一个订单！");
         }
 
+        if (10002 == result) {
+            return AjaxResult.error(10002, "选择准备生成中转的运输单，运输单装车数量为空，请确认！");
+        }
+
         return toAjax(result);
     }
 }
