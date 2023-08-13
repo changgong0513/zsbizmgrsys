@@ -130,7 +130,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="订单编号" prop="orderId">
-              <el-input v-model="form.orderId" placeholder="请输入订单编号" style="width: 240px" />
+              <el-input v-model="form.orderId" placeholder="请输入订单编号" :disabled="this.isUpdate" style="width: 240px" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -703,7 +703,7 @@
             :limit.sync="queryParams.pageSize"
             @pagination="getReceiptList"
           /> -->
-          <el-table v-loading="loading" :data="transportList">
+          <el-table v-loading="transportLoading" :data="transportList">
             <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
             <el-table-column label="经办人姓名" align="center" prop="handledByName" />
             <el-table-column label="物料名称" align="center" prop="materialName" />
@@ -1006,7 +1006,7 @@ export default {
       fileListDetail: [],
       // 遮罩层
       loading: true,
-      transportLoading: false,
+      transportLoading: true,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -1098,7 +1098,7 @@ export default {
       // 客户名称选择用
       optionsSupplierName: [],
       listSupplierName: [],
-      remoteLoadingSupplierName: false
+      remoteLoadingSupplierName: false,
     };
   },
   created() {
@@ -1173,6 +1173,7 @@ export default {
       listDetail(this.queryTransportParams).then(response => {
         this.transportList = response.rows;
         this.totalTransport = response.total;
+        this.transportLoading = false;
       });
     },
     // 取消按钮

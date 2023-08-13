@@ -163,10 +163,12 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
         // 根据客户编号，取得客户名称
         list.stream().forEach(elment -> {
             String supplierName = elment.getSupplierName();
-            MasterDataClientInfo supplierData = masterDataClientInfoService
-                    .selectMasterDataClientInfoByBaseId(supplierName);
-            String supplierRealName = supplierData.getCompanyName();
-            elment.setSupplierRealName(supplierRealName);
+            if (StringUtils.isNotBlank(supplierName)) {
+                MasterDataClientInfo supplierData = masterDataClientInfoService
+                        .selectMasterDataClientInfoByBaseId(supplierName);
+                String supplierRealName = supplierData.getCompanyName();
+                elment.setSupplierRealName(supplierRealName);
+            }
         });
 
         return list;

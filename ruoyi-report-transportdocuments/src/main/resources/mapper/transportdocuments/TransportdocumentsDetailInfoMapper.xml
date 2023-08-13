@@ -47,12 +47,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTransportdocumentsDetailInfoList" parameterType="TransportdocumentsDetailInfo" resultMap="TransportdocumentsDetailInfoResult">
         <include refid="selectTransportdocumentsDetailInfoVo"/>
-        <where>  
+        <where>
             <if test="transportdocumentsId != null  and transportdocumentsId != ''"> and transportdocuments_id = #{transportdocumentsId}</if>
             <if test="businessDate != null "> and business_date = #{businessDate}</if>
             <if test="documentsType != null  and documentsType != ''"> and documents_type = #{documentsType}</if>
             <if test="transportdocumentsState != null  and transportdocumentsState != ''"> and transportdocuments_state = #{transportdocumentsState}</if>
             <if test="transportdocumentsType != null  and transportdocumentsType != ''"> and transportdocuments_type = #{transportdocumentsType}</if>
+            <if test="relatedOrderId != null  and relatedOrderId != ''"> and related_order_id = #{relatedOrderId}</if>
         </where>
     </select>
     
