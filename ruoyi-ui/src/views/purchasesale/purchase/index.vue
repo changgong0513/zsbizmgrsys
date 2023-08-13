@@ -383,7 +383,7 @@
         <el-divider />
         <h3>运输单明细</h3>
         <el-row>
-          <el-table v-loading="loading" :data="transportList">
+          <el-table v-loading="transportLoading" :data="transportList">
             <el-table-column label="运输单号" align="center" prop="transportdocumentsId" />
             <el-table-column label="经办人姓名" align="center" prop="handledByName" />
             <el-table-column label="物料名称" align="center" prop="materialName" />
@@ -1005,8 +1005,8 @@ export default {
       fileList: [],
       fileListDetail: [],
       // 遮罩层
-      // loading: true,
-      loading: false,
+      loading: true,
+      transportLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用

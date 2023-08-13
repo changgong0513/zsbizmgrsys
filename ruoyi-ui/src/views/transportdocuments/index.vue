@@ -1066,19 +1066,19 @@ export default {
     },
     /** 处理中转运单 */
     handleTransfer() {
-      // for (let i = 0; i < this.ids.length; i++) {
-      //   let isFind = false;
-      //   for (let j = 0; j < this.detailList.length; j++) {
-      //     if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '2') {
-      //       isFind = true;
-      //       break;
-      //     }
-      //   }
-      //   if (isFind) {
-      //     this.$modal.msgError('要合并的有不包含中转状态运输单，请确认！');
-      //     return false;
-      //   }
-      // }
+      for (let i = 0; i < this.ids.length; i++) {
+        let isFind = false;
+        for (let j = 0; j < this.detailList.length; j++) {
+          if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '2') {
+            isFind = true;
+            break;
+          }
+        }
+        if (isFind) {
+          this.$modal.msgError('要合并的有不包含中转状态运输单，请确认！');
+          return false;
+        }
+      }
 
       // this.$modal.confirm('是否确认生成中转运输单？').then(() => {
       //   // 如果需要在then中使用this引用变量，必须使用箭头函数。
