@@ -131,6 +131,7 @@ public class ZjzyFkrlInfoServiceImpl implements IZjzyFkrlInfoService
             zjzyFkrlInfo.setFkrlHtbh(null);
         }
 
+        // 运费（=运费单价*卸货数量）
         Long carriage = data.getLong("unitPrice") * data.getLong("landedQuantity");
 
         List<ZjzyFkrlInfo> zjzyFkrlInfoList = null;

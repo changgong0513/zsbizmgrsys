@@ -77,7 +77,6 @@ public class PurchaseSaleOrderInfoController extends BaseController {
             list = purchaseSaleOrderInfoService.selectSaleOrderInfoUnionList(purchaseSaleOrderInfo);
         }
 
-        // 设置采购合同状态和完成率
         purchaseSaleOrderInfoService.setPurchaseOrderStatusAndCompletionRate(list);
 
         return getDataTable(list);

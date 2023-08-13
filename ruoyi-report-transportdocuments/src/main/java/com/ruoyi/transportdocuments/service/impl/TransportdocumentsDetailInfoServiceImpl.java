@@ -1,19 +1,16 @@
 package com.ruoyi.transportdocuments.service.impl;
 
-import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
 import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
-import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.common.utils.uuid.Seq;
 import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseSaleOrderInfoService;
@@ -21,6 +18,7 @@ import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
+import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
 import com.ruoyi.report.masterdata.service.IMasterDataWarehouseBaseInfoService;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
@@ -73,6 +71,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
 
     @Autowired
     ITransportdocumentsTraceInfoService transportdocumentsTraceInfoService;
+
+    @Autowired
+    private IMasterDataClientInfoService masterDataClientInfoService;
 
     @Autowired
     protected Validator validator;
@@ -609,25 +610,6 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return traceList;
-    }
-
-    /**
-     * 使用迭代器可，正确无误的删除
-     *
-     * @param list
-     * @param element
-     * @return
-     */
-    public List iteratorRemove(List list, Object element) {
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            Object cur = iterator.next();
-            if (cur.equals(element)) {
-                // 注意！！！这里时Iterator.remove()!!!而不是list.remove()!!!
-                iterator.remove();
-            }
-        }
-        return list;
     }
 }
 

@@ -3,6 +3,7 @@ package com.ruoyi.transportdocuments.service;
 import java.util.List;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsDetailInfo;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
 

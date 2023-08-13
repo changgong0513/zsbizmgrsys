@@ -1,19 +1,17 @@
 package com.ruoyi.purchase.sale.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.annotation.DataScope;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.fpgl.domain.FpglMainInfo;
 import com.ruoyi.fpgl.mapper.FpglMainInfoMapper;
 import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
-import com.ruoyi.report.masterdata.mapper.MasterDataClientInfoMapper;
 import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +38,7 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
     @Autowired
     private IMasterDataClientInfoService masterDataClientInfoService;
 
-    /**
-     * 查询采购收货销售发货管理
-     *
-     * @param ContractId 合同编号
-     * @return 采购收货销售发货管理
-     */
+    @Override
     public PurchaseSaleOrderInfo selectPurchaseSaleOrderInfoByContractId(String ContractId) {
         PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoMapper
                 .selectPurchaseSaleOrderInfoByOrderId(ContractId);
@@ -111,39 +104,38 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
     @DataScope(deptAlias = "tt1")
     @Override
     public List<PurchaseSaleOrderInfo> selectPurchaseOrderInfoUnionList(PurchaseSaleOrderInfo purchaseSaleOrderInfo) {
-
-        List<PurchaseSaleOrderInfo> list = purchaseSaleOrderInfoMapper
-                .selectPurchaseOrderInfoUnionList(purchaseSaleOrderInfo);
-
+        List<PurchaseSaleOrderInfo> list = purchaseSaleOrderInfoMapper.selectPurchaseOrderInfoUnionList(purchaseSaleOrderInfo);
         Map<String, List<PurchaseSaleOrderInfo>> map = list.stream()
                 .collect(Collectors.groupingBy(element -> element.getSupplierName()));
 
-        List<PurchaseSaleOrderInfo> findPurchaseOrderList = new ArrayList<>();
+//        List<PurchaseSaleOrderInfo> findPurchaseOrderList = new ArrayList<>();
 
         // 查询条件：合同数量
-        int htslCounts = purchaseSaleOrderInfo.getHtsl();
-        if (htslCounts > 0) {
-            for (Map.Entry<String, List<PurchaseSaleOrderInfo>> entry:map.entrySet()){
-                if (entry.getValue() != null && entry.getValue().size() == htslCounts) {
-                    findPurchaseOrderList = entry.getValue();
-                }
-            }
-        } else {
-            findPurchaseOrderList = list;
-        }
+//        int htslCounts = purchaseSaleOrderInfo.getHtsl();
+//        if (htslCounts > 0) {
+//            for (Map.Entry<String, List<PurchaseSaleOrderInfo>> entry:map.entrySet()){
+//                if (entry.getValue() != null && entry.getValue().size() == htslCounts) {
+//                    findPurchaseOrderList = entry.getValue();
+//                }
+//            }
+//        } else {
+//            findPurchaseOrderList = list;
+//        }
 
         // 根据客户编号，取得客户名称
-        findPurchaseOrderList.stream().forEach(elment -> {
+        list.stream().forEach(elment -> {
             String supplierName = elment.getSupplierName();
-            MasterDataClientInfo supplierData = masterDataClientInfoService
-                    .selectMasterDataClientInfoByBaseId(supplierName);
+            MasterDataClientInfo supplierData = masterDataClientInfoService.selectMasterDataClientInfoByBaseId(supplierName);
             if (supplierData != null) {
                 String supplierRealName = supplierData.getCompanyName();
                 elment.setSupplierRealName(supplierRealName);
             }
         });
 
-        return findPurchaseOrderList;
+        // 设置采购合同状态和完成率
+//        transportdocumentsDetailInfoService.setPurchaseOrderStatusAndCompletionRate(list);
+
+        return list;
     }
 
     /**
@@ -278,37 +270,56 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
      * 设置采购订单状态和完成率
      *
      * @param list
-     * @param contractType
      */
     @Override
     public void setPurchaseOrderStatusAndCompletionRate(List<PurchaseSaleOrderInfo> list) {
-
         if (list == null || list.size() == 0) {
             return;
         }
 
+        // 取得所有采购运输单状态为完成的数据
+        List<String> orderIdList = list.stream().map(PurchaseSaleOrderInfo::getOrderId).collect(Collectors.toList());
+        String[] orderIdArray = orderIdList.toArray(new String[list.size()]);
+        List<JSONObject> transportdocumentsDetailInfoList = selectTransportdocumentsDetailInfoByRelatedOrderIds(orderIdArray);
+        if (null == transportdocumentsDetailInfoList && 0 == transportdocumentsDetailInfoList.size()) return;
+        List<JSONObject> completeList = transportdocumentsDetailInfoList.stream()
+                .filter(d -> org.apache.commons.lang3.StringUtils.equals(d.getString("transportdocuments_state"), "3")).collect(Collectors.toList());
+
         // 设置合同状态和完成率
         list.stream().forEach(element -> {
             // 采购数量（来自于采购管理）
+            long sumLandedQuantity = 0L;
+            if (null == completeList && 0 == completeList.size()) {
+                element.setCompletionRate(0 + "%");
+            } else {
+                // 计算关联订单的卸货数量总和
+                String orderId = element.getOrderId();
+                sumLandedQuantity = completeList
+                        .stream()
+                        .filter(d -> orderId.equals(d.getString("related_order_id")) && null != d.getLong("landed_quantity"))
+                        .map(d -> d.getLong("landed_quantity")).mapToLong(Long::longValue).sum();
+            }
+
+            // 设置订单完成率为100%范围
             long purchaseQuantity = element.getPurchaseQuantity();
             double minPurchaseQuantity = purchaseQuantity * 0.9;
             double maxPurchaseQuantity = purchaseQuantity + purchaseQuantity * 0.1;
-            // 核算数量（来自于收货管理）
-            long checkQuantity = element.getCheckQuantity();
-            if (1 == Double.compare(checkQuantity, minPurchaseQuantity) &&
-                    1 == Double.compare(maxPurchaseQuantity, checkQuantity)) {
-                // 采购数量（来自于采购管理） == 核算数量（来自于收货管理）
-                // 订单状态：已关闭
+
+            // 设置订单完成率
+            if (1 == Double.compare(sumLandedQuantity, minPurchaseQuantity) &&
+                    1 == Double.compare(maxPurchaseQuantity, sumLandedQuantity)) {
+                // 采购数量（来自于采购管理） == 卸货数量（来自于运单管理）
+                // 订单状态：已完成
                 element.setOrderStatus("1");
                 // 完成率：100%
                 element.setCompletionRate(100 + "%");
             } else {
-                // 采购数量（来自于采购管理） <> 核算数量（来自于收货管理）
-                // 订单状态：待确认
-                element.setOrderStatus("2");
+                // 采购数量（来自于采购管理） == 卸货数量（来自于运单管理）
                 if (0 != Long.compare(purchaseQuantity, 0)) {
+                    // 订单状态：未完成
+                    element.setOrderStatus("2");
                     // 完成率：核算数量（来自于收货管理）/ 采购数量（来自于采购管理）* 100
-                    double completionRate = division(checkQuantity, purchaseQuantity, 2) * 100;
+                    double completionRate = division(sumLandedQuantity, purchaseQuantity, 2) * 100;
                     element.setCompletionRate(completionRate + "%");
                 }
             }
@@ -332,6 +343,11 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
      */
     public int checkPurchaseOrderId(PurchaseSaleOrderInfo param){
         return purchaseSaleOrderInfoMapper.checkPurchaseOrder(param);
+    }
+
+    @Override
+    public List<JSONObject> selectTransportdocumentsDetailInfoByRelatedOrderIds(String[] relatedOrderIds) {
+        return purchaseSaleOrderInfoMapper.selectTransportdocumentsDetailInfoByRelatedOrderIds(relatedOrderIds);
     }
 
     /**

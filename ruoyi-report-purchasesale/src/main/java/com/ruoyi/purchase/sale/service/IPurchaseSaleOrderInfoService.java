@@ -1,6 +1,9 @@
 package com.ruoyi.purchase.sale.service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 
 /**
@@ -110,4 +113,6 @@ public interface IPurchaseSaleOrderInfoService {
      * @return
      */
     public int checkPurchaseOrderId(PurchaseSaleOrderInfo param);
+
+    public List<JSONObject> selectTransportdocumentsDetailInfoByRelatedOrderIds(String[] relatedOrderIds);
 }
