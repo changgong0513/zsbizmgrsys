@@ -1,6 +1,5 @@
 package com.ruoyi.transportdocuments.service.impl;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,13 +12,10 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
 import com.ruoyi.common.utils.uuid.Seq;
-import com.ruoyi.purchase.sale.domain.PurchaseSaleOrderInfo;
 import com.ruoyi.purchase.sale.service.IPurchaseSaleOrderInfoService;
-import com.ruoyi.report.masterdata.domain.MasterDataClientInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataMaterialInfo;
 import com.ruoyi.report.masterdata.domain.MasterDataWarehouseBaseInfo;
 import com.ruoyi.report.masterdata.mapper.MasterDataMaterialInfoMapper;
-import com.ruoyi.report.masterdata.service.IMasterDataClientInfoService;
 import com.ruoyi.report.masterdata.service.IMasterDataWarehouseBaseInfoService;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.transportdocuments.domain.TransportdocumentsTraceInfo;
@@ -27,7 +23,6 @@ import com.ruoyi.transportdocuments.domain.WarehouseInventoryInfo;
 import com.ruoyi.transportdocuments.mapper.WarehouseInventoryInfoMapper;
 import com.ruoyi.transportdocuments.service.ITransportdocumentsTraceInfoService;
 import com.ruoyi.zjzy.service.IZjzyFkrlInfoService;
-import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -507,14 +502,71 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
             transportLoadingCapacity = transportLoadingCapacity * 2000;
         }
-        String tempTransportdocumentsId = "M" + Seq.getId(new AtomicInteger(1), 3);
-        String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
-        makeTransport(transportdocumentsList.get(0), transportLoadingCapacity, transportdocumentsId);
 
-//        for (TransportdocumentsDetailInfo transportdocumentsDetailInfo: transportdocumentsList) {
-//            transportdocumentsDetailInfo.setTransportdocumentsState("4");
-//            updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
-//        }
+        TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
+        traceInfo.setRelatedOrderId(transportdocumentsList.get(0).getRelatedOrderId());
+
+        if (ids.length == 1) {
+            String tempTransportdocumentsId = "C" + Seq.getId(new AtomicInteger(1), 3);
+            String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
+            makeTransport(transportdocumentsList.get(0), transportLoadingCapacity, transportdocumentsId);
+
+            TransportdocumentsDetailInfo updateTransportDetailInfo = transportdocumentsList.get(0);
+            Long updateQuantity = 0L;
+            Long loadingQuantity = updateTransportDetailInfo.getLoadingQuantity();
+            if (0 >= transportLoadingCapacity.compareTo(loadingQuantity)) {
+                updateQuantity = loadingQuantity - transportLoadingCapacity;
+            }
+
+            updateTransportDetailInfo.setLoadingQuantity(updateQuantity);
+
+            if (0 == updateQuantity.compareTo(0L)) {
+                updateTransportDetailInfo.setTransportdocumentsState("4");
+            }
+
+            updateTransportdocumentsDetailInfo(updateTransportDetailInfo);
+
+            traceInfo.setPreTransportdocumentsId(transportdocumentsList.get(0).getTransportdocumentsId());
+            traceInfo.setTransportdocumentsId(transportdocumentsId);
+            traceInfo.setPostTransportdocumentsId(null);
+            traceInfo.setCreateBy(SecurityUtils.getUsername());
+            traceInfo.setCreateTime(DateUtils.getNowDate());
+            traceInfo.setUpdateBy(SecurityUtils.getUsername());
+            traceInfo.setUpdateTime(DateUtils.getNowDate());
+            transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+        } else {
+            String tempTransportdocumentsId = "M" + Seq.getId(new AtomicInteger(1), 3);
+            String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
+
+            AtomicReference<Long> totalQuantity = new AtomicReference<>(0L);
+            transportdocumentsList.stream().forEach(element -> {
+                totalQuantity.set(totalQuantity.get() + element.getLoadingQuantity());
+            });
+
+            if (0 < totalQuantity.get().compareTo(transportLoadingCapacity)) {
+                return 10003;
+            }
+
+            makeTransport(transportdocumentsList.get(0), totalQuantity.get(), transportdocumentsId);
+            for (TransportdocumentsDetailInfo transportData : transportdocumentsList) {
+                transportData.setTransportdocumentsState("4");
+                transportData.setLoadingQuantity(0L);
+                updateTransportdocumentsDetailInfo(transportData);
+            }
+
+            List<String> transportList = transportdocumentsList.stream()
+                    .map(bean -> bean.getTransportdocumentsId())
+                    .collect(Collectors.toList());
+
+            traceInfo.setPreTransportdocumentsId(String.join(",", transportList));
+            traceInfo.setTransportdocumentsId(transportdocumentsId);
+            traceInfo.setPostTransportdocumentsId(null);
+            traceInfo.setCreateBy(SecurityUtils.getUsername());
+            traceInfo.setCreateTime(DateUtils.getNowDate());
+            traceInfo.setUpdateBy(SecurityUtils.getUsername());
+            traceInfo.setUpdateTime(DateUtils.getNowDate());
+            transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+        }
 
         return 1;
     }

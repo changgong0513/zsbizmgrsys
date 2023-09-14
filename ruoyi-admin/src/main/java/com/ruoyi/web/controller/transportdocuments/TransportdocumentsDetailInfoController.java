@@ -169,6 +169,10 @@ public class TransportdocumentsDetailInfoController extends BaseController
             return AjaxResult.error(10002, "选择准备生成中转的运输单，运输单装车数量为空，请确认！");
         }
 
+        if (10003 == result) {
+            return AjaxResult.error(10003, "中转运输单选择的运输方式不能装载合并运输单总装载量！");
+        }
+
         return toAjax(result);
     }
 
