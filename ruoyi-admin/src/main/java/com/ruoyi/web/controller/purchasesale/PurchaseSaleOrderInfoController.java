@@ -163,7 +163,7 @@ public class PurchaseSaleOrderInfoController extends BaseController {
 
         String supplierRealName = purchaseSaleOrderInfo.getSupplierRealName();
         if (StringUtils.isNotBlank(supplierRealName)) {
-            if (!StringUtils.startsWith(supplierRealName, "GYS") && !StringUtils.startsWith(supplierRealName, "KH")) {
+            if (StringUtils.startsWith(supplierRealName, "GYS") || StringUtils.startsWith(supplierRealName, "KH")) {
                 // 取得所有客户主数据
                 List<MasterDataClientInfo> clientList = masterDataClientInfoService.
                         selectMasterDataClientInfoList(new MasterDataClientInfo());
