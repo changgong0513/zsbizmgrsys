@@ -164,7 +164,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
-            disabled="scope.row.transportdocumentsState == '4'"
+            :disabled="scope.row.transportdocumentsState == '4'"
             @click="handleDelete(scope.row)"
             v-hasPermi="['transportdocuments:detail:remove']"
           >删除</el-button>

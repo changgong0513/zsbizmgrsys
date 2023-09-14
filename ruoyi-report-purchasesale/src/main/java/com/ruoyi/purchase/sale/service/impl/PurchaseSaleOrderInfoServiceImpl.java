@@ -108,20 +108,6 @@ public class PurchaseSaleOrderInfoServiceImpl implements IPurchaseSaleOrderInfoS
         Map<String, List<PurchaseSaleOrderInfo>> map = list.stream()
                 .collect(Collectors.groupingBy(element -> element.getSupplierName()));
 
-//        List<PurchaseSaleOrderInfo> findPurchaseOrderList = new ArrayList<>();
-
-        // 查询条件：合同数量
-//        int htslCounts = purchaseSaleOrderInfo.getHtsl();
-//        if (htslCounts > 0) {
-//            for (Map.Entry<String, List<PurchaseSaleOrderInfo>> entry:map.entrySet()){
-//                if (entry.getValue() != null && entry.getValue().size() == htslCounts) {
-//                    findPurchaseOrderList = entry.getValue();
-//                }
-//            }
-//        } else {
-//            findPurchaseOrderList = list;
-//        }
-
         // 根据客户编号，取得客户名称
         list.stream().forEach(elment -> {
             String supplierName = elment.getSupplierName();
