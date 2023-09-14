@@ -1226,6 +1226,7 @@ export default {
         batchNumber: null,
       };
       this.resetForm("form");
+      this.transportList = [];
     },
     /** 搜索按钮操作 */
     handleQuery() {

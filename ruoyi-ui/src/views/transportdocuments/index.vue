@@ -156,6 +156,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            :disabled="scope.row.transportdocumentsState == '4'"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['transportdocuments:detail:edit']"
           >修改</el-button>
@@ -163,6 +164,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            disabled="scope.row.transportdocumentsState == '4'"
             @click="handleDelete(scope.row)"
             v-hasPermi="['transportdocuments:detail:remove']"
           >删除</el-button>
@@ -818,16 +820,16 @@ export default {
       getDetail(id).then(response => {
         this.form = response.data;
         this.form.settlementUnitPrice = this.form.unitPrice;
-        if (this.form.sourcePlaceId) {
-          if (this.form.sourcePlaceId.indexOf('-') != -1) {
-            this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
-          }
-        }
+        // if (this.form.sourcePlaceId) {
+        //   if (this.form.sourcePlaceId.indexOf('-') != -1) {
+        //     this.form.sourcePlaceId = this.form.sourcePlaceId.split('-');
+        //   }
+        // }
         
-        if (this.form.sourcePlaceName) {
-          let sourcePlaceArray = this.form.sourcePlaceName.split('/');
-          this.form.sourcePlaceId = TextToCode[sourcePlaceArray[0]][sourcePlaceArray[1]][sourcePlaceArray[2]].code 
-        }
+        // if (this.form.sourcePlaceName) {
+        //   let sourcePlaceArray = this.form.sourcePlaceName.split('/');
+        //   this.form.sourcePlaceId = TextToCode[sourcePlaceArray[0]][sourcePlaceArray[1]][sourcePlaceArray[2]].code 
+        // }
 
         if (this.form.relatedContractId) {
           this.form.relatedContractId = this.form.relatedContractId.split('-');
