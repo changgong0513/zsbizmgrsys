@@ -120,6 +120,8 @@ public class PurchaseSaleOrderInfo extends BaseEntity
 
     private String orderType;
 
+    private String batchNumber;
+
     public String getOrderId() {
         return orderId;
     }
@@ -366,6 +368,14 @@ public class PurchaseSaleOrderInfo extends BaseEntity
 
     public void setOrderType(String orderType) {
         this.orderType = orderType;
+    }
+
+    public String getBatchNumber() {
+        return batchNumber;
+    }
+
+    public void setBatchNumber(String batchNumber) {
+        this.batchNumber = batchNumber;
     }
 
     @Override

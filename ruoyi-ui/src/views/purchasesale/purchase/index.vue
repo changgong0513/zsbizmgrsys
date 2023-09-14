@@ -306,7 +306,12 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
+          <el-col :span="8">
+            <el-form-item label="关联批次号" prop="batchNumber">
+              <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" style="width: 240px" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
             <el-form-item label="是否开票" prop="isInvoicing">
               <el-switch
                 :active-value="1"
@@ -616,8 +621,13 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="8">
+            <el-form-item label="关联批次号" prop="batchNumber">
+              <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" style="width: 240px" />
+            </el-form-item>
+          </el-col>
           <!-- 是否开票 -->
-          <el-col :span="24">
+          <el-col :span="16">
             <el-form-item label="是否开票" prop="isInvoicing">
               <el-switch
                 :active-value="1"
@@ -1213,6 +1223,7 @@ export default {
         orderRemark: null,
         orderType: null,
         transportMode: null,
+        batchNumber: null,
       };
       this.resetForm("form");
     },
