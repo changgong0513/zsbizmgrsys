@@ -83,7 +83,12 @@ public class TransportdocumentsDetailInfoController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody TransportdocumentsDetailInfo transportdocumentsDetailInfo)
     {
-        return toAjax(transportdocumentsDetailInfoService.insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo));
+        int result = transportdocumentsDetailInfoService.insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
+        if (3 == result) {
+            return AjaxResult.error("运输单的发货地名称和收货地名称，都不是所属仓库！");
+        }
+
+        return toAjax(result);
     }
 
     /**

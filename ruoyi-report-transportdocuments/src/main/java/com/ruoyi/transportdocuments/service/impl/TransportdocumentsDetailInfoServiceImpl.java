@@ -74,9 +74,6 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     ITransportdocumentsTraceInfoService transportdocumentsTraceInfoService;
 
     @Autowired
-    private IMasterDataClientInfoService masterDataClientInfoService;
-
-    @Autowired
     protected Validator validator;
 
     /**
@@ -122,10 +119,16 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      */
     @Override
     public int insertTransportdocumentsDetailInfo(TransportdocumentsDetailInfo transportdocumentsDetailInfo) {
+        // 设置运输单类型
+        if (!setTransportdocumentsTypeByWarehouseName(transportdocumentsDetailInfo)) {
+            return 3;
+        }
+
         transportdocumentsDetailInfo.setCreateBy(SecurityUtils.getUsername());
         transportdocumentsDetailInfo.setCreateTime(DateUtils.getNowDate());
         transportdocumentsDetailInfo.setUpdateBy(SecurityUtils.getUsername());
         transportdocumentsDetailInfo.setUpdateTime(DateUtils.getNowDate());
+        transportdocumentsDetailInfo.setBizVersion(1L);
         return transportdocumentsDetailInfoMapper.insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
     }
 
@@ -614,6 +617,32 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         }
 
         return traceList;
+    }
+
+    private boolean setTransportdocumentsTypeByWarehouseName(TransportdocumentsDetailInfo transportdocumentsDetailInfo) {
+        // 运输单发货地址是仓库，就是销售单
+        boolean isWarehouse = false;
+        String sourcePlaceName = transportdocumentsDetailInfo.getSourcePlaceName();
+        MasterDataWarehouseBaseInfo param = new MasterDataWarehouseBaseInfo();
+        param.setWarehouseName(sourcePlaceName);
+        List<MasterDataWarehouseBaseInfo> sourceWarehouseBaseInfos = masterDataWarehouseBaseInfoService
+                .selectMasterDataWarehouseBaseInfoList(param);
+        if (null != sourceWarehouseBaseInfos && 0 < sourceWarehouseBaseInfos.size()) {
+            transportdocumentsDetailInfo.setTransportdocumentsType("S");
+            isWarehouse = true;
+        }
+
+        // 运输单最终目的地是仓库，就是采购单
+        String targetPlaceName = transportdocumentsDetailInfo.getTargetPlaceName();
+        param.setWarehouseName(targetPlaceName);
+        List<MasterDataWarehouseBaseInfo> targetWarehouseBaseInfos = masterDataWarehouseBaseInfoService
+                .selectMasterDataWarehouseBaseInfoList(param);
+        if (null != targetWarehouseBaseInfos && 0 < targetWarehouseBaseInfos.size()) {
+            transportdocumentsDetailInfo.setTransportdocumentsType("P");
+            isWarehouse = true;
+        }
+
+        return isWarehouse;
     }
 }
 

@@ -207,39 +207,15 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="发货地名称" prop="sourcePlaceId">
+            <el-form-item label="发货地名称" prop="sourcePlaceName">
               <!-- 运输单发货地址是仓库，就是销售单，创建运输单时需要仓库减去对应数量 -->
-              <el-cascader
-                size="large"
-                :options="regionOptions"
-                v-model="form.sourcePlaceId"
-                filterable
-                @change="handleSourcePlaceRegionChange"
-                style="width: 200px;">
-              </el-cascader>
+              <el-input v-model="form.sourcePlaceName" placeholder="请输入发货地名称" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="卸货地名称" prop="targetPlaceId">
+            <el-form-item label="卸货地名称" prop="targetPlaceName">
               <!-- 运输单最终目的地是仓库，就是采购单，当运输单完成时，需要仓库加上对应数量 -->
-              <el-select
-                v-model="form.targetPlaceId"
-                filterable
-                remote
-                clearable
-                reserve-keyword
-                placeholder="请输入仓库名称关键字"
-                :remote-method="remoteWarehouseName"
-                :loading="remoteLoadingWarehouseName"
-                @change="selChangeWarehouse"
-                style="width: 200px">
-                <el-option
-                  v-for="item in optionsWarehouseName"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input v-model="form.targetPlaceName" placeholder="请输入卸货地名称" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
