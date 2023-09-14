@@ -21,7 +21,6 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     private Long id;
 
     /** 运输单号 */
-    @Excel(name = "运输单号")
     private String transportdocumentsId;
 
     /** 关联订单编号 */

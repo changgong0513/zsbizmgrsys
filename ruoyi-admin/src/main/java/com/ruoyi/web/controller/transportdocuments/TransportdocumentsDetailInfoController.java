@@ -1,9 +1,11 @@
 package com.ruoyi.web.controller.transportdocuments;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.utils.uuid.Seq;
 import com.ruoyi.zjzy.domain.ZjzyHkInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,5 +165,14 @@ public class TransportdocumentsDetailInfoController extends BaseController
         }
 
         return toAjax(result);
+    }
+
+    @GetMapping("/generate/transport/id")
+    public AjaxResult generateTransportId() {
+        AjaxResult ajax = AjaxResult.success();
+        String tempTransportdocumentsId = "C" + Seq.getId(new AtomicInteger(1), 3);
+        String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
+        ajax.put("transportdocumentsId", transportdocumentsId);
+        return ajax;
     }
 }

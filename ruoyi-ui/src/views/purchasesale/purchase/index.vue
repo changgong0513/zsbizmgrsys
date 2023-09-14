@@ -1006,7 +1006,7 @@ export default {
       fileListDetail: [],
       // 遮罩层
       loading: true,
-      transportLoading: true,
+      transportLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用

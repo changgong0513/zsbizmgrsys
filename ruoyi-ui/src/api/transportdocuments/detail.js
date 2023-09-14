@@ -51,3 +51,11 @@ export function generateTransport(ids, data) {
     data: data
   })
 }
+
+// 生成运输单编号
+export function generateTransportId() {
+  return request({
+    url: '/transportdocuments/detail/generate/transport/id',
+    method: 'get'
+  })
+}

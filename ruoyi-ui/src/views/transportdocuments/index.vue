@@ -111,7 +111,7 @@
 
     <el-table v-loading="loading" :data="detailList" @selection-change="handleSelectionChange" :key="key" @cell-dblclick="doubleClick">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="运输单号（双击可编辑）" align="center" prop="transportdocumentsId">
+      <el-table-column label="运输单号" align="center" prop="transportdocumentsId">
         <template slot-scope="scope">
           <el-input 
             v-focus v-if="scope.row[scope.column.property + 'Show']" 
@@ -139,7 +139,7 @@
           <dict-tag :options="dict.type.transportdocuments_state" :value="scope.row.transportdocumentsState"/>
         </template>
       </el-table-column>
-      <el-table-column label="关联订单（双击可编辑）" align="center" prop="relatedOrderId">
+      <el-table-column label="关联订单" align="center" prop="relatedOrderId">
         <template slot-scope="scope">
           <el-input 
             v-focus v-if="scope.row[scope.column.property + 'Show']" 
@@ -191,7 +191,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="运输单号" prop="transportdocumentsId">
-              <el-input v-model="form.transportdocumentsId" placeholder="请输入运输单号" style="width: 200px;" />
+              <el-input v-model="form.transportdocumentsId" placeholder="请输入运输单号" :disabled="true" style="width: 200px;" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -529,7 +529,7 @@
 </template>
 
 <script>
-import { listDetail, getDetail, delDetail, addDetail, updateDetail, generateTransport } from "@/api/transportdocuments/detail";
+import { listDetail, getDetail, delDetail, addDetail, updateDetail, generateTransport, generateTransportId } from "@/api/transportdocuments/detail";
 import { listTrace } from "@/api/transportdocuments/trace";
 import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
@@ -827,10 +827,13 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.form.transportdocumentsState = '1';
-      this.title = "添加采购运输单详细信息";
+      generateTransportId().then(response => {
+        this.reset();
+        this.open = true;
+        this.form.transportdocumentsState = '1';
+        this.form.transportdocumentsId = response.transportdocumentsId;
+        this.title = "添加采购运输单详细信息";
+      });    
     },
     /** 修改按钮操作 */
     handleUpdate(row) {

@@ -2,6 +2,7 @@ package com.ruoyi.transportdocuments.service.impl;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import com.alibaba.fastjson2.JSONObject;
@@ -370,6 +371,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                     data.setTransportdocumentsState("3");
                 }
 
+                String tempTransportdocumentsId = "I" + Seq.getId(new AtomicInteger(1), 3);
+                String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
+                data.setTransportdocumentsId(transportdocumentsId);
                 data.setTransportdocumentsType(transportdocumentsType);
                 data.setCreateBy(operName);
                 data.setCreateTime(DateUtils.getNowDate());
