@@ -1,12 +1,16 @@
 package com.ruoyi.web.controller.transportdocuments;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.transportdocuments.domain.TraceTimeLine;
 import org.apache.poi.ss.formula.functions.T;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,13 +51,13 @@ public class TransportdocumentsTraceInfoController extends BaseController
     public TableDataInfo list(TransportdocumentsTraceInfo transportdcoumentsTraceInfo)
     {
         startPage();
-        TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
-        List<TransportdocumentsTraceInfo> list = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfoList(param);
-        List<String> tracePreviousList = new ArrayList<>();
-        trace(list, transportdcoumentsTraceInfo, "previous", tracePreviousList);
-
-        List<String> tracePostList = new ArrayList<>();
-        trace(list, transportdcoumentsTraceInfo, "post", tracePostList);
+//        TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+        List<TransportdocumentsTraceInfo> list = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfoList(transportdcoumentsTraceInfo);
+//        List<String> tracePreviousList = new ArrayList<>();
+//        trace(list, transportdcoumentsTraceInfo, "previous", tracePreviousList);
+//
+//        List<String> tracePostList = new ArrayList<>();
+//        trace(list, transportdcoumentsTraceInfo, "post", tracePostList);
 
         return getDataTable(list);
     }
@@ -112,6 +116,44 @@ public class TransportdocumentsTraceInfoController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByIds(ids));
+    }
+
+    @GetMapping("/previous/post/list")
+    public AjaxResult trace(TransportdocumentsTraceInfo transportdcoumentsTraceInfo) {
+        // 取得所有运输单追踪数据列表
+        List<TransportdocumentsTraceInfo> allTraceDatalist = transportdocumentsTraceInfoService
+                .selectTransportdocumentsTraceInfoList(new TransportdocumentsTraceInfo());
+
+        List<TraceTimeLine> traceTimeLineList = new ArrayList<>();
+        // 取得前置运输单追踪数据列表
+        List<String> tracePreviousList = new ArrayList<>();
+        trace(allTraceDatalist, transportdcoumentsTraceInfo, "previous", tracePreviousList);
+        for (String previous : tracePreviousList) {
+            TraceTimeLine previousTraceTimeLine = new TraceTimeLine();
+            previousTraceTimeLine.setType("warning");
+            previousTraceTimeLine.setContent(previous);
+            traceTimeLineList.add(previousTraceTimeLine);
+        }
+
+        TraceTimeLine currentTraceTimeLine = new TraceTimeLine();
+        currentTraceTimeLine.setContent(transportdcoumentsTraceInfo.getTransportdocumentsId());
+        currentTraceTimeLine.setType("primary");
+        traceTimeLineList.add(currentTraceTimeLine);
+
+        // 取得后置运输单追踪数据列表
+        List<String> tracePostList = new ArrayList<>();
+        trace(allTraceDatalist, transportdcoumentsTraceInfo, "post", tracePostList);
+        for (String post : tracePostList) {
+            TraceTimeLine postTraceTimeLine = new TraceTimeLine();
+            postTraceTimeLine.setType("success");
+            postTraceTimeLine.setContent(post);
+            traceTimeLineList.add(postTraceTimeLine);
+        }
+
+        AjaxResult ajaxResult = AjaxResult.success();
+        ajaxResult.put("traceTimeLineList", traceTimeLineList);
+
+        return ajaxResult;
     }
 
 //    private void trace(List<TransportdocumentsTraceInfo> list, TransportdocumentsTraceInfo item, List<String> traceList) {

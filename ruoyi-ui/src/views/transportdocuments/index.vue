@@ -486,10 +486,11 @@
 
     <!-- 查看订单追踪对话框 -->
     <el-dialog :title="titleTrace" :visible.sync="openTrace" width="650px" append-to-body>
-      <el-table v-loading="loadingTrace" :data="traceList">
+      <!-- <el-table v-loading="loadingTrace" :data="traceList">
         <el-table-column label="前置运单编号" align="center" prop="preTransportdocumentsId" />
         <el-table-column label="当前运单编号" align="center" prop="transportdocumentsId" /> 
         <el-table-column label="后置运单编号" align="center" prop="postTransportdocumentsId" class-name="small-padding fixed-width" /> 
+        
       </el-table>
     
       <pagination
@@ -498,7 +499,22 @@
         :page.sync="queryTraceParams.pageNum"
         :limit.sync="queryTraceParams.pageSize"
         @pagination="getTraceList"
-      />
+      /> -->
+      <el-row>
+        <el-button type="warning" plain disabled>前置运输单</el-button>
+        <el-button type="primary" plain disabled>当前运输单</el-button>
+        <el-button type="success" plain disabled>后置运输单</el-button>
+      </el-row>
+      <div class="block" style="margin-top: 25px;">
+        <el-timeline :reverse="reverse">
+          <el-timeline-item
+            v-for="(activity, index) in activities"
+            :key="index"
+            :type="activity.type">
+            {{activity.content}}
+          </el-timeline-item>
+        </el-timeline>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeTrace">关 闭</el-button>
       </div>
@@ -508,7 +524,7 @@
 
 <script>
 import { listDetail, getDetail, delDetail, addDetail, updateDetail, generateTransport, generateTransportId } from "@/api/transportdocuments/detail";
-import { listTrace } from "@/api/transportdocuments/trace";
+import { listPreviousPostTrace } from "@/api/transportdocuments/trace";
 import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
@@ -678,6 +694,18 @@ export default {
       hidTempTransportdocumentsId: null,
       // 运单追踪表格数据
       traceList: [],
+      reverse: true,
+      activities: [],
+      // activities: [{
+      //   content: '活动按期开始',
+      //   timestamp: '2018-04-15'
+      // }, {
+      //   content: '通过审核',
+      //   timestamp: '2018-04-13'
+      // }, {
+      //   content: '创建成功',
+      //   timestamp: '2018-04-11'
+      // }]
     };
   },
   created() {
@@ -1120,11 +1148,9 @@ export default {
       this.reset();
       this.queryTraceParams.transportdocumentsId = row.transportdocumentsId;
       this.loadingTrace = true;
-      listTrace(this.queryTraceParams).then(response => {
-        this.traceList = response.rows;
-        this.totalTrace = response.total;
+      listPreviousPostTrace(this.queryTraceParams).then(response => {
+        this.activities = response.traceTimeLineList.reverse();
         this.loadingTrace = false;
-
         this.openTrace = true;
         this.titleTrace = "查看追踪运单数据列表";
       });

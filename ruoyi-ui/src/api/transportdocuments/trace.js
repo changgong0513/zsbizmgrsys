@@ -42,3 +42,12 @@ export function delTrace(id) {
     method: 'delete'
   })
 }
+
+// 查询前置和后置运输单追溯信息列表
+export function listPreviousPostTrace(query) {
+  return request({
+    url: '/transportdocuments/trace//previous/post/list',
+    method: 'get',
+    params: query
+  })
+}
