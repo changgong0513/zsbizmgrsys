@@ -579,6 +579,16 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setUpdateBy(SecurityUtils.getUsername());
             traceInfo.setUpdateTime(DateUtils.getNowDate());
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+
+            Optional<TransportdocumentsTraceInfo> optionalAny = traceList.stream()
+                    .filter(item -> item.getTransportdocumentsId().contains(transportdocumentsList.get(0).getTransportdocumentsId()))
+                    .findAny();
+
+            TransportdocumentsTraceInfo any = optionalAny.isPresent() ? optionalAny.get() : null;
+            if (null != any) {
+                any.setPostTransportdocumentsId(transportdocumentsId);
+                transportdocumentsTraceInfoService.updateTransportdocumentsTraceInfo(any);
+            }
         }
 
         return 1;
