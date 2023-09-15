@@ -1,7 +1,12 @@
 package com.ruoyi.web.controller.transportdocuments;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,10 +44,17 @@ public class TransportdocumentsTraceInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('transportdocuments:trace:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TransportdocumentsTraceInfo transportdocumentsTraceInfo)
+    public TableDataInfo list(TransportdocumentsTraceInfo transportdcoumentsTraceInfo)
     {
         startPage();
-        List<TransportdocumentsTraceInfo> list = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfoList(transportdocumentsTraceInfo);
+        TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+        List<TransportdocumentsTraceInfo> list = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfoList(param);
+        List<String> tracePreviousList = new ArrayList<>();
+        trace(list, transportdcoumentsTraceInfo, "previous", tracePreviousList);
+
+        List<String> tracePostList = new ArrayList<>();
+        trace(list, transportdcoumentsTraceInfo, "post", tracePostList);
+
         return getDataTable(list);
     }
 
@@ -100,5 +112,66 @@ public class TransportdocumentsTraceInfoController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(transportdocumentsTraceInfoService.deleteTransportdocumentsTraceInfoByIds(ids));
+    }
+
+//    private void trace(List<TransportdocumentsTraceInfo> list, TransportdocumentsTraceInfo item, List<String> traceList) {
+//
+//        Optional<TransportdocumentsTraceInfo> optionalCurrent = list.stream()
+//                .filter(data -> data.getTransportdocumentsId().contains(item.getTransportdocumentsId()))
+//                .findAny();
+//        TransportdocumentsTraceInfo current = optionalCurrent.isPresent() ? optionalCurrent.get() : null;
+//        if (null == current) {
+//            return;
+//        }
+//
+//        traceList.add(current.getPreTransportdocumentsId());
+//
+//        Optional<TransportdocumentsTraceInfo> optionalPrevious = list.stream()
+//                .filter(data ->current.getPreTransportdocumentsId().contains(data.getTransportdocumentsId()))
+//                .findAny();
+//
+//        TransportdocumentsTraceInfo previous = optionalPrevious.isPresent() ? optionalPrevious.get() : null;
+//        if (null ==  previous) {
+//            return;
+//        }
+//
+//        trace(list, previous, traceList);
+//    }
+
+    private void trace(List<TransportdocumentsTraceInfo> list, TransportdocumentsTraceInfo item, String traceType, List<String> traceList) {
+
+        Optional<TransportdocumentsTraceInfo> optionalCurrent = list.stream()
+                .filter(data -> data.getTransportdocumentsId().contains(item.getTransportdocumentsId()))
+                .findAny();
+        TransportdocumentsTraceInfo current = optionalCurrent.isPresent() ? optionalCurrent.get() : null;
+        if (null == current) {
+            return;
+        }
+
+
+
+        Optional<TransportdocumentsTraceInfo> optionalFindTransport = Optional.empty();
+        if (StringUtils.equals(traceType, "previous")) {
+            if (StringUtils.isNotBlank(current.getPreTransportdocumentsId())) {
+                traceList.add(current.getPreTransportdocumentsId());
+                optionalFindTransport = list.stream()
+                        .filter(data ->current.getPreTransportdocumentsId().contains(data.getTransportdocumentsId()))
+                        .findAny();
+            }
+        } else {
+            if (StringUtils.isNotBlank(current.getPostTransportdocumentsId())) {
+                traceList.add(current.getPostTransportdocumentsId());
+                optionalFindTransport = list.stream()
+                        .filter(data ->current.getPostTransportdocumentsId().contains(data.getTransportdocumentsId()))
+                        .findAny();
+            }
+        }
+
+        TransportdocumentsTraceInfo findTransport = optionalFindTransport.isPresent() ? optionalFindTransport.get() : null;
+        if (null ==  findTransport) {
+            return;
+        }
+
+        trace(list, findTransport, traceType, traceList);
     }
 }

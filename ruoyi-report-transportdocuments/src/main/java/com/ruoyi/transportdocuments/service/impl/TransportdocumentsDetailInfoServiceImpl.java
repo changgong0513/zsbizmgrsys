@@ -506,6 +506,9 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         TransportdocumentsTraceInfo traceInfo = new TransportdocumentsTraceInfo();
         traceInfo.setRelatedOrderId(transportdocumentsList.get(0).getRelatedOrderId());
 
+        TransportdocumentsTraceInfo param = new TransportdocumentsTraceInfo();
+        List<TransportdocumentsTraceInfo> traceList = transportdocumentsTraceInfoService.selectTransportdocumentsTraceInfoList(param);
+
         if (ids.length == 1) {
             String tempTransportdocumentsId = "C" + Seq.getId(new AtomicInteger(1), 3);
             String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
@@ -534,6 +537,16 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setUpdateBy(SecurityUtils.getUsername());
             traceInfo.setUpdateTime(DateUtils.getNowDate());
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
+
+            Optional<TransportdocumentsTraceInfo> optionalAny = traceList.stream()
+                    .filter(item -> item.getTransportdocumentsId().contains(transportdocumentsList.get(0).getTransportdocumentsId()))
+                    .findAny();
+
+            TransportdocumentsTraceInfo any = optionalAny.isPresent() ? optionalAny.get() : null;
+            if (null != any) {
+                any.setPostTransportdocumentsId(transportdocumentsId);
+                transportdocumentsTraceInfoService.updateTransportdocumentsTraceInfo(any);
+            }
         } else {
             String tempTransportdocumentsId = "M" + Seq.getId(new AtomicInteger(1), 3);
             String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
