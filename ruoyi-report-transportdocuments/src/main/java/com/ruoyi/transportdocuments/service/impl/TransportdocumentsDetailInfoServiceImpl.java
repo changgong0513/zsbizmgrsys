@@ -133,6 +133,12 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             return 3;
         }
 
+        // 检查运输单经办人
+        SysUser sysUser = sysUserMapper.selectUserByNickName(transportdocumentsDetailInfo.getHandledByName());
+        if (null == sysUser) {
+            return 4;
+        }
+
         transportdocumentsDetailInfo.setCreateBy(SecurityUtils.getUsername());
         transportdocumentsDetailInfo.setCreateTime(DateUtils.getNowDate());
         transportdocumentsDetailInfo.setUpdateBy(SecurityUtils.getUsername());
@@ -149,6 +155,12 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      */
     @Override
     public int updateTransportdocumentsDetailInfo(TransportdocumentsDetailInfo transportdocumentsDetailInfo) {
+        // 检查运输单经办人
+        SysUser sysUser = sysUserMapper.selectUserByNickName(transportdocumentsDetailInfo.getHandledByName());
+        if (null == sysUser) {
+            return 4;
+        }
+
         transportdocumentsDetailInfo.setUpdateBy(SecurityUtils.getUsername());
         transportdocumentsDetailInfo.setUpdateTime(DateUtils.getNowDate());
         int result = transportdocumentsDetailInfoMapper.updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo);

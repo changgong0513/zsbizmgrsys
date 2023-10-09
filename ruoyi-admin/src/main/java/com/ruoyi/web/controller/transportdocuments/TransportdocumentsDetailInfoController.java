@@ -86,6 +86,8 @@ public class TransportdocumentsDetailInfoController extends BaseController
         int result = transportdocumentsDetailInfoService.insertTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
         if (3 == result) {
             return AjaxResult.error("运输单的发货地名称和收货地名称，都不是所属仓库！");
+        } else if (4 == result) {
+            return AjaxResult.error("运输单的经办人不属于该系统，请确认！");
         }
 
         return toAjax(result);
@@ -99,7 +101,12 @@ public class TransportdocumentsDetailInfoController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody TransportdocumentsDetailInfo transportdocumentsDetailInfo)
     {
-        return toAjax(transportdocumentsDetailInfoService.updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo));
+        int result = transportdocumentsDetailInfoService.updateTransportdocumentsDetailInfo(transportdocumentsDetailInfo);
+        if (4 == result) {
+            return AjaxResult.error("运输单的经办人不属于该系统，请确认！");
+        }
+
+        return toAjax(result);
     }
 
     /**
