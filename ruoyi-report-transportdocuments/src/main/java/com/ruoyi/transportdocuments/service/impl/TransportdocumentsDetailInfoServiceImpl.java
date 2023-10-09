@@ -369,7 +369,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                     data.setTransportdocumentsState("3");
                 }
 
-                String tempTransportdocumentsId = "I" + Seq.getId(new AtomicInteger(1), 3);
+                String tempTransportdocumentsId = "I" + Seq.getId();
                 String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
                 data.setTransportdocumentsId(transportdocumentsId);
                 data.setTransportdocumentsType(transportdocumentsType);
