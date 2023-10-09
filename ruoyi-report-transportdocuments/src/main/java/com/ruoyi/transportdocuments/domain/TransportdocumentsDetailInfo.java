@@ -63,6 +63,10 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     @Excel(name = "经办人")
     private String handledByName;
 
+    /** 经办人昵称 */
+    @Excel(name = "经办人昵称")
+    private String handledByNickName;
+
     /** 联系电话 */
     @Excel(name = "联系电话")
     private String telephone;
@@ -234,7 +238,16 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     {
         return handledByName;
     }
-    public void setTelephone(String telephone) 
+
+    public String getHandledByNickName() {
+        return handledByNickName;
+    }
+
+    public void setHandledByNickName(String handledByNickName) {
+        this.handledByNickName = handledByNickName;
+    }
+
+    public void setTelephone(String telephone)
     {
         this.telephone = telephone;
     }
@@ -420,6 +433,7 @@ public class TransportdocumentsDetailInfo extends BaseEntity
             .append("loadingQuantity", getLoadingQuantity())
             .append("handledById", getHandledById())
             .append("handledByName", getHandledByName())
+                .append("handledByNickName", getHandledByNickName())
             .append("telephone", getTelephone())
             .append("materialId", getMaterialId())
             .append("materialName", getMaterialName())

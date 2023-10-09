@@ -42,7 +42,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTransportdocumentsDetailInfoVo">
-        select id, transportdocuments_id, transportdocuments_type, pch, wagon_number, source_place_id, source_place_name, target_place_id, target_place_name, loading_quantity, handled_by_id, handled_by_name, telephone, material_id, material_name, business_date, documents_type, unit_price, related_order_id, related_contract_id, related_contract_name, landed_quantity, accounting_quantity, settlement_unit_price, freight_unit_price, deduction_amount, follow_up_fare, landed_date, transportdocuments_state, create_by, create_time, update_by, update_time, biz_version from transportdocuments_detail_info
+        select
+            id, transportdocuments_id, transportdocuments_type, pch, wagon_number,
+            source_place_id, source_place_name,
+            target_place_id, target_place_name,
+            loading_quantity, handled_by_id, handled_by_name,
+            telephone,
+            material_id, material_name, business_date, documents_type,
+            unit_price, related_order_id, related_contract_id, related_contract_name,
+            landed_quantity, accounting_quantity, settlement_unit_price, freight_unit_price, deduction_amount,
+            follow_up_fare, landed_date, transportdocuments_state,
+            create_by, create_time, update_by, update_time, biz_version
+        from
+            transportdocuments_detail_info
     </sql>
 
     <select id="selectTransportdocumentsDetailInfoList" parameterType="TransportdocumentsDetailInfo" resultMap="TransportdocumentsDetailInfoResult">

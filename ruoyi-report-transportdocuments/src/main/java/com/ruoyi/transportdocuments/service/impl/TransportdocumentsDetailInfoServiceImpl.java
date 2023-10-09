@@ -103,7 +103,21 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
     @Override
     public List<TransportdocumentsDetailInfo> selectTransportdocumentsDetailInfoList(TransportdocumentsDetailInfo transportdocumentsDetailInfo)
     {
-        return transportdocumentsDetailInfoMapper.selectTransportdocumentsDetailInfoList(transportdocumentsDetailInfo);
+        List<TransportdocumentsDetailInfo> listTransportdocumentsDetailInfo = transportdocumentsDetailInfoMapper
+                .selectTransportdocumentsDetailInfoList(transportdocumentsDetailInfo);
+
+        listTransportdocumentsDetailInfo.stream().forEach(data -> {
+            SysUser sysUser = sysUserMapper.selectUserByNickName(data.getHandledByName());
+            if (sysUser != null) {
+                data.setHandledById(sysUser.getUserId());
+                data.setHandledByNickName(sysUser.getNickName());
+            } else {
+                data.setHandledById(null);
+                data.setHandledByNickName(StringUtils.EMPTY);
+            }
+        });
+
+        return listTransportdocumentsDetailInfo;
     }
 
     /**
@@ -349,6 +363,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 SysUser sysUser = sysUserMapper.selectUserByUserName(data.getHandledByName());
                 if (sysUser != null) {
                     data.setHandledById(sysUser.getUserId());
+                    data.setHandledByNickName(sysUser.getNickName());
                 } else {
                     throw new Exception(transportdocumentsName + "中经办人输入错误！");
                 }
