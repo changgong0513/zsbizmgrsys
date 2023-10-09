@@ -313,32 +313,37 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
 
-        String transportdocumentsName = "采购运输单";
-        if(StringUtils.equals(transportdocumentsType, "s")) {
-            transportdocumentsName = "销售运输单";
-        }
+        String transportdocumentsName = StringUtils.EMPTY;
 
         for (TransportdocumentsDetailInfo data : transportdocumentsList) {
 
             try {
                 BeanValidators.validateWithException(validator, data);
 
-                if (StringUtils.equals(transportdocumentsType, "p") && StringUtils.isNotBlank(data.getTargetPlaceName())) {
+                if (StringUtils.isNotBlank(data.getTargetPlaceName())) {
                     String warehouseCode = findWarehouseCode(data.getTargetPlaceName());
                     if (StringUtils.isNotBlank(warehouseCode)) {
+                        transportdocumentsType = "p";
                         data.setSourcePlaceId(warehouseCode);
                     } else {
-                        throw new Exception(transportdocumentsName + "中卸货地输入错误！");
+                        throw new Exception("采购运输单中卸货地输入错误！");
                     }
                 }
 
-                if (StringUtils.equals(transportdocumentsType, "s") && StringUtils.isNotBlank(data.getSourcePlaceName())) {
+                if (StringUtils.isNotBlank(data.getSourcePlaceName())) {
                     String warehouseCode = findWarehouseCode(data.getTargetPlaceName());
                     if (StringUtils.isNotBlank(warehouseCode)) {
+                        transportdocumentsType = "s";
                         data.setSourcePlaceId(warehouseCode);
                     } else {
-                        throw new Exception(transportdocumentsName + "中发货地输入错误！");
+                        throw new Exception("销售运输单中发货地输入错误！");
                     }
+                }
+
+                if (StringUtils.equals(transportdocumentsType, "p")) {
+                    transportdocumentsName = "采购运输单";
+                } else if(StringUtils.equals(transportdocumentsType, "s")) {
+                    transportdocumentsName = "销售运输单";
                 }
 
                 SysUser sysUser = sysUserMapper.selectUserByUserName(data.getHandledByName());
