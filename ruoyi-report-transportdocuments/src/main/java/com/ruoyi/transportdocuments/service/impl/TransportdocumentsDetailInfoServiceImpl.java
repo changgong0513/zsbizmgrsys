@@ -328,7 +328,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                     if (StringUtils.isNotBlank(warehouseCode)) {
                         data.setSourcePlaceId(warehouseCode);
                     } else {
-                        throw new Exception(transportdocumentsName + "中发货地输入错误！");
+                        throw new Exception(transportdocumentsName + "中卸货地输入错误！");
                     }
                 }
 
