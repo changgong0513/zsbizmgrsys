@@ -130,6 +130,9 @@ public class TransportdocumentsDetailInfo extends BaseEntity
     /** 临时运输单编号 */
     private String tempTransportdocumentsId;
 
+    /** 内勤 */
+    private String officeStaff;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -418,6 +421,14 @@ public class TransportdocumentsDetailInfo extends BaseEntity
         this.tempTransportdocumentsId = tempTransportdocumentsId;
     }
 
+    public String getOfficeStaff() {
+        return officeStaff;
+    }
+
+    public void setOfficeStaff(String officeStaff) {
+        this.officeStaff = officeStaff;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -450,7 +461,8 @@ public class TransportdocumentsDetailInfo extends BaseEntity
             .append("deductionAmount", getDeductionAmount())
             .append("followUpFare", getFollowUpFare())
             .append("landedDate", getLandedDate())
-            .append("transportdocumentsState", getTransportdocumentsState())
+                .append("tempTransportdocumentsId", getTempTransportdocumentsId())
+                .append("officeStaff", getOfficeStaff())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

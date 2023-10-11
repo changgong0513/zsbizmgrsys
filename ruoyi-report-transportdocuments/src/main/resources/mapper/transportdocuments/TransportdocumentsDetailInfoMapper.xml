@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="followUpFare"    column="follow_up_fare"    />
         <result property="landedDate"    column="landed_date"    />
         <result property="transportdocumentsState"    column="transportdocuments_state"    />
+        <result property="officeStaff"    column="office_staff"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -51,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             material_id, material_name, business_date, documents_type,
             unit_price, related_order_id, related_contract_id, related_contract_name,
             landed_quantity, accounting_quantity, settlement_unit_price, freight_unit_price, deduction_amount,
-            follow_up_fare, landed_date, transportdocuments_state,
+            follow_up_fare, landed_date, transportdocuments_state, office_staff,
             create_by, create_time, update_by, update_time, biz_version
         from
             transportdocuments_detail_info
@@ -105,6 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followUpFare != null">follow_up_fare,</if>
             <if test="landedDate != null">landed_date,</if>
             <if test="transportdocumentsState != null and transportdocumentsState != ''">transportdocuments_state,</if>
+            <if test="officeStaff != null">office_staff,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null and updateBy != ''">update_by,</if>
@@ -140,6 +142,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followUpFare != null">#{followUpFare},</if>
             <if test="landedDate != null">#{landedDate},</if>
             <if test="transportdocumentsState != null and transportdocumentsState != ''">#{transportdocumentsState},</if>
+            <if test="officeStaff != null">#{officeStaff},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
@@ -179,6 +182,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followUpFare != null">follow_up_fare = #{followUpFare},</if>
             <if test="landedDate != null">landed_date = #{landedDate},</if>
             <if test="transportdocumentsState != null and transportdocumentsState != ''">transportdocuments_state = #{transportdocumentsState},</if>
+            <if test="officeStaff != null">office_staff = #{officeStaff},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
