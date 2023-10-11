@@ -198,7 +198,23 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="批次号" prop="pch">
-              <el-input v-model="form.pch" placeholder="请输入批次号" style="width: 200px;" />
+              <el-select
+                v-model="form.pch"
+                filterable
+                remote
+                clearable
+                reserve-keyword
+                placeholder="请输入批次号关键字"
+                :remote-method="remoteMethodPch"
+                :loading="remoteLoadingPch"
+                style="width: 200px">
+                <el-option
+                  v-for="item in optionsPch"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -322,7 +338,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="内勤" prop="officeStaff">
-              <el-input v-model="form.officeStaff" placeholder="请输入内勤名称" disabled="true" style="width: 200px;" />
+              <el-input v-model="form.officeStaff" placeholder="请输入内勤名称" :disabled="true" style="width: 200px;" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -534,6 +550,7 @@ import { listContract } from "@/api/contract/contract";
 import { listWarehouse } from "@/api/masterdata/warehouse";
 import { regionData, CodeToText, TextToCode } from "element-china-area-data"
 import { listMaterialData } from "@/api/masterdata/material";
+import { listPch } from "@/api/masterdata/pch";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -579,6 +596,7 @@ export default {
         businessDate: null,
         documentsType: null,
         transportdocumentsState: null,
+        pch: null
       },
       // 查询运单追踪参数
       queryTraceParams: {
@@ -701,16 +719,10 @@ export default {
       traceList: [],
       reverse: true,
       activities: [],
-      // activities: [{
-      //   content: '活动按期开始',
-      //   timestamp: '2018-04-15'
-      // }, {
-      //   content: '通过审核',
-      //   timestamp: '2018-04-13'
-      // }, {
-      //   content: '创建成功',
-      //   timestamp: '2018-04-11'
-      // }]
+      // 物料名称选择用
+      optionsPch: [],
+      listPch: [],
+      remoteLoadingPch: false,
     };
   },
   created() {
@@ -1041,6 +1053,27 @@ export default {
         return item.warehouseCode == selValue;
       });
       this.form.targetPlaceName = selWarehouse.warehouseName; // 仓库名称
+    },
+    /** 根据输入批次号关键字，取得批次号列表 */
+    remoteMethodPch(query) {
+      if (query !== '') {
+        this.remoteLoadingPch = true;
+        this.queryParams.pch = query;
+        listPch(this.queryParams).then(response => {
+          this.remoteLoadingPch = false;
+          this.listPch = response.rows;
+          this.optionsPch = response.rows.map(item => {
+            return { value: `${item.pch}`, label: `${item.pch}` };
+          }).filter(item => {
+            return item.label.toLowerCase()
+              .indexOf(query.toLowerCase()) > -1;
+          });
+
+          this.queryParams.pch = null;
+        });
+      } else {
+        this.optionsPch = [];
+      }
     },
     /** 运输单状态下拉列表框，选择值改变后回调方法 */
     selChangeTransportdocumentsState(selValue) {
