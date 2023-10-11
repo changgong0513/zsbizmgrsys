@@ -321,6 +321,13 @@
             <el-input v-model="form.handledById" v-show="false" />
           </el-col>
           <el-col :span="8">
+            <el-form-item label="内勤" prop="officeStaff">
+              <el-input v-model="form.officeStaff" placeholder="请输入内勤名称" disabled="true" style="width: 200px;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
             <el-form-item label="关联合同" prop="relatedContractId">
               <el-select
                 v-model="form.relatedContractId"
@@ -342,8 +349,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="卸货数量" prop="landedQuantity">
               <el-input v-model="form.landedQuantity" placeholder="请输入卸货数量" :disabled="isEditByTransportState" style="width: 200px;" />
@@ -354,13 +359,13 @@
               <el-input v-model="form.accountingQuantity" placeholder="请输入核算数量" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="结算单价" prop="settlementUnitPrice">
               <el-input v-model="form.settlementUnitPrice" placeholder="请输入结算单价" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="运费单价" prop="freightUnitPrice">
               <el-input v-model="form.freightUnitPrice" placeholder="请输入运费单价" :disabled="isEditByTransportState" style="width: 200px;" />
@@ -371,13 +376,13 @@
               <el-input v-model="form.deductionAmount" placeholder="请输入扣款金额" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="压车费" prop="followUpFare">
               <el-input v-model="form.followUpFare" placeholder="请输入压车费" :disabled="isEditByTransportState" style="width: 200px;" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="卸货日期" prop="landedDate">
               <el-date-picker clearable
@@ -395,13 +400,13 @@
               <el-input :disabled="true" style="width: 200px;" :value="calInflation" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="运费">
               <el-input :disabled="true" style="width: 200px;" :value="calCarriage" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="8">
             <el-form-item label="实付运费金额">
               <el-input :disabled="true" style="width: 200px;" :value="calRealCarriageAmount" />
@@ -801,7 +806,8 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-        bizVersion: null
+        bizVersion: null,
+        officeStaff: null
       };
 
       this.formTransfer = {
@@ -838,6 +844,7 @@ export default {
         this.open = true;
         this.form.transportdocumentsState = '1';
         this.form.transportdocumentsId = response.transportdocumentsId;
+        this.form.officeStaff = this.$store.state.user.name;
         this.title = "添加采购运输单详细信息";
       });    
     },
