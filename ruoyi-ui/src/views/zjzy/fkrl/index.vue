@@ -115,14 +115,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="合同编号" prop="fkrlHtbh">
+        <el-form-item label="订单编号" prop="fkrlHtbh">
           <el-select
             v-model="form.fkrlHtbh"
             filterable
             remote
             clearable
             reserve-keyword
-            placeholder="请输入合同编号关键字"
+            placeholder="请输入订单编号关键字"
             style="width: 240px"
             :remote-method="remoteMethodFkrlHtbh"
             :loading="remoteLoadingFkrlHtbh">
@@ -306,15 +306,11 @@ export default {
     remoteMethodFkrlHtbh(query) {
       if (query !== '') {
         this.remoteLoadingFkrlHtbh = true;
-        console.log("select远程方法调用" + JSON.stringify(this.queryParams));
         getHkrlHtbh(this.queryParams).then(response => {
           this.remoteLoadingFkrlHtbh = false;
           this.listFkrlHtbh = response.rows;
           this.optionsFkrlHtbh = response.rows.map(item => {
-            return { value: `${item.contractId}`, label: `${item.contractId}` };
-          }).filter(item => {
-            return item.label.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1;
+            return { value: `${item.orderId}`, label: `${item.orderId}` };
           });
         });
       } else {
