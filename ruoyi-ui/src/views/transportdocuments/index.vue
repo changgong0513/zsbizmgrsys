@@ -120,7 +120,8 @@
           type="primary"
           icon="el-icon-connection"
           size="mini"
-          @click="handleTransfer"
+          :disabled="single"
+          @click="handleSplit"
         >拆分</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -509,6 +510,9 @@
         <el-form-item label="物料名称" prop="mergeMaterialName">
           <el-input v-model="formTransfer.mergeMaterialName" placeholder="请输入物料名称" :disabled="true" style="width: 200px;" />
         </el-form-item>
+        <el-form-item label="装车地点" prop="sourcePlaceName" v-show="isSplitTransfer">
+          <el-input v-model="formTransfer.sourcePlaceName" placeholder="请输入装车地点" :disabled="true" style="width: 200px;" />
+        </el-form-item>
         <el-form-item label="装载量" prop="transportLoadingCapacity">
           <el-input v-model="formTransfer.transportLoadingCapacity" placeholder="请输入装载量" style="width: 200px;" />
         </el-form-item>
@@ -527,20 +531,6 @@
 
     <!-- 查看订单追踪对话框 -->
     <el-dialog :title="titleTrace" :visible.sync="openTrace" width="650px" append-to-body>
-      <!-- <el-table v-loading="loadingTrace" :data="traceList">
-        <el-table-column label="前置运单编号" align="center" prop="preTransportdocumentsId" />
-        <el-table-column label="当前运单编号" align="center" prop="transportdocumentsId" /> 
-        <el-table-column label="后置运单编号" align="center" prop="postTransportdocumentsId" class-name="small-padding fixed-width" /> 
-        
-      </el-table>
-    
-      <pagination
-        v-show="totalTrace > 0"
-        :total="totalTrace"
-        :page.sync="queryTraceParams.pageNum"
-        :limit.sync="queryTraceParams.pageSize"
-        @pagination="getTraceList"
-      /> -->
       <el-row>
         <el-button type="warning" plain disabled>前置运输单</el-button>
         <el-button type="primary" plain disabled>当前运输单</el-button>
@@ -697,8 +687,8 @@ export default {
           { required: true, message: "请选择运输方式", trigger: "change" }
         ],
         transportLoadingCapacity: [
-          { required: true, message: "请输入装载量", trigger: "blur" },
-          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的装载量", trigger: "blur" }
+          { required: true, message: "请输入装载量", trigger: "change" },
+          { pattern: /^[0-9,.]*$/, message: "包括非数字，请输入正确的装载量", trigger: "change" }
         ],
         transportUnitOfMeasurement: [
           { required: true, message: "请选择计量单位", trigger: "change" }
@@ -743,6 +733,9 @@ export default {
       optionsPch: [],
       listPch: [],
       remoteLoadingPch: false,
+      // 是否是拆分运输单
+      isSplitTransfer: false,
+      splitOriLoadingCapacity: null,
     };
   },
   created() {
@@ -847,12 +840,16 @@ export default {
         mergeMaterialName: null,
         transportLoadingCapacity: null,
         transportUnitOfMeasurement: null,
+        sourcePlaceName: null,
       }
 
       this.traceList = [];
 
       this.resetForm("form");
       this.resetForm("formTransfer");
+      this.isSplitTransfer = false;
+      this.splitOriLoadingCapacity = null;
+      this.openTransfer = false;
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -1164,6 +1161,8 @@ export default {
     },
     /** 处理合并运单 */
     handleMerge() {
+      this.isSplitTransfer = false;
+
       // 检查合并的运输单数量
       if (this.ids.length < 2) {
         this.$modal.msgError("请选择两个以上运输单进行合并，请确认！");
@@ -1171,7 +1170,6 @@ export default {
       }
 
       // 检查合并的运输单状态
-      
       for (let i = 0; i < this.ids.length; i++) {
         let isFind = false;
         for (let j = 0; j < this.detailList.length; j++) {
@@ -1229,14 +1227,29 @@ export default {
       this.formTransfer.mergeMaterialName = tempMaterialName;
       this.formTransfer.transportLoadingCapacity = sumLandedQuantity;
       this.formTransfer.transportUnitOfMeasurement = '1';
+    },
+    /** 处理拆分运单 */
+    handleSplit() {
 
+      this.isSplitTransfer = true;
 
+      let selectedData = this.detailList.filter(element => {
+        return element.id === this.ids[0];
+      });
 
-      
-      
+      // 检查拆分的运输单状态
+      if (selectedData[0].transportdocumentsState != '3') {
+        this.$modal.msgError('要拆分的运输单的状态必须是完成状态，请确认！');
+        return false;
+      }
 
+      this.splitOriLoadingCapacity = selectedData[0].loadingQuantity;
 
-
+      this.openTransfer = true;
+      this.titleTransfer = "拆分运输单";
+      this.formTransfer.mergeMaterialName = selectedData[0].materialName;;
+      this.formTransfer.sourcePlaceName = selectedData[0].targetPlaceName;
+      this.formTransfer.transportUnitOfMeasurement = '1';
     },
     // 双击单元格触发事件
     doubleClick(row, column) {
@@ -1264,6 +1277,13 @@ export default {
     },
     /** 生成中转运单提交按钮 */
     submitFormTransfer() {
+
+      // 运输单数量不得大于原来的运输单数量
+      if (this.formTransfer.transportLoadingCapacity - this.splitOriLoadingCapacity > 0.001) {
+        this.$modal.msgError('要拆分的运输单数量不得大于拆分的原来运输单数量，请确认！');
+        return false;
+      }
+
       this.$refs["formTransfer"].validate(valid => {
         if (valid) {
           generateTransport(this.ids, this.formTransfer).then(response => {

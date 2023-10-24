@@ -457,79 +457,6 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             return 10001;
         }
 
-//        Map<Long, String> transportdocumentsMap = transportdocumentsList.stream()
-//                .collect(Collectors.toMap(TransportdocumentsDetailInfo::getId, TransportdocumentsDetailInfo::getTransportdocumentsId));
-//
-//        // 计算选择的运输单运输量
-//        AtomicReference<Long> sumLoadingQuantity = new AtomicReference<>(0L);
-//        try {
-//            transportdocumentsList.stream().forEach(element -> {
-//                Long loadingQuantity = element.getLoadingQuantity();
-//                Long landedQuantity = element.getLandedQuantity();
-//                if (element.getLoadingQuantity() != null && element.getLandedQuantity() != null) {
-//                    sumLoadingQuantity.set(sumLoadingQuantity.get() + (loadingQuantity - landedQuantity));
-//                } else {
-//                    sumLoadingQuantity.set(sumLoadingQuantity.get() + loadingQuantity);
-//                }
-//            });
-//        } catch (Exception e) {
-//            return 10002;
-//        }
-
-        // 运输量统一转化为以斤为单位，便于计算
-//        PurchaseSaleOrderInfo purchaseSaleOrderInfo = purchaseSaleOrderInfoService
-//                .selectPurchaseSaleOrderInfoByOrderId(relatedOrderList.get(0));
-//        String meteringUnit = purchaseSaleOrderInfo.getMeteringUnit();
-//        if (StringUtils.equals(meteringUnit, "1")) {
-//            sumLoadingQuantity.set(sumLoadingQuantity.get() * 2000);
-//        }
-//
-//        Long transportLoadingCapacity = data.getLong("transportLoadingCapacity");
-//        if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
-//            transportLoadingCapacity = transportLoadingCapacity * 2000;
-//        }
-
-//        int transportNumber = 1;
-//        Long loadingQuantity = 0L;
-//        int traceTransportNumber = 0;
-//        if (0 < sumLoadingQuantity.get().compareTo(transportLoadingCapacity)) {
-//            // 拆分运输单
-//            transportNumber = (int) Math.ceil((double) sumLoadingQuantity.get() / (double) transportLoadingCapacity);
-//            loadingQuantity = null;
-//            traceTransportNumber = transportNumber;
-//        } else {
-//            // 选择一个或者多个运输单都将生成一个新的中转运输单（1:1/n:1）
-//            loadingQuantity = sumLoadingQuantity.get();
-//            if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
-//                // 计量单位为吨的场合
-//                loadingQuantity = sumLoadingQuantity.get() / 2000;
-//            }
-
-//            TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
-//            String tempTransportdocumentsId = "YSD" + Seq.getId().toUpperCase();
-//            makeTransport(previousData, loadingQuantity, tempTransportdocumentsId);
-//            makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
-//        }
-
-//        List<TransportdocumentsTraceInfo> traceList = null;
-//        List<String> tempTransportdocumentsIdList = new ArrayList<>();
-//        for (int i = 0; i < transportNumber; i++) {
-//            TransportdocumentsDetailInfo previousData = transportdocumentsList.get(0);
-//            String tempTransportdocumentsId = "YSD" + Seq.getId().toUpperCase();
-//            makeTransport(previousData, loadingQuantity, tempTransportdocumentsId);
-//            traceList = makeTrackData(ids, transportdocumentsMap, previousData.getRelatedOrderId(), tempTransportdocumentsId);
-//
-//            traceList.stream().forEach(element -> {
-//                tempTransportdocumentsIdList.add(element.getPostTransportdocumentsId());
-//            });
-//        }
-
-//        String join = StringUtils.join(tempTransportdocumentsIdList, "-");
-//        TransportdocumentsTraceInfo param  = new TransportdocumentsTraceInfo();
-//        param.setPostTransportdocumentsId(join);
-//        param.setPreTransportdocumentsId(traceList.get(0).getPreTransportdocumentsId());
-//        transportdocumentsTraceInfoService.updatePostTransportdocumentsId(param);
-
         Long transportLoadingCapacity = data.getLong("transportLoadingCapacity");
         if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
             transportLoadingCapacity = transportLoadingCapacity * 2000;
@@ -544,13 +471,20 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         if (ids.length == 1) {
             String tempTransportdocumentsId = "C" + Seq.getId(new AtomicInteger(1), 3);
             String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
-            makeTransport(transportdocumentsList.get(0), transportLoadingCapacity, transportdocumentsId);
+            makeTransport(transportdocumentsList.get(0), data.getLong("transportLoadingCapacity"), transportdocumentsId);
 
             TransportdocumentsDetailInfo updateTransportDetailInfo = transportdocumentsList.get(0);
             Long updateQuantity = 0L;
             Long loadingQuantity = updateTransportDetailInfo.getLoadingQuantity();
+            if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
+                loadingQuantity = loadingQuantity * 2000;
+            }
             if (0 >= transportLoadingCapacity.compareTo(loadingQuantity)) {
                 updateQuantity = loadingQuantity - transportLoadingCapacity;
+            }
+
+            if (StringUtils.equals(data.getString("transportUnitOfMeasurement"), "1")) {
+                updateQuantity = updateQuantity / 2000;
             }
 
             updateTransportDetailInfo.setLoadingQuantity(updateQuantity);
@@ -661,8 +595,8 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         transportdocumentsDetailInfo.setLoadingQuantity(loadingQuantity);
         transportdocumentsDetailInfo.setTransportdocumentsState("2");
         transportdocumentsDetailInfo.setPch(previousData.getPch());
-        transportdocumentsDetailInfo.setSourcePlaceId(null);
-        transportdocumentsDetailInfo.setSourcePlaceName(null);
+        transportdocumentsDetailInfo.setSourcePlaceId(previousData.getSourcePlaceId());
+        transportdocumentsDetailInfo.setSourcePlaceName(previousData.getSourcePlaceName());
         transportdocumentsDetailInfo.setTargetPlaceId(null);
         transportdocumentsDetailInfo.setTargetPlaceName(null);
         transportdocumentsDetailInfo.setHandledByName(previousData.getHandledByName());

@@ -128,6 +128,7 @@ public class TransportdocumentsTraceInfoController extends BaseController
         // 取得前置运输单追踪数据列表
         List<String> tracePreviousList = new ArrayList<>();
         trace(allTraceDatalist, transportdcoumentsTraceInfo, "previous", tracePreviousList);
+        Collections.reverse(tracePreviousList);
         for (String previous : tracePreviousList) {
             TraceTimeLine previousTraceTimeLine = new TraceTimeLine();
             previousTraceTimeLine.setType("warning");
