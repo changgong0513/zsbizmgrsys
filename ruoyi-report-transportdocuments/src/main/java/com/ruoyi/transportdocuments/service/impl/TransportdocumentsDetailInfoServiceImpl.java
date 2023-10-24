@@ -471,7 +471,8 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
         if (ids.length == 1) {
             String tempTransportdocumentsId = "C" + Seq.getId(new AtomicInteger(1), 3);
             String transportdocumentsId = tempTransportdocumentsId.replace("A", "");
-            makeTransport(transportdocumentsList.get(0), data.getLong("transportLoadingCapacity"), transportdocumentsId);
+            makeTransport(transportdocumentsList.get(0), data.getLong("transportLoadingCapacity"),
+                    transportdocumentsId, data.getString("sourcePlaceName"));
 
             TransportdocumentsDetailInfo updateTransportDetailInfo = transportdocumentsList.get(0);
             Long updateQuantity = 0L;
@@ -527,7 +528,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
                 return 10003;
             }
 
-            makeTransport(transportdocumentsList.get(0), totalQuantity.get(), transportdocumentsId);
+            makeTransport(transportdocumentsList.get(0), totalQuantity.get(), transportdocumentsId, "");
             for (TransportdocumentsDetailInfo transportData : transportdocumentsList) {
                 transportData.setTransportdocumentsState("4");
                 transportData.setLoadingQuantity(0L);
@@ -588,15 +589,15 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
      * @return
      */
     private int makeTransport(TransportdocumentsDetailInfo previousData, final Long loadingQuantity,
-                              final String tempTransportdocumentsId) {
+                              final String tempTransportdocumentsId, final String sourcePlaceName) {
         TransportdocumentsDetailInfo transportdocumentsDetailInfo = new TransportdocumentsDetailInfo();
         transportdocumentsDetailInfo.setTransportdocumentsId(tempTransportdocumentsId);
         transportdocumentsDetailInfo.setWagonNumber(null);
         transportdocumentsDetailInfo.setLoadingQuantity(loadingQuantity);
         transportdocumentsDetailInfo.setTransportdocumentsState("2");
         transportdocumentsDetailInfo.setPch(previousData.getPch());
-        transportdocumentsDetailInfo.setSourcePlaceId(previousData.getSourcePlaceId());
-        transportdocumentsDetailInfo.setSourcePlaceName(previousData.getSourcePlaceName());
+        transportdocumentsDetailInfo.setSourcePlaceId(findWarehouseCode(sourcePlaceName));
+        transportdocumentsDetailInfo.setSourcePlaceName(sourcePlaceName);
         transportdocumentsDetailInfo.setTargetPlaceId(null);
         transportdocumentsDetailInfo.setTargetPlaceName(null);
         transportdocumentsDetailInfo.setHandledByName(previousData.getHandledByName());

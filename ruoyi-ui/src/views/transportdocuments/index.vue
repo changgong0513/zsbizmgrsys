@@ -1293,7 +1293,6 @@ export default {
           });
         }
       });
-      this.reset();
     },
     /** 生成中转运单取消按钮 */
     cancelTransfer() {
