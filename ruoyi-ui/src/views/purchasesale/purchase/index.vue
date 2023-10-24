@@ -1054,7 +1054,7 @@ export default {
       queryTransportParams: {
         pageNum: 1,
         pageSize: 10,
-        relatedOrderId: null,
+        relatedOrderId: null
       },
       // 表单参数
       form: {},
@@ -1181,8 +1181,10 @@ export default {
     getTransportList() {
       this.queryTransportParams.relatedOrderId = this.selRow.orderId;
       listDetail(this.queryTransportParams).then(response => {
-        this.transportList = response.rows;
-        this.totalTransport = response.total;
+        this.transportList = response.rows.filter(element => {
+          return element.transportdocumentsState != '4'
+        });
+        this.totalTransport = this.transportList.length;
         this.transportLoading = false;
       });
     },
