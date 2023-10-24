@@ -96,7 +96,7 @@
           v-hasPermi="['transportdocuments:detail:export']"
         >导入</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -105,6 +105,23 @@
           :disabled="multiple"
           @click="handleTransfer"
         >生成中转运单</el-button>
+      </el-col> -->
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-connection"
+          size="mini"
+          :disabled="multiple"
+          @click="handleMerge"
+        >合并</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-connection"
+          size="mini"
+          @click="handleTransfer"
+        >拆分</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -489,6 +506,9 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="物料名称" prop="mergeMaterialName">
+          <el-input v-model="formTransfer.mergeMaterialName" placeholder="请输入物料名称" :disabled="true" style="width: 200px;" />
+        </el-form-item>
         <el-form-item label="装载量" prop="transportLoadingCapacity">
           <el-input v-model="formTransfer.transportLoadingCapacity" placeholder="请输入装载量" style="width: 200px;" />
         </el-form-item>
@@ -824,6 +844,7 @@ export default {
 
       this.formTransfer = {
         transportMode: null,
+        mergeMaterialName: null,
         transportLoadingCapacity: null,
         transportUnitOfMeasurement: null,
       }
@@ -1140,6 +1161,82 @@ export default {
       this.openTransfer = true;
       this.titleTransfer = "生成中转运单";
       this.formTransfer.transportUnitOfMeasurement = '1';
+    },
+    /** 处理合并运单 */
+    handleMerge() {
+      // 检查合并的运输单数量
+      if (this.ids.length < 2) {
+        this.$modal.msgError("请选择两个以上运输单进行合并，请确认！");
+        return;
+      }
+
+      // 检查合并的运输单状态
+      
+      for (let i = 0; i < this.ids.length; i++) {
+        let isFind = false;
+        for (let j = 0; j < this.detailList.length; j++) {
+          if (this.ids[i] === this.detailList[j].id && this.detailList[j].transportdocumentsState != '3') {
+            isFind = true;
+          } 
+        }
+
+        if (isFind) {
+          this.$modal.msgError('要合并的运输单的状态必须是完成状态，请确认！');
+          return false;
+        }
+      }
+
+      let selectedData = this.detailList.filter(element => {
+        console.log(JSON.stringify(element))
+        return element.transportdocumentsState === '3'
+      });
+
+      console.log(JSON.stringify(selectedData));
+
+      let tempTargetPlaceName = selectedData[0].targetPlaceName;
+      let tempMaterialName = selectedData[0].materialName;
+      let isDiffTargetPlaceName = false;
+      let isDiffMaterialName = false
+      let sumLandedQuantity = 0.0;
+      selectedData.forEach(element => {
+        if (tempTargetPlaceName != element.targetPlaceName) {
+          isDiffTargetPlaceName = true;
+        }
+
+        if (tempMaterialName != element.materialName) {
+          isDiffMaterialName = true;
+        }
+
+        if (element.landedQuantity) {
+          sumLandedQuantity += element.landedQuantity 
+        } else {
+          sumLandedQuantity += 0.0;
+        }
+      });
+
+      if (isDiffTargetPlaceName) {
+        this.$modal.msgError('要合并的运输单的卸货地点必须是相同的，请确认！');
+        return;
+      }
+
+      if (isDiffMaterialName) {
+        this.$modal.msgError('要合并的运输单的物料名称必须是相同的，请确认！');
+        return;
+      }
+
+      this.openTransfer = true;
+      this.titleTransfer = "合并运输单";
+      this.formTransfer.mergeMaterialName = tempMaterialName;
+      this.formTransfer.transportLoadingCapacity = sumLandedQuantity;
+      this.formTransfer.transportUnitOfMeasurement = '1';
+
+
+
+      
+      
+
+
+
     },
     // 双击单元格触发事件
     doubleClick(row, column) {

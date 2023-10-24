@@ -568,6 +568,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setCreateTime(DateUtils.getNowDate());
             traceInfo.setUpdateBy(SecurityUtils.getUsername());
             traceInfo.setUpdateTime(DateUtils.getNowDate());
+            traceInfo.setBizVersion(1L);
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
 
             Optional<TransportdocumentsTraceInfo> optionalAny = traceList.stream()
@@ -610,6 +611,7 @@ public class TransportdocumentsDetailInfoServiceImpl implements ITransportdocume
             traceInfo.setCreateTime(DateUtils.getNowDate());
             traceInfo.setUpdateBy(SecurityUtils.getUsername());
             traceInfo.setUpdateTime(DateUtils.getNowDate());
+            traceInfo.setBizVersion(1L);
             transportdocumentsTraceInfoService.insertTransportdocumentsTraceInfo(traceInfo);
 
             Optional<TransportdocumentsTraceInfo> optionalAny = traceList.stream()
