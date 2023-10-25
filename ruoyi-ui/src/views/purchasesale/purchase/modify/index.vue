@@ -12,6 +12,7 @@
             <el-select
               v-model="form.purchaseType"
               placeholder="请选择采购类型"
+              :disabled="this.isView"
               style="width: 240px" >
               <el-option
                 v-for="dict in dict.type.purchasesale_purchase_type"
@@ -24,14 +25,14 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="经办人" prop="handledBy">
-            <el-input v-model="form.handledBy" placeholder="" style="width: 240px" maxlength="16" show-word-limit />
+            <el-input v-model="form.handledBy" placeholder="" :disabled="this.isView" style="width: 240px" maxlength="16" show-word-limit />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="所属部门" prop="belongDept">
-            <el-select v-model="form.belongDept" placeholder="请选择所属部门" style="width: 240px;">
+            <el-select v-model="form.belongDept" placeholder="请选择所属部门" :disabled="this.isView" style="width: 240px;">
               <el-option
                 v-for="item in deptOptions"
                 :key="item.value"
@@ -48,6 +49,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择业务日期"
+              :disabled="this.isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -57,6 +59,7 @@
             <el-input 
               v-model="form.materialName" 
               placeholder="请输入物料名称" 
+              :disabled="this.isView"
               style="width: 240px"
               maxlength="64"
               show-word-limit />
@@ -66,7 +69,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="采购数量" prop="purchaseQuantity">
-            <el-input v-model="form.purchaseQuantity" placeholder="请输入采购数量" style="width: 240px" />
+            <el-input v-model="form.purchaseQuantity" placeholder="请输入采购数量" :disabled="this.isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -75,6 +78,7 @@
               v-model="form.meteringUnit"
               placeholder="计量单位"
               clearable
+              :disabled="this.isView"
               style="width: 240px"
             >
               <el-option
@@ -88,7 +92,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="单价" prop="unitPrice">
-            <el-input v-model="form.unitPrice" placeholder="请输入单价" style="width: 240px" />
+            <el-input v-model="form.unitPrice" placeholder="请输入单价" :disabled="this.isView" style="width: 240px" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -102,6 +106,7 @@
               clearable
               reserve-keyword
               placeholder="请输入供应商名称关键字"
+              :disabled="this.isView"
               style="width: 240px"
               :remote-method="remoteMethodSupplierName"
               :loading="remoteLoadingSupplierName">
@@ -121,6 +126,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择预计到货期"
+              :disabled="this.isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -132,6 +138,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择要求交货期"
+              :disabled="this.isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -140,7 +147,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="账期" prop="accountPeriod">
-            <el-input v-model="form.accountPeriod" placeholder="请输入账期" style="width: 240px" />
+            <el-input v-model="form.accountPeriod" placeholder="请输入账期" :disabled="this.isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -149,6 +156,7 @@
               v-model="form.arrivalTerms"
               placeholder="到账条件"
               clearable
+              :disabled="this.isView"
               style="width: 130px"
             >
               <el-option
@@ -158,7 +166,7 @@
                 :value="dict.value"
               />
             </el-select>
-            <el-input v-model="form.arrivalTermsValue" placeholder="天数" style="margin-left: 10px; width: 60px" />（天）
+            <el-input v-model="form.arrivalTermsValue" placeholder="天数" :disabled="this.isView" style="margin-left: 10px; width: 60px" />（天）
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -167,6 +175,7 @@
               v-model="form.settlementMethod"
               placeholder="结算方式"
               clearable
+              :disabled="this.isView"
               style="width: 240px"
             >
               <el-option
@@ -182,7 +191,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="关联批次号" prop="batchNumber">
-            <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" style="width: 240px" />
+            <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" :disabled="this.isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="16">
@@ -191,6 +200,7 @@
               :active-value="1"
               :inactive-value="0"
               v-model="form.isInvoicing"
+              :disabled="this.isView"
             ></el-switch>
           </el-form-item>
         </el-col>
@@ -201,6 +211,7 @@
             <el-input 
               v-model="form.orderRemark" 
               type="textarea" 
+              :disabled="this.isView"
               style="width: 97%" 
               maxlength="128"
               show-word-limit />
@@ -232,7 +243,7 @@
               v-show="form.orderId"
             >
               <!-- 上传按钮 -->
-              <el-button size="mini" type="primary">选取文件</el-button>
+              <el-button size="mini" type="primary" :disabled="this.isView">选取文件</el-button>
               <!-- 上传提示 -->
               <div class="el-upload__tip" slot="tip" v-if="showTip">
                 请上传
@@ -305,8 +316,8 @@
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer" style="text-align: center; margin-top: 50px;">
-      <el-button type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="cancel">取 消</el-button>
+      <el-button type="primary" @click="submitForm" v-if="!this.isView">确 定</el-button>
+      <el-button @click="cancel" v-if="!this.isView">取 消</el-button>
       <el-button @click="returnPrePage">返 回</el-button>
     </div>
   </div>
@@ -457,6 +468,7 @@ export default {
       optionsSupplierName: [],
       listSupplierName: [],
       remoteLoadingSupplierName: false,
+      isView: false,
     };
   },
   created() {
@@ -665,6 +677,8 @@ export default {
               this.getList();
             });
           }
+
+          this.returnPrePage();
         }
       });
     },
@@ -832,6 +846,8 @@ export default {
 
         this.selRow = this.$route.query.selPurchaseOrderRow;
         this.getTransportList();
+
+        this.isView = this.$route.query.isView;
       }
     }
   }

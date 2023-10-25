@@ -1293,7 +1293,7 @@ export default {
       //   this.selRow = row;
       //   this.getTransportList();
       // });
-      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: this.selRow } });
+      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: this.selRow, isView: false } });
     },
     /** 提交按钮 */
     submitForm() {
@@ -1336,21 +1336,22 @@ export default {
     },
      /** 查看合同数据 */ 
     handleView(row) {
-      this.formDetail = row;
-      this.fileListDetail = [];
-      this.selRow = row;
-      this.selRow.purchaseOrderId = this.formDetail.orderId;
+      // this.formDetail = row;
+      // this.fileListDetail = [];
+      // this.selRow = row;
+      // this.selRow.purchaseOrderId = this.formDetail.orderId;
 
-      getOrderAdditional(this.formDetail.orderId).then(response => {
-        response.rows.forEach(element => {
-          if (element.bizVersion != 100) {
-            this.fileListDetail.push({ name: element.uplloadFilePath, url: element.uplloadFilePath });
-          }
-        });
-      });
+      // getOrderAdditional(this.formDetail.orderId).then(response => {
+      //   response.rows.forEach(element => {
+      //     if (element.bizVersion != 100) {
+      //       this.fileListDetail.push({ name: element.uplloadFilePath, url: element.uplloadFilePath });
+      //     }
+      //   });
+      // });
 
-      this.getTransportList(this.selRow);
-      this.openDetail = true;
+      // this.getTransportList(this.selRow);
+      // this.openDetail = true;
+      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: row, isView: true } });
     },
     // 文件上传用
     // 上传前校检格式和大小
