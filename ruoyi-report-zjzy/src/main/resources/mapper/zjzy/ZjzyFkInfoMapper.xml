@@ -266,34 +266,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     t2.hkrl_pch
             ) tt2
             ON tt1.fkrl_bmbh = tt2.hkrl_bmbh AND tt1.fkrl_pch = tt2.hkrl_pch
-            UNION
-            SELECT
-                tt1.fkrl_bmbh, tt1.fkrl_pch, tt1.sum_fkje, tt2.hkrl_bmbh, tt2.hkrl_pch, tt2.sum_hkje
-            FROM
-            (
-                SELECT
-                    t1.fkrl_bmbh,
-                    t1.fkrl_pch,
-                    SUM( t1.fkrl_je ) AS sum_fkje
-                FROM
-                    zjzy_fkrl_info t1
-                GROUP BY
-                    t1.fkrl_bmbh,
-                    t1.fkrl_pch
-            ) tt1
-            RIGHT JOIN
-            (
-                SELECT
-                    t2.hkrl_bmbh,
-                    t2.hkrl_pch,
-                    SUM( t2.hkrl_je ) AS sum_hkje
-                FROM
-                    zjzy_hkrl_info t2
-                GROUP BY
-                    t2.hkrl_bmbh,
-                    t2.hkrl_pch
-            ) tt2
-            ON tt1.fkrl_bmbh = tt2.hkrl_bmbh AND tt1.fkrl_pch = tt2.hkrl_pch
         ) zjzytj, masterdata_pch_info zsjpch, sys_dept dept
     </sql>
 
