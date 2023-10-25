@@ -1121,8 +1121,6 @@ export default {
     '$route' () {
       // 此处写router变化时，想要初始化或者是执行的方法......
       this.getList();
-      this.selRow = this.$route.query.selPurchaseOrderRow;
-      console.log("2@" + JSON.stringify(this.selRow));
     },
     value: {
       handler(val) {

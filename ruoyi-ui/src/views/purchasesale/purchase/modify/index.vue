@@ -461,23 +461,14 @@ export default {
   },
   created() {
     this.getDeptTree();
-    
-    this.reset();
-    this.isUpdate = true;
-    this.fileList = [];
-    this.form = this.$route.query.selPurchaseOrderRow;
-    getOrderAdditional(this.form.orderId).then(response => {
-      response.rows.forEach(element => {
-        this.fileList.push({ name: element.uplloadFilePath, 
-          url: element.uplloadFilePath });
-      });
-    });
-
-    this.selRow = this.$route.query.selPurchaseOrderRow;
-    this.getTransportList();
+    this.setPageValues();
   },
   // 文件上传用
   watch: {
+    '$route' () {
+      // 此处写router变化时，想要初始化或者是执行的方法......
+      this.setPageValues();
+    },
     value: {
       handler(val) {
         if (val) {
@@ -557,9 +548,8 @@ export default {
     },
     // 返回采购管理
     returnPrePage() {
-      // this.$router.push({ path: "/purchase" });
       this.$tab.closePage().then(() => {
-        this.$router.push({ path: "/purchase", query: { returnPurchaseRow: this.selRow } });
+        this.$router.push({ path: "/purchase" });
       });
     },
     // 取消按钮
@@ -827,6 +817,23 @@ export default {
           });
       });
     },
+    setPageValues() {
+      this.reset();
+      this.isUpdate = true;
+      this.fileList = [];
+      if (this.$route.query.selPurchaseOrderRow) {
+        this.form = this.$route.query.selPurchaseOrderRow;
+        getOrderAdditional(this.form.orderId).then(response => {
+        response.rows.forEach(element => {
+          this.fileList.push({ name: element.uplloadFilePath, 
+            url: element.uplloadFilePath });
+          });
+        });
+
+        this.selRow = this.$route.query.selPurchaseOrderRow;
+        this.getTransportList();
+      }
+    }
   }
 };
 </script>
