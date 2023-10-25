@@ -1109,6 +1109,7 @@ export default {
       optionsSupplierName: [],
       listSupplierName: [],
       remoteLoadingSupplierName: false,
+      selRow: null,
     };
   },
   created() {
@@ -1117,6 +1118,12 @@ export default {
   },
   // 文件上传用
   watch: {
+    '$route' () {
+      // 此处写router变化时，想要初始化或者是执行的方法......
+      this.getList();
+      this.selRow = this.$route.query.selPurchaseOrderRow;
+      console.log("2@" + JSON.stringify(this.selRow));
+    },
     value: {
       handler(val) {
         if (val) {
@@ -1256,36 +1263,39 @@ export default {
       this.ids = selection.map(item => item.orderId)
       this.single = selection.length!==1
       this.multiple = !selection.length
+      this.selRow = selection.length!==1 ? null : selection[0];
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加采购订单数据";
-      this.form.isInvoicing = "1";
-      this.isUpdate = false;
-      this.fileList = [];
+      // this.reset();
+      // this.open = true;
+      // this.title = "添加采购订单数据";
+      // this.form.isInvoicing = "1";
+      // this.isUpdate = false;
+      // this.fileList = [];
+      this.$router.push({ path: "/purchasemanage/add" });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const orderId = row.orderId || this.ids
-      getPurchase(orderId).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改采购订单数据";
-        this.isUpdate = true;
-        this.fileList = [];
-        getOrderAdditional(this.form.orderId).then(response => {
-          response.rows.forEach(element => {
-            this.fileList.push({ name: element.uplloadFilePath, 
-              url: element.uplloadFilePath });
-          });
-        });
+      // this.reset();
+      // const orderId = row.orderId || this.ids
+      // getPurchase(orderId).then(response => {
+      //   this.form = response.data;
+      //   this.open = true;
+      //   this.title = "修改采购订单数据";
+      //   this.isUpdate = true;
+      //   this.fileList = [];
+      //   getOrderAdditional(this.form.orderId).then(response => {
+      //     response.rows.forEach(element => {
+      //       this.fileList.push({ name: element.uplloadFilePath, 
+      //         url: element.uplloadFilePath });
+      //     });
+      //   });
 
-        this.selRow = row;
-        this.getTransportList();
-      });
+      //   this.selRow = row;
+      //   this.getTransportList();
+      // });
+      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: this.selRow } });
     },
     /** 提交按钮 */
     submitForm() {

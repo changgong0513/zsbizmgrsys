@@ -130,6 +130,34 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/purchasemanage',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/purchasesale/purchase/add/index'),
+        name: 'addpurchase',
+        meta: { title: '添加采购订单' }
+      }
+    ]
+  },
+  {
+    path: '/purchasemanage',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/purchasesale/purchase/modify/index'),
+        name: 'modifypurchase',
+        meta: { title: '修改采购订单' }
+      }
+    ]
+  },
 ]
 
 // 动态路由，基于用户权限动态去加载
