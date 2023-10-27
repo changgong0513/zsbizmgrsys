@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="订单编号" prop="orderId">
-            <el-input v-model="form.orderId" placeholder="请输入订单编号" :disabled="this.isUpdate" style="width: 240px" />
+            <el-input v-model="form.orderId" placeholder="请输入订单编号" :disabled="isUpdate" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -12,7 +12,7 @@
             <el-select
               v-model="form.purchaseType"
               placeholder="请选择采购类型"
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px" >
               <el-option
                 v-for="dict in dict.type.purchasesale_purchase_type"
@@ -25,14 +25,14 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="经办人" prop="handledBy">
-            <el-input v-model="form.handledBy" placeholder="" :disabled="this.isView" style="width: 240px" maxlength="16" show-word-limit />
+            <el-input v-model="form.handledBy" placeholder="" :disabled="isView" style="width: 240px" maxlength="16" show-word-limit />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="所属部门" prop="belongDept">
-            <el-select v-model="form.belongDept" placeholder="请选择所属部门" :disabled="this.isView" style="width: 240px;">
+            <el-select v-model="form.belongDept" placeholder="请选择所属部门" :disabled="isView" style="width: 240px;">
               <el-option
                 v-for="item in deptOptions"
                 :key="item.value"
@@ -49,7 +49,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择业务日期"
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -59,7 +59,7 @@
             <el-input 
               v-model="form.materialName" 
               placeholder="请输入物料名称" 
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px"
               maxlength="64"
               show-word-limit />
@@ -69,7 +69,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="采购数量" prop="purchaseQuantity">
-            <el-input v-model="form.purchaseQuantity" placeholder="请输入采购数量" :disabled="this.isView" style="width: 240px" />
+            <el-input v-model="form.purchaseQuantity" placeholder="请输入采购数量" :disabled="isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -78,7 +78,7 @@
               v-model="form.meteringUnit"
               placeholder="计量单位"
               clearable
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px"
             >
               <el-option
@@ -92,7 +92,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="单价" prop="unitPrice">
-            <el-input v-model="form.unitPrice" placeholder="请输入单价" :disabled="this.isView" style="width: 240px" />
+            <el-input v-model="form.unitPrice" placeholder="请输入单价" :disabled="isView" style="width: 240px" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -106,7 +106,7 @@
               clearable
               reserve-keyword
               placeholder="请输入供应商名称关键字"
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px"
               :remote-method="remoteMethodSupplierName"
               :loading="remoteLoadingSupplierName">
@@ -126,7 +126,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择预计到货期"
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -138,7 +138,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="请选择要求交货期"
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px">
             </el-date-picker>
           </el-form-item>
@@ -147,7 +147,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="账期" prop="accountPeriod">
-            <el-input v-model="form.accountPeriod" placeholder="请输入账期" :disabled="this.isView" style="width: 240px" />
+            <el-input v-model="form.accountPeriod" placeholder="请输入账期" :disabled="isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -156,7 +156,7 @@
               v-model="form.arrivalTerms"
               placeholder="到账条件"
               clearable
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 130px"
             >
               <el-option
@@ -166,7 +166,7 @@
                 :value="dict.value"
               />
             </el-select>
-            <el-input v-model="form.arrivalTermsValue" placeholder="天数" :disabled="this.isView" style="margin-left: 10px; width: 60px" />（天）
+            <el-input v-model="form.arrivalTermsValue" placeholder="天数" :disabled="isView" style="margin-left: 10px; width: 60px" />（天）
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -175,7 +175,7 @@
               v-model="form.settlementMethod"
               placeholder="结算方式"
               clearable
-              :disabled="this.isView"
+              :disabled="isView"
               style="width: 240px"
             >
               <el-option
@@ -191,7 +191,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="关联批次号" prop="batchNumber">
-            <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" :disabled="this.isView" style="width: 240px" />
+            <el-input v-model="form.batchNumber" placeholder="请输入关联批次号" :disabled="isView" style="width: 240px" />
           </el-form-item>
         </el-col>
         <el-col :span="16">
@@ -200,7 +200,7 @@
               :active-value="1"
               :inactive-value="0"
               v-model="form.isInvoicing"
-              :disabled="this.isView"
+              :disabled="isView"
             ></el-switch>
           </el-form-item>
         </el-col>
@@ -211,14 +211,14 @@
             <el-input 
               v-model="form.orderRemark" 
               type="textarea" 
-              :disabled="this.isView"
-              style="width: 97%" 
+              :disabled="isView"
+              style="width: 86%" 
               maxlength="128"
               show-word-limit />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row style="margin-bottom: 50px;;">
+      <el-row style="margin-bottom: 50px;">
         <el-col :span="2">
           <el-form-item label=""></el-form-item>
         </el-col>
@@ -243,7 +243,7 @@
               v-show="form.orderId"
             >
               <!-- 上传按钮 -->
-              <el-button size="mini" type="primary" :disabled="this.isView">选取文件</el-button>
+              <el-button size="mini" type="primary" :disabled="isView">选取文件</el-button>
               <!-- 上传提示 -->
               <div class="el-upload__tip" slot="tip" v-if="showTip">
                 请上传
@@ -316,8 +316,8 @@
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer" style="text-align: center; margin-top: 50px;">
-      <el-button type="primary" @click="submitForm" v-if="!this.isView">确 定</el-button>
-      <el-button @click="cancel" v-if="!this.isView">取 消</el-button>
+      <el-button type="primary" @click="submitForm" v-if="!isView">确 定</el-button>
+      <el-button @click="cancel" v-if="!isView">取 消</el-button>
       <el-button @click="returnPrePage">返 回</el-button>
     </div>
   </div>
@@ -847,7 +847,7 @@ export default {
         this.selRow = this.$route.query.selPurchaseOrderRow;
         this.getTransportList();
 
-        this.isView = this.$route.query.isView;
+        this.isView = Boolean(parseInt(this.$route.query.isView));
       }
     }
   }

@@ -201,13 +201,13 @@
             <el-input 
               v-model="form.orderRemark" 
               type="textarea" 
-              style="width: 97%" 
+              style="width: 86%" 
               maxlength="128"
               show-word-limit />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row style="margin-bottom: 50px;;">
+      <el-row style="margin-bottom: 50px;">
         <el-col :span="2">
           <el-form-item label=""></el-form-item>
         </el-col>

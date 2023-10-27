@@ -1293,7 +1293,7 @@ export default {
       //   this.selRow = row;
       //   this.getTransportList();
       // });
-      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: this.selRow, isView: false } });
+      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: this.selRow, isView: 0 } });
     },
     /** 提交按钮 */
     submitForm() {
@@ -1351,7 +1351,7 @@ export default {
 
       // this.getTransportList(this.selRow);
       // this.openDetail = true;
-      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: row, isView: true } });
+      this.$router.push({ path: "/purchasemanage/modify", query: { selPurchaseOrderRow: row, isView: 1 } });
     },
     // 文件上传用
     // 上传前校检格式和大小
